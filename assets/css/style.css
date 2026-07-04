@@ -1,0 +1,360 @@
+/*
+==================================================
+SchoolsPH
+Version : 0.1.0
+File : style.css
+Sprint : Homepage Foundation
+Developer : Chris + ChatGPT
+
+Learning Journey Theme
+Mobile First
+
+Power to the People.
+==================================================
+*/
+
+/* ==================================================
+   1. VARIABLES
+================================================== */
+
+:root{
+
+    --primary-yellow:#F4C430;
+    --dark-brown:#5A2E1B;
+    --light-brown:#A66A3F;
+    --maroon:#7A1E1E;
+
+    --green:#2E7D32;
+    --sky-blue:#87CEEB;
+
+    --background:#F5F7FA;
+    --card:#FFFFFF;
+
+    --text:#333333;
+    --text-light:#666666;
+
+    --border:#E5E7EB;
+
+    --shadow:0 6px 18px rgba(0,0,0,.08);
+
+}
+
+/* ==================================================
+   2. RESET
+================================================== */
+
+*{
+
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+
+}
+
+body{
+
+    font-family:Arial, Helvetica, sans-serif;
+
+    background:var(--background);
+
+    color:var(--text);
+
+    line-height:1.6;
+
+}
+
+/* ==================================================
+   3. LAYOUT
+================================================== */
+
+.container{
+
+    width:92%;
+
+    max-width:900px;
+
+    margin:auto;
+
+}
+
+/* ==================================================
+   4. HEADER
+================================================== */
+
+.site-header{
+
+    background:linear-gradient(
+        135deg,
+        var(--dark-brown),
+        var(--light-brown)
+    );
+
+    color:white;
+
+    padding:35px 20px;
+
+    border-bottom:5px solid var(--primary-yellow);
+
+}
+
+.school-info{
+
+    text-align:center;
+
+}
+
+.school-info h1{
+
+    font-size:28px;
+
+    margin-bottom:8px;
+
+}
+
+.school-info p{
+
+    font-size:15px;
+
+    opacity:.95;
+
+}
+
+.website-status{
+
+    display:inline-block;
+
+    margin-top:15px;
+
+    background:rgba(255,255,255,.15);
+
+    padding:8px 16px;
+
+    border-radius:30px;
+
+    font-size:13px;
+
+}
+
+/* ==================================================
+   5. ANNOUNCEMENT
+================================================== */
+
+.announcement{
+
+    background:var(--card);
+
+    margin-top:25px;
+
+    padding:25px;
+
+    border-radius:18px;
+
+    border-left:8px solid var(--maroon);
+
+    box-shadow:var(--shadow);
+
+}
+
+.announcement-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.badge{
+
+    padding:7px 14px;
+
+    border-radius:30px;
+
+    color:white;
+
+    font-size:12px;
+
+    font-weight:bold;
+
+}
+
+.emergency{
+
+    background:var(--maroon);
+
+}
+
+.announcement-date{
+
+    color:var(--text-light);
+
+    font-size:13px;
+
+}
+
+.announcement h2{
+
+    color:var(--dark-brown);
+
+    margin-bottom:12px;
+
+    font-size:24px;
+
+}
+
+.announcement p{
+
+    margin-bottom:20px;
+
+}
+
+.announcement button{
+
+    background:var(--primary-yellow);
+
+    color:var(--dark-brown);
+
+    border:none;
+
+    padding:12px 20px;
+
+    border-radius:12px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    transition:.2s;
+
+}
+
+.announcement button:hover{
+
+    transform:translateY(-2px);
+
+}
+
+/* ==================================================
+   6. QUICK ACTIONS
+================================================== */
+
+.quick-actions{
+
+    margin-top:30px;
+
+}
+
+.quick-actions h2{
+
+    color:var(--dark-brown);
+
+    margin-bottom:18px;
+
+}
+
+.actions-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(2,1fr);
+
+    gap:15px;
+
+}
+
+.action-card{
+
+    background:var(--card);
+
+    text-decoration:none;
+
+    color:var(--text);
+
+    padding:22px;
+
+    border-radius:18px;
+
+    box-shadow:var(--shadow);
+
+    display:flex;
+
+    flex-direction:column;
+
+    align-items:center;
+
+    justify-content:center;
+
+    transition:.2s;
+
+}
+
+.action-card:hover{
+
+    transform:translateY(-3px);
+
+}
+
+.action-card:active{
+
+    transform:scale(.96);
+
+}
+
+.icon{
+
+    font-size:34px;
+
+    margin-bottom:10px;
+
+}
+
+.action-card span{
+
+    font-size:14px;
+
+    color:var(--dark-brown);
+
+    font-weight:bold;
+
+}
+
+/* ==================================================
+   7. FOOTER
+================================================== */
+
+footer{
+
+    margin-top:40px;
+
+    padding:30px 20px;
+
+    text-align:center;
+
+    color:var(--text-light);
+
+    font-size:14px;
+
+}
+
+/* ==================================================
+   8. RESPONSIVE
+================================================== */
+
+@media(min-width:768px){
+
+    .school-info h1{
+
+        font-size:36px;
+
+    }
+
+    .actions-grid{
+
+        grid-template-columns:repeat(4,1fr);
+
+    }
+
+}
