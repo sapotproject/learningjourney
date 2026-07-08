@@ -1,288 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title><?= SCHOOL_NAME ?></title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-body{background:#f4f6f9}
-.header{background:linear-gradient(135deg,#8b5a3c,#a66a3f);color:#fff;text-align:center;padding:30px 20px}
-.header h1{font-size:26px;font-weight:700}.header p{margin-top:6px;font-size:14px;opacity:.95}
-.line{height:4px;background:#f2b705}
-.nav{background:#5a2a1a;display:flex;flex-wrap:wrap;justify-content:center}
-.nav a{color:#fff;text-decoration:none;padding:14px 18px;font-size:14px;font-weight:600}
-.nav a:hover,.nav a.active{background:#f2b705;color:#5a2a1a}
-.container{max-width:1100px;margin:auto;padding:20px}
-.card,.box{background:#fff;border-radius:18px;padding:20px;box-shadow:0 6px 18px rgba(0,0,0,.08);border-left:10px solid #f2b705;position:relative}
-.card{margin-top:20px}
-.tag{background:#7a1f1f;color:#fff;padding:6px 12px;border-radius:20px;font-size:12px;display:inline-block;font-weight:bold}
-.date{position:absolute;right:20px;top:20px;font-size:13px;color:#555}
-.card h2{margin-top:15px;font-size:20px;color:#5a2a1a;line-height:1.3}
-.card p{margin-top:10px;font-size:14px;color:#333;line-height:1.6}
-.btn{margin-top:15px;display:inline-block;background:#f2b705;color:#5a2a1a;padding:10px 16px;border-radius:10px;font-weight:bold;text-decoration:none}
-.btn:hover{background:#d9a400}
-h3{color:#5a2a1a;margin-top:25px;margin-bottom:15px;font-size:20px}
-.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
-.box{text-align:center}.icon{font-size:28px;margin-bottom:10px}.box p{font-size:14px;color:#333;font-weight:600}
-.featured-card{padding:18px}
-.featured-layout{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:center}
-.featured-layout .post-image{margin:0;width:100%;height:200px;aspect-ratio:auto;object-fit:cover;border-radius:14px;background:#eee;display:block}
-.featured-content{min-width:0}
-.featured-content h2{margin-top:12px;font-size:22px}
-.featured-content p{font-size:14px;line-height:1.6}
-.featured-content .date-inline{font-size:13px;color:#555;margin-left:10px}
-.latest-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:5px}
-.compact-card{background:#fff;border-radius:18px;padding:14px;box-shadow:0 6px 18px rgba(0,0,0,.08);border-left:10px solid #f2b705;display:flex;flex-direction:column;min-height:100%}
-.compact-card .post-image{width:100%;height:145px;object-fit:cover;border-radius:14px;margin:0 0 12px;background:#eee;display:block}
-.compact-card .tag-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
-.compact-card .tag{font-size:10px;padding:5px 9px;white-space:nowrap}
-.compact-card .small-date{font-size:11px;color:#555;white-space:nowrap}
-.compact-card h2{font-size:16px;color:#5a2a1a;line-height:1.25;margin:4px 0 0}
-.compact-card p{font-size:13px;color:#333;line-height:1.45;margin-top:8px;flex:1}
-.compact-card .btn{font-size:13px;padding:8px 12px;margin-top:12px;align-self:flex-start}
-.section-title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:25px;margin-bottom:15px}
-.section-title-row h3{margin:0}
-.empty-card{color:#777;font-size:13px;line-height:1.5}
-@media(max-width:1000px){.latest-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:768px){
-.quick-grid{grid-template-columns:repeat(2,1fr)}
-.latest-grid{grid-template-columns:1fr}
-.nav a{padding:12px 10px;font-size:13px}
-.header h1{font-size:22px}
-.date{position:static;margin-top:10px}
-.featured-layout{display:block}
-.featured-layout .post-image{width:100%;height:auto;aspect-ratio:16/9;margin:16px 0 4px;object-fit:cover}
-.featured-content .date-inline{display:block;margin-left:0;margin-top:10px}
-.compact-card .post-image{height:180px}
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}body{background:#f4f6f9}.header{background:linear-gradient(135deg,#8b5a3c,#a66a3f);color:#fff;text-align:center;padding:30px 20px}.header h1{font-size:26px;font-weight:700}.header p{margin-top:6px;font-size:14px;opacity:.95}.line{height:4px;background:#f2b705}.nav{background:#5a2a1a;display:flex;flex-wrap:wrap;justify-content:center}.nav a{color:#fff;text-decoration:none;padding:14px 18px;font-size:14px;font-weight:600}.nav a:hover{background:#f2b705;color:#5a2a1a}.container{max-width:1100px;margin:auto;padding:20px}.card,.box{background:#fff;border-radius:18px;padding:20px;box-shadow:0 6px 18px rgba(0,0,0,.08);border-left:10px solid #f2b705;position:relative}.card{margin-top:20px}.tag{background:#7a1f1f;color:#fff;padding:6px 12px;border-radius:20px;font-size:12px;display:inline-block;font-weight:bold}.date{position:absolute;right:20px;top:20px;font-size:13px;color:#555}.card h2{margin-top:15px;font-size:20px;color:#5a2a1a;line-height:1.3}.card p{margin-top:10px;font-size:14px;color:#333;line-height:1.6}.btn{margin-top:15px;display:inline-block;background:#f2b705;color:#5a2a1a;padding:10px 16px;border-radius:10px;font-weight:bold;text-decoration:none}h3{color:#5a2a1a;margin-top:25px;margin-bottom:15px;font-size:20px}.quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.box{text-align:center}.icon{font-size:28px;margin-bottom:10px}.box p{font-size:14px;color:#333;font-weight:600}.featured-card{padding:18px}.featured-layout{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:center}.post-image{width:100%;height:200px;object-fit:cover;border-radius:14px;background:#eee;display:block}.featured-content h2{margin-top:12px;font-size:22px}.date-inline{font-size:13px;color:#555;margin-left:10px}.latest-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:5px}.compact-card{background:#fff;border-radius:18px;padding:14px;box-shadow:0 6px 18px rgba(0,0,0,.08);border-left:10px solid #f2b705;display:flex;flex-direction:column;min-height:100%}.compact-card .post-image{height:145px;margin-bottom:12px}.tag-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.compact-card .tag{font-size:10px;padding:5px 9px}.small-date{font-size:11px;color:#555}.compact-card h2{font-size:16px;color:#5a2a1a;line-height:1.25;margin:4px 0 0}.compact-card p{font-size:13px;color:#333;line-height:1.45;margin-top:8px;flex:1}.compact-card .btn{font-size:13px;padding:8px 12px}.section-title-row{margin-top:25px;margin-bottom:15px}.section-title-row h3{margin:0}.empty-card{color:#777;font-size:13px;line-height:1.5}@media(max-width:1000px){.latest-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:768px){.quick-grid{grid-template-columns:repeat(2,1fr)}.latest-grid{grid-template-columns:1fr}.nav a{padding:12px 10px;font-size:13px}.header h1{font-size:22px}.date{position:static;margin-top:10px}.featured-layout{display:block}.post-image{height:auto;aspect-ratio:16/9;margin:16px 0 4px}.date-inline{display:block;margin-left:0;margin-top:10px}.compact-card .post-image{height:180px}}
 </style>
 </head>
 <body>
-<div class="header">
-  <h1><?= SCHOOL_NAME ?></h1>
-  <p><?= SCHOOL_TAGLINE ?></p>
-</div>
-<div class="line"></div>
-<nav class="nav">
-  <a href="<?= APP_URL ?>">Home</a>
-  <a href="<?= APP_URL ?>">Announcements</a>
-  <a href="<?= APP_URL ?>">News</a>
-  <a href="<?= APP_URL ?>">Events</a>
-  <a href="<?= APP_URL ?>">Calendar</a>
-  <a href="<?= APP_URL ?>">School Forms</a>
-  <a href="<?= APP_URL ?>">Gallery</a>
-  <a href="<?= APP_URL ?>">About</a>
-  <a href="<?= APP_URL ?>">Contact</a>
-  <a href="<?= APP_URL ?>?page=admin">Teacher Login</a>
-</nav>
-
+<div class="header"><h1><?= SCHOOL_NAME ?></h1><p><?= SCHOOL_TAGLINE ?></p></div><div class="line"></div>
+<nav class="nav"><a href="<?= APP_URL ?>">Home</a><a href="<?= APP_URL ?>">Announcements</a><a href="<?= APP_URL ?>">News</a><a href="<?= APP_URL ?>">Events</a><a href="<?= APP_URL ?>">Calendar</a><a href="<?= APP_URL ?>">School Forms</a><a href="<?= APP_URL ?>">Gallery</a><a href="<?= APP_URL ?>">About</a><a href="<?= APP_URL ?>">Contact</a><a href="<?= APP_URL ?>?page=admin">Teacher Login</a></nav>
 <div class="container">
-  <section id="latestSection" class="card featured-card">
-    <div class="tag">Latest Update</div>
-    <h2>Loading latest post...</h2>
-    <p>Please wait while we retrieve the latest announcement.</p>
-  </section>
-
-  <h3>Quick Actions</h3>
-  <div class="quick-grid">
-    <div class="box"><div class="icon">📞</div><p>Call School</p></div>
-    <div class="box"><div class="icon">📍</div><p>Google Maps</p></div>
-    <div class="box"><div class="icon">💬</div><p>Messenger</p></div>
-    <div class="box"><div class="icon">✉️</div><p>Email</p></div>
-  </div>
-
-  <div class="section-title-row">
-    <h3>Latest Updates by Category</h3>
-  </div>
-
-  <div class="latest-grid">
-    <div id="newsSection"></div>
-    <div id="eventsSection"></div>
-    <div id="remindersSection"></div>
-    <div id="advisorySection"></div>
-  </div>
+<section id="latestSection" class="card featured-card"><div class="tag">Latest Update</div><h2>Loading latest post...</h2><p>Please wait while we retrieve the latest announcement.</p></section>
+<h3>Quick Actions</h3><div class="quick-grid"><div class="box"><div class="icon">📞</div><p>Call School</p></div><div class="box"><div class="icon">📍</div><p>Google Maps</p></div><div class="box"><div class="icon">💬</div><p>Messenger</p></div><div class="box"><div class="icon">✉️</div><p>Email</p></div></div>
+<div class="section-title-row"><h3>Latest Updates by Category</h3></div><div class="latest-grid"><div id="newsSection"></div><div id="eventsSection"></div><div id="remindersSection"></div><div id="advisorySection"></div></div>
 </div>
-
 <script>
-const APP_URL = "<?= APP_URL ?>";
-
-const latestSection = document.getElementById("latestSection");
-const newsSection = document.getElementById("newsSection");
-const eventsSection = document.getElementById("eventsSection");
-const remindersSection = document.getElementById("remindersSection");
-const advisorySection = document.getElementById("advisorySection");
-
-function escapeHtml(value){
-  return String(value ?? "")
-    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
-}
-
-function cleanText(value){return String(value ?? "").trim();}
-
-function normalizeCategory(type){
-  const value = cleanText(type).toLowerCase();
-  if(value==="news"||value==="latest news") return "news";
-  if(value==="event"||value==="events"||value==="school event"||value==="school events") return "event";
-  if(value==="reminder"||value==="reminders"||value==="important reminder"||value==="important reminders") return "reminder";
-  if(value==="school advisory"||value==="school advisories"||value==="advisory"||value==="advisories"||value==="announcement"||value==="announcements"||value==="news advisory"||value==="news advisories") return "school advisory";
-  return value;
-}
-
-function labelFor(type){
-  const c = normalizeCategory(type);
-  if(c==="news") return "News";
-  if(c==="event") return "Event";
-  if(c==="reminder") return "Reminder";
-  if(c==="school advisory") return "School Advisory";
-  return cleanText(type)||"Update";
-}
-
-function parseDateTime(value){
-  if(!value) return 0;
-  const raw = String(value).trim();
-  if(!raw) return 0;
-  if(/^\d{4}-\d{2}-\d{2}$/.test(raw)){
-    const d = new Date(raw+"T00:00:00+08:00");
-    return isNaN(d.getTime()) ? 0 : d.getTime();
-  }
-  if(/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/.test(raw)){
-    const d = new Date(raw.replace(" ","T")+"+08:00");
-    return isNaN(d.getTime()) ? 0 : d.getTime();
-  }
-  const d = new Date(raw);
-  return isNaN(d.getTime()) ? 0 : d.getTime();
-}
-
-function formatDate(value){
-  if(!value) return "";
-  const raw = String(value).trim();
-  let d;
-  if(/^\d{4}-\d{2}-\d{2}$/.test(raw)) d = new Date(raw+"T00:00:00+08:00");
-  else if(/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/.test(raw)) d = new Date(raw.replace(" ","T")+"+08:00");
-  else d = new Date(raw);
-  if(!isNaN(d.getTime())) return d.toLocaleDateString("en-PH",{year:"numeric",month:"short",day:"numeric"});
-  return raw;
-}
-
-function normalizePost(post,index){
-  const date = cleanText(post.date);
-  const createdAt = cleanText(post.created_at);
-  const createdTime = parseDateTime(createdAt);
-  const dateTime = parseDateTime(date);
-  return {
-    id: cleanText(post.id)||"post-"+index,
-    type: cleanText(post.type),
-    category: normalizeCategory(post.type),
-    label: labelFor(post.type),
-    title: cleanText(post.title),
-    message: cleanText(post.message),
-    date,
-    created_at: createdAt,
-    dateDisplay: formatDate(date||createdAt),
-    image: cleanText(post.image),
-    sortTime: createdTime || dateTime || 0,
-    rowOrder: Number(post.row_order || index)
-  };
-}
-
-function renderLatestPost(post){
-  const img = post.image ? `<img src="${escapeHtml(post.image)}" alt="${escapeHtml(post.title)}" class="post-image">` : "";
-  const dateInline = post.dateDisplay ? `<span class="date-inline">${escapeHtml(post.dateDisplay)}</span>` : "";
-
-  if(post.image){
-    latestSection.innerHTML = `
-      <div class="featured-layout">
-        ${img}
-        <div class="featured-content">
-          <div><span class="tag">${escapeHtml(post.label)}</span>${dateInline}</div>
-          <h2>${escapeHtml(post.title)}</h2>
-          <p>${escapeHtml(post.message)}</p>
-          <a href="#" class="btn">Read More</a>
-        </div>
-      </div>`;
-    return;
-  }
-
-  latestSection.innerHTML = `
-    <div class="tag">${escapeHtml(post.label)}</div>
-    ${post.dateDisplay ? `<div class="date">${escapeHtml(post.dateDisplay)}</div>` : ""}
-    <h2>${escapeHtml(post.title)}</h2>
-    <p>${escapeHtml(post.message)}</p>
-    <a href="#" class="btn">Read More</a>`;
-}
-
-function renderCompactPost(post){
-  const img = post.image ? `<img src="${escapeHtml(post.image)}" alt="${escapeHtml(post.title)}" class="post-image">` : "";
-  return `
-    <article class="compact-card">
-      ${img}
-      <div class="tag-row">
-        <span class="tag">${escapeHtml(post.label)}</span>
-        ${post.dateDisplay ? `<span class="small-date">${escapeHtml(post.dateDisplay)}</span>` : ""}
-      </div>
-      <h2>${escapeHtml(post.title)}</h2>
-      <p>${escapeHtml(post.message)}</p>
-      <a href="#" class="btn">Read More</a>
-    </article>`;
-}
-
-function renderEmptyCard(label){
-  return `<article class="compact-card"><div class="empty-card">No ${escapeHtml(label)} posted yet.</div></article>`;
-}
-
-function getLatestByCategory(posts,category,excludedId){
-  return posts.find(p => p.category === category && p.id !== excludedId) || null;
-}
-
-function renderHomepage(posts){
-  if(!posts.length){
-    latestSection.innerHTML = `<div class="tag">Latest Update</div><h2>No school updates yet.</h2><p>Published posts will appear here once available.</p>`;
-    newsSection.innerHTML = renderEmptyCard("news");
-    eventsSection.innerHTML = renderEmptyCard("events");
-    remindersSection.innerHTML = renderEmptyCard("reminders");
-    advisorySection.innerHTML = renderEmptyCard("school advisories");
-    return;
-  }
-
-  const topPost = posts[0];
-  renderLatestPost(topPost);
-
-  const latestNews = getLatestByCategory(posts,"news",topPost.id);
-  const latestEvent = getLatestByCategory(posts,"event",topPost.id);
-  const latestReminder = getLatestByCategory(posts,"reminder",topPost.id);
-  const latestAdvisory = getLatestByCategory(posts,"school advisory",topPost.id);
-
-  newsSection.innerHTML = latestNews ? renderCompactPost(latestNews) : renderEmptyCard("news");
-  eventsSection.innerHTML = latestEvent ? renderCompactPost(latestEvent) : renderEmptyCard("events");
-  remindersSection.innerHTML = latestReminder ? renderCompactPost(latestReminder) : renderEmptyCard("reminders");
-  advisorySection.innerHTML = latestAdvisory ? renderCompactPost(latestAdvisory) : renderEmptyCard("school advisories");
-}
-
-async function loadPosts(){
-  try{
-    const response = await fetch(APP_URL + "?action=getPosts&cacheBust=" + Date.now());
-    const result = await response.json();
-    if(!result.success) throw new Error(result.message || "Unable to load posts.");
-    const posts = (result.posts || [])
-      .map(normalizePost)
-      .filter(p => p.title || p.message)
-      .sort((a,b) => {
-        if(b.sortTime !== a.sortTime) return b.sortTime - a.sortTime;
-        return b.rowOrder - a.rowOrder;
-      });
-    renderHomepage(posts);
-  }catch(error){
-    latestSection.innerHTML = `<div class="tag">Latest Update</div><h2>Unable to load posts</h2><p>${escapeHtml(error.message || "Please refresh the page.")}</p>`;
-    newsSection.innerHTML = renderEmptyCard("news");
-    eventsSection.innerHTML = renderEmptyCard("events");
-    remindersSection.innerHTML = renderEmptyCard("reminders");
-    advisorySection.innerHTML = renderEmptyCard("school advisories");
-  }
-}
-
-loadPosts();
+const APP_URL="<?= APP_URL ?>";
+const latestSection=document.getElementById("latestSection"),newsSection=document.getElementById("newsSection"),eventsSection=document.getElementById("eventsSection"),remindersSection=document.getElementById("remindersSection"),advisorySection=document.getElementById("advisorySection");
+function esc(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+function clean(v){return String(v??"").trim()}
+function cat(t){const v=clean(t).toLowerCase();if(v==="news"||v==="latest news")return"news";if(["event","events","school event","school events"].includes(v))return"event";if(["reminder","reminders","important reminder","important reminders"].includes(v))return"reminder";if(["school advisory","school advisories","advisory","advisories","announcement","announcements","news advisory","news advisories"].includes(v))return"school advisory";return v}
+function label(t){const c=cat(t);return c==="news"?"News":c==="event"?"Event":c==="reminder"?"Reminder":c==="school advisory"?"School Advisory":clean(t)||"Update"}
+function parseT(v){if(!v)return 0;const r=String(v).trim();let d;if(/^\d{4}-\d{2}-\d{2}$/.test(r))d=new Date(r+"T00:00:00+08:00");else if(/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/.test(r))d=new Date(r.replace(" ","T")+"+08:00");else d=new Date(r);return isNaN(d.getTime())?0:d.getTime()}
+function fmt(v){if(!v)return"";const r=String(v).trim();let d;if(/^\d{4}-\d{2}-\d{2}$/.test(r))d=new Date(r+"T00:00:00+08:00");else if(/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/.test(r))d=new Date(r.replace(" ","T")+"+08:00");else d=new Date(r);return isNaN(d.getTime())?r:d.toLocaleDateString("en-PH",{year:"numeric",month:"short",day:"numeric"})}
+function norm(p,i){const d=clean(p.date),cr=clean(p.created_at);return{id:clean(p.id)||"post-"+i,type:clean(p.type),category:cat(p.type),label:label(p.type),title:clean(p.title),message:clean(p.message),dateDisplay:fmt(d||cr),image:clean(p.image),sortTime:parseT(cr)||parseT(d)||0,rowOrder:Number(p.row_order||i)}}
+function latest(p){const img=p.image?`<img src="${esc(p.image)}" alt="${esc(p.title)}" class="post-image">`:"";const dt=p.dateDisplay?`<span class="date-inline">${esc(p.dateDisplay)}</span>`:"";if(p.image){latestSection.innerHTML=`<div class="featured-layout">${img}<div class="featured-content"><div><span class="tag">${esc(p.label)}</span>${dt}</div><h2>${esc(p.title)}</h2><p>${esc(p.message)}</p><a href="#" class="btn">Read More</a></div></div>`;return}latestSection.innerHTML=`<div class="tag">${esc(p.label)}</div>${p.dateDisplay?`<div class="date">${esc(p.dateDisplay)}</div>`:""}<h2>${esc(p.title)}</h2><p>${esc(p.message)}</p><a href="#" class="btn">Read More</a>`}
+function compact(p){const img=p.image?`<img src="${esc(p.image)}" alt="${esc(p.title)}" class="post-image">`:"";return`<article class="compact-card">${img}<div class="tag-row"><span class="tag">${esc(p.label)}</span>${p.dateDisplay?`<span class="small-date">${esc(p.dateDisplay)}</span>`:""}</div><h2>${esc(p.title)}</h2><p>${esc(p.message)}</p><a href="#" class="btn">Read More</a></article>`}
+function empty(l){return`<article class="compact-card"><div class="empty-card">No ${esc(l)} posted yet.</div></article>`}
+function by(posts,c,id){return posts.find(p=>p.category===c&&p.id!==id)||null}
+function render(posts){if(!posts.length){latestSection.innerHTML=`<div class="tag">Latest Update</div><h2>No school updates yet.</h2><p>Published posts will appear here once available.</p>`;newsSection.innerHTML=empty("news");eventsSection.innerHTML=empty("events");remindersSection.innerHTML=empty("reminders");advisorySection.innerHTML=empty("school advisories");return}const top=posts[0];latest(top);const n=by(posts,"news",top.id),e=by(posts,"event",top.id),r=by(posts,"reminder",top.id),a=by(posts,"school advisory",top.id);newsSection.innerHTML=n?compact(n):empty("news");eventsSection.innerHTML=e?compact(e):empty("events");remindersSection.innerHTML=r?compact(r):empty("reminders");advisorySection.innerHTML=a?compact(a):empty("school advisories")}
+async function load(){try{const res=await fetch(APP_URL+"?action=getPosts&cacheBust="+Date.now());const out=await res.json();if(!out.success)throw new Error(out.message||"Unable to load posts.");const posts=(out.posts||[]).map(norm).filter(p=>p.title||p.message).sort((a,b)=>b.sortTime!==a.sortTime?b.sortTime-a.sortTime:b.rowOrder-a.rowOrder);render(posts)}catch(err){latestSection.innerHTML=`<div class="tag">Latest Update</div><h2>Unable to load posts</h2><p>${esc(err.message||"Please refresh the page.")}</p>`;newsSection.innerHTML=empty("news");eventsSection.innerHTML=empty("events");remindersSection.innerHTML=empty("reminders");advisorySection.innerHTML=empty("school advisories")}}
+load();
 </script>
-</body>
-</html>
+</body></html>
