@@ -4,7 +4,7 @@
    Cloudflare Worker R2 Upload + Apps Script Save
    ========================================================= */
 
-const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyOHLGgAxYbhITD4PYOEaFKVWZMntDHMCQ5raJYiDgwo2CQeFGTCXp-BUxPCF4Mu9k/exec";
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyFZrJEXsqktYS-Eamf4X1B7b-MJk-86aw-sYLhiCBv3636XDATjwQqf2YI6Q2mFrnzYw/exec";
 const UPLOAD_WORKER_URL = "https://schoolsph-upload.sapotproject.workers.dev";
 
 /*
