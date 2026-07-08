@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Teacher Dashboard | Learning Journey Child Growth Center, Inc.</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{background:#f4f6f9;color:#2f261f}
+
+.header{
+  background:linear-gradient(135deg,#5d341f 0%,#76492d 35%,#8b5a3c 68%,#a66a3f 100%);
+  color:#fff;
+  padding:22px 20px;
+  box-shadow:0 3px 14px rgba(0,0,0,.15)
+}
+
+.header-inner{
+  max-width:1100px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.school-logo{
+  width:64px;
+  height:64px;
+  object-fit:contain;
+  display:block;
+  flex-shrink:0;
+}
+
+.brand h1{
+  font-size:22px;
+  line-height:1.25;
+}
+
+.brand p{
+  margin-top:4px;
+  font-size:14px;
+  color:#ffe9a8;
+}
+
+.header-actions{
+  display:flex;
+  gap:10px;
+  align-items:center;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+
+.header-actions a,
+.header-actions button{
+  border:none;
+  border-radius:12px;
+  padding:10px 14px;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
+  text-decoration:none;
+}
+
+.home-btn{background:#f2b705;color:#5a2a1a}
+.logout-btn{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35)!important;color:#fff}
+
+.container{max-width:1100px;margin:auto;padding:22px 20px 50px}
+
+.welcome-card{
+  background:#fff8ea;
+  border:1px solid #f0dfba;
+  border-radius:18px;
+  padding:20px;
+  margin-bottom:20px;
+}
+
+.welcome-card h2{color:#5a2a1a;font-size:24px}
+.welcome-card p{color:#6f6258;font-size:14px;margin-top:6px}
+
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);
+  gap:20px;
+}
+
+.card{
+  background:#fff;
+  border-radius:18px;
+  padding:20px;
+  box-shadow:0 6px 18px rgba(0,0,0,.08);
+  border-left:10px solid #f2b705;
+}
+
+.card h3{color:#5a2a1a;font-size:20px;margin-bottom:16px}
+
+.form-row{margin-bottom:15px}
+
+.form-row label{
+  display:block;
+  margin-bottom:7px;
+  font-size:14px;
+  font-weight:700;
+  color:#5a2a1a;
+}
+
+.form-row input,
+.form-row select,
+.form-row textarea{
+  width:100%;
+  border:1px solid #e8ded3;
+  border-radius:12px;
+  padding:12px 13px;
+  font-size:15px;
+  outline:none;
+  background:#fff;
+}
+
+.form-row textarea{resize:vertical;min-height:150px}
+
+.form-row input:focus,
+.form-row select:focus,
+.form-row textarea:focus{
+  border-color:#a66a3f;
+  box-shadow:0 0 0 3px rgba(166,106,63,.16);
+}
+
+.upload-box{
+  border:1px dashed #d8c5b7;
+  background:#fffdf8;
+  border-radius:16px;
+  padding:16px;
+}
+
+.file-input{
+  border:none!important;
+  padding:0!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+}
+
+.upload-preview{
+  display:none;
+  width:100%;
+  max-height:220px;
+  object-fit:cover;
+  border-radius:14px;
+  margin-top:12px;
+  background:#eee;
+}
+
+.upload-status{
+  margin-top:8px;
+  color:#6f6258;
+  font-size:12px;
+  line-height:1.4;
+}
+
+.form-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:8px;
+}
+
+.form-actions button{
+  border:none;
+  border-radius:12px;
+  padding:12px 16px;
+  font-size:15px;
+  font-weight:700;
+  cursor:pointer;
+  transition:.15s ease;
+}
+
+.publish-btn{background:#7a1f1f;color:#fff}
+.clear-btn{background:#fff;color:#5a2a1a;border:1px solid #e8ded3!important}
+
+.form-actions button:hover{transform:translateY(-1px);opacity:.94}
+.form-actions button:disabled{opacity:.65;cursor:not-allowed;transform:none}
+
+.form-message{
+  margin-top:14px;
+  min-height:22px;
+  font-size:14px;
+  font-weight:700;
+}
+
+.form-message.success{color:#1f7a3f}
+.form-message.error{color:#b42318}
+
+.preview-box{
+  border:1px dashed #e8ded3;
+  background:#fffdf8;
+  border-radius:16px;
+  padding:18px;
+  min-height:220px;
+}
+
+.preview-empty{color:#777;font-size:14px;line-height:1.5}
+
+.preview-image{
+  width:100%;
+  max-height:210px;
+  object-fit:cover;
+  border-radius:14px;
+  background:#eee;
+  margin-bottom:14px;
+  display:block;
+}
+
+.preview-tag{
+  background:#7a1f1f;
+  color:#fff;
+  padding:6px 12px;
+  border-radius:20px;
+  font-size:12px;
+  display:inline-block;
+  font-weight:bold;
+}
+
+.preview-date{margin-top:10px;font-size:13px;color:#555}
+.preview-title{margin-top:12px;font-size:20px;color:#5a2a1a;line-height:1.3}
+.preview-message{margin-top:10px;font-size:14px;color:#333;line-height:1.6;white-space:pre-wrap}
+
+.tip-list{
+  margin-top:16px;
+  padding-left:18px;
+  color:#6f6258;
+  font-size:13px;
+  line-height:1.6;
+}
+
+@media(max-width:850px){
+  .header-inner{flex-direction:column;align-items:flex-start}
+  .header-actions{justify-content:flex-start}
+  .dashboard-grid{grid-template-columns:1fr}
+}
+
+@media(max-width:520px){
+  .brand{align-items:flex-start}
+  .school-logo{width:56px;height:56px}
+  .brand h1{font-size:18px}
+  .form-actions button,.header-actions a,.header-actions button{width:100%;text-align:center}
+  .header-actions{width:100%}
+}
+</style>
+</head>
+
+<body>
+<header class="header">
+  <div class="header-inner">
+    <div class="brand">
+      <img src="assets/images/school-logo.png" alt="Learning Journey Child Growth Center Logo" class="school-logo">
+      <div>
+        <h1>Learning Journey Child Growth Center, Inc.</h1>
+        <p>Teacher Dashboard</p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <a href="index.html" class="home-btn">← Back to Home</a>
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <section class="welcome-card">
+    <h2>Publish School Update</h2>
+    <p>Create announcements, news, events, reminders, and school advisories for parents.</p>
+  </section>
+
+  <section class="dashboard-grid">
+    <form id="postForm" class="card">
+      <h3>Create New Post</h3>
+
+      <div class="form-row">
+        <label for="type">Post Type</label>
+        <select id="type" name="type" required>
+          <option value="">Select type</option>
+          <option value="School Advisory">School Advisory</option>
+          <option value="News">News</option>
+          <option value="Event">Event</option>
+          <option value="Reminder">Reminder</option>
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label for="date">Date</label>
+        <input type="date" id="date" name="date" required>
+      </div>
+
+      <div class="form-row">
+        <label for="title">Title</label>
+        <input type="text" id="title" name="title" placeholder="Example: No Classes Tomorrow" required>
+      </div>
+
+      <div class="form-row">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" placeholder="Write the full announcement here..." required></textarea>
+      </div>
+
+      <div class="form-row">
+        <label for="imageFile">Image Upload</label>
+        <div class="upload-box">
+          <input type="file" id="imageFile" name="imageFile" accept="image/jpeg,image/png,image/webp,image/gif" class="file-input">
+          <img id="uploadPreview" class="upload-preview" alt="Selected image preview">
+          <p id="uploadStatus" class="upload-status">Optional. Choose an image from your device. It will upload to Cloudflare R2 when you publish.</p>
+        </div>
+        <input type="hidden" id="image" name="image">
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" id="publishBtn" class="publish-btn">Publish Post</button>
+        <button type="button" id="clearBtn" class="clear-btn">Clear Form</button>
+      </div>
+
+      <p id="postMessage" class="form-message" aria-live="polite"></p>
+    </form>
+
+    <aside class="card">
+      <h3>Live Post Preview</h3>
+
+      <article id="postPreview" class="preview-box">
+        <p class="preview-empty">Preview will appear here while you type.</p>
+      </article>
+
+      <ul class="tip-list">
+        <li>Keep titles short and clear.</li>
+        <li>Use School Advisory for important official notices.</li>
+        <li>Image upload supports JPG, PNG, WebP, and GIF.</li>
+        <li>Recommended image size: below 3 MB.</li>
+      </ul>
+    </aside>
+  </section>
+</main>
+
+<script src="assets/js/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+[
+  {
+    "type": "announcement",
+    "icon": "📢",
+    "title": "System Development Started",
+    "description": "SchoolsPH platform development has officially begun."
+  },
+  {
+    "type": "system",
+    "icon": "⚙️",
+    "title": "Initial Setup Completed",
+    "description": "Project repository, hosting, and structure are now in place."
+  },
+  {
+    "type": "event",
+    "icon": "🏫",
+    "title": "Platform Design Phase",
+    "description": "UI and structure planning for parent-friendly experience."
+  },
+  {
+    "type": "notice",
+    "icon": "⚠️",
+    "title": "Information Access Improvement",
+    "description": "Goal is to reduce repeated school inquiries by centralizing updates."
+  }
+]

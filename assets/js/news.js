@@ -1,0 +1,13 @@
+const API_URL="https://script.google.com/macros/s/AKfycbyFZrJEXsqktYS-Eamf4X1B7b-MJk-86aw-sYLhiCBv3636XDATjwQqf2YI6Q2mFrnzYw/exec";
+document.addEventListener("DOMContentLoaded",loadPage);
+function loadPage(){fetch(API_URL+"?action=getPosts").then(r=>r.json()).then(data=>{const posts=normalizePosts(data.posts||[]).filter(p=>p.type==="News");renderPage(posts);}).catch(e=>console.error(e));}
+function renderPage(posts){const latest=document.getElementById("latestNews"), archive=document.getElementById("newsArchive");if(!posts.length){latest.innerHTML=`<span class="tag">News</span><h2>No News yet</h2><p class="empty">No posts yet.</p>`;archive.innerHTML=`<p class="empty">No previous posts yet.</p>`;return;}const top=posts[0], old=posts.slice(1,8);latest.innerHTML=`<span class="tag">${top.type}</span><div class="date">${fmtDate(top.dateObj)}</div>${imageHTML(top)}<h2>${esc(top.title)}</h2><p>${esc(trunc(top.message,460))}</p><a href="post.html?id=${encodeURIComponent(top.id)}" class="btn">Read More →</a>`;archive.innerHTML=old.length?old.map(p=>`<a class="archive-item" href="post.html?id=${encodeURIComponent(p.id)}"><div class="archive-date">${fmtDate(p.dateObj)}</div><div class="archive-title">${esc(p.title)}</div></a>`).join(""):`<p class="empty">No previous posts yet.</p>`;}
+
+function imageHTML(post,full=false){const img=(post.image||"").trim();if(!img)return "";return `<img class="post-image ${full?"full":""}" src="${escAttr(img)}" alt="${esc(post.title||"Post image")}" loading="lazy">`;}
+function attachmentHTML(post){const a=(post.attachment||"").trim();if(!a)return "";return `<br><a href="${escAttr(a)}" target="_blank" class="btn">Download Attachment</a>`;}
+function fmtDateTime(d){if(!(d instanceof Date)||isNaN(d.getTime()))return "";return d.toLocaleString("en-US",{year:"numeric",month:"long",day:"numeric",hour:"numeric",minute:"2-digit"});}
+function fmtDate(d){if(!(d instanceof Date)||isNaN(d.getTime()))return "";return d.toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});}
+function trunc(t,l){if(!t)return "";return t.length>l?t.substring(0,l).trim()+"...":t;}
+function esc(v){return String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");}
+function escAttr(v){return esc(v);}
+function normalizePosts(posts){return posts.map((p,i)=>{const d=new Date(p.date);return{id:p.id||i,type:(p.type||"").trim(),title:p.title||"Untitled Post",message:p.message||"",image:p.image||"",attachment:p.attachment||"",dateObj:isNaN(d.getTime())?new Date(0):d};}).sort((a,b)=>b.dateObj-a.dateObj);}
