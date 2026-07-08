@@ -1,6 +1,7 @@
 /* =========================================================
    Learning Journey Teacher Dashboard
-   Cloudflare Worker R2 Upload - Debug/Timeout Fix
+   Stable Publish v1
+   Cloudflare Worker R2 Upload + Apps Script Save
    ========================================================= */
 
 const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyOHLGgAxYbhITD4PYOEaFKVWZMntDHMCQ5raJYiDgwo2CQeFGTCXp-BUxPCF4Mu9k/exec";
@@ -10,7 +11,7 @@ const UPLOAD_WORKER_URL = "https://schoolsph-upload.sapotproject.workers.dev";
   IMPORTANT:
   Replace this with the exact same UPLOAD_TOKEN value from Cloudflare Worker Variables.
 */
-const UPLOAD_TOKEN = "8Qm!9Xv#LJ2026@SchoolsPH$Upload^7PkR2";
+const UPLOAD_TOKEN = "PASTE_YOUR_EXACT_UPLOAD_TOKEN_HERE";
 
 const token = sessionStorage.getItem("lj_token");
 const loggedIn = sessionStorage.getItem("lj_logged_in");
@@ -62,18 +63,14 @@ async function fetchWithTimeout(url, options, timeoutMs, stepName) {
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
-    const response = await fetch(url, {
-      ...options,
-      signal: controller.signal
-    });
-
+    const response = await fetch(url, { ...options, signal: controller.signal });
     clearTimeout(timeoutId);
     return response;
   } catch (error) {
     clearTimeout(timeoutId);
 
     if (error.name === "AbortError") {
-      throw new Error(stepName + " timed out. Please check Worker/App Script deployment.");
+      throw new Error(stepName + " timed out. Please check deployment/settings.");
     }
 
     throw error;
@@ -88,7 +85,7 @@ async function parseJsonResponse(response, sourceName) {
     result = JSON.parse(text);
   } catch (error) {
     console.error(sourceName + " returned non-JSON:", text);
-    throw new Error(sourceName + " returned non-JSON response. Check deployment URL/settings.");
+    throw new Error(sourceName + " returned non-JSON response.");
   }
 
   return result;
@@ -176,7 +173,6 @@ function resetForm() {
   uploadPreview.style.display = "none";
   uploadPreview.src = "";
   setUploadStatus("Optional. Choose an image from your device. It will upload to Cloudflare R2 when you publish.");
-  setPostMessage("", "");
   renderPreview();
 }
 
@@ -229,7 +225,6 @@ imageFileInput.addEventListener("change", function() {
 
 async function uploadImageIfNeeded() {
   if (!selectedImageFile) {
-    console.log("No image selected. Skipping image upload.");
     return imageHiddenInput.value.trim();
   }
 
@@ -243,15 +238,11 @@ async function uploadImageIfNeeded() {
   const formData = new FormData();
   formData.append("file", selectedImageFile);
 
-  console.log("Uploading image to Worker:", UPLOAD_WORKER_URL);
-
   const response = await fetchWithTimeout(
     UPLOAD_WORKER_URL,
     {
       method: "POST",
-      headers: {
-        "X-SchoolsPH-Upload-Token": UPLOAD_TOKEN
-      },
+      headers: { "X-SchoolsPH-Upload-Token": UPLOAD_TOKEN },
       body: formData
     },
     30000,
@@ -259,8 +250,6 @@ async function uploadImageIfNeeded() {
   );
 
   const result = await parseJsonResponse(response, "Upload Worker");
-
-  console.log("Worker upload result:", result);
 
   if (!response.ok || !result.success) {
     throw new Error(result.message || "Image upload failed.");
@@ -271,7 +260,7 @@ async function uploadImageIfNeeded() {
   return result.url || "";
 }
 
-async function createPost(imageUrl) {
+async function savePostToSheet(imageUrl) {
   const post = getFormValues();
 
   setPostMessage("Step 2 of 2: Saving post to Google Sheet...", "");
@@ -286,21 +275,14 @@ async function createPost(imageUrl) {
   formData.append("image", imageUrl || post.image || "");
   formData.append("author", post.author);
 
-  console.log("Saving post to Apps Script:", APPS_SCRIPT_URL);
-
   const response = await fetchWithTimeout(
     APPS_SCRIPT_URL,
-    {
-      method: "POST",
-      body: formData
-    },
+    { method: "POST", body: formData },
     30000,
     "Saving post"
   );
 
   const result = await parseJsonResponse(response, "Content Apps Script");
-
-  console.log("Apps Script createPost result:", result);
 
   if (!response.ok || !result.success) {
     throw new Error(result.message || "Failed to save post.");
@@ -311,6 +293,7 @@ async function createPost(imageUrl) {
 
 clearBtn.addEventListener("click", function() {
   resetForm();
+  setPostMessage("", "");
 });
 
 logoutBtn.addEventListener("click", async function() {
@@ -321,10 +304,7 @@ logoutBtn.addEventListener("click", async function() {
 
     await fetchWithTimeout(
       APPS_SCRIPT_URL,
-      {
-        method: "POST",
-        body: formData
-      },
+      { method: "POST", body: formData },
       10000,
       "Logout"
     );
@@ -355,11 +335,12 @@ postForm.addEventListener("submit", async function(event) {
 
   try {
     const uploadedImageUrl = await uploadImageIfNeeded();
-    await createPost(uploadedImageUrl);
+    const result = await savePostToSheet(uploadedImageUrl);
 
     setPostMessage("Post published successfully.", "success");
-    setUploadStatus("Done.");
+    setUploadStatus("Done. Saved to " + (result.sheet_used || "Google Sheet") + ".");
     resetForm();
+    setPostMessage("Post published successfully.", "success");
 
   } catch (error) {
     console.error("Publish failed:", error);
