@@ -11,7 +11,7 @@ const UPLOAD_WORKER_URL = "https://schoolsph-upload.sapotproject.workers.dev";
   IMPORTANT:
   Replace this with the exact same UPLOAD_TOKEN value from Cloudflare Worker Variables.
 */
-const UPLOAD_TOKEN = "PASTE_YOUR_EXACT_UPLOAD_TOKEN_HERE";
+const UPLOAD_TOKEN = "8Qm!9Xv#LJ2026@SchoolsPH$Upload^7PkR2";
 
 const token = sessionStorage.getItem("lj_token");
 const loggedIn = sessionStorage.getItem("lj_logged_in");
