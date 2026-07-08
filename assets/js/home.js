@@ -1,11 +1,11 @@
 /* =========================================================
    Learning Journey Homepage Renderer
-   Homepage Fix v1
+   Homepage Fetch Fix v2
 
    Purpose:
    - Keep approved homepage design unchanged.
    - Fix latest post logic.
-   - Prevent stale cached Apps Script response.
+   - Fix "Failed to fetch" caused by CORS preflight headers.
    - Top card = newest post overall.
    - Category cards = latest per category, excluding top card.
    ========================================================= */
@@ -79,7 +79,6 @@ function parseDateTime(value) {
   if (!value) return 0;
 
   const raw = String(value).trim();
-
   if (!raw) return 0;
 
   if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
@@ -99,7 +98,6 @@ function parseDateTime(value) {
 function getPostSortTime(post) {
   const createdAtTime = parseDateTime(post.created_at || post.createdAt || post.timestamp);
   const dateTime = parseDateTime(post.date || post.post_date || post.event_date);
-
   return createdAtTime || dateTime || 0;
 }
 
@@ -107,7 +105,6 @@ function formatDate(value) {
   if (!value) return "";
 
   const raw = String(value).trim();
-
   if (!raw) return "";
 
   let parsed;
@@ -288,13 +285,15 @@ function renderHomepage(posts) {
 async function fetchPostsFromAppsScript() {
   const url = `${APPS_SCRIPT_URL}?action=getPosts&cacheBust=${Date.now()}`;
 
+  /*
+    Important:
+    Do not add custom headers here.
+    Custom headers trigger CORS preflight, and Google Apps Script web apps
+    often fail OPTIONS/preflight requests.
+  */
   const response = await fetch(url, {
     method: "GET",
-    cache: "no-store",
-    headers: {
-      "Cache-Control": "no-cache",
-      "Pragma": "no-cache"
-    }
+    cache: "no-store"
   });
 
   if (!response.ok) {
