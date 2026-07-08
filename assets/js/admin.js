@@ -33,6 +33,13 @@ function setMsg(id, text, className) {
   if (className) el.classList.add(className);
 }
 
+function setMiniMsg(id, text, className) {
+  const el = document.getElementById(id);
+  el.textContent = text || "";
+  el.className = "mini-message";
+  if (className) el.classList.add(className);
+}
+
 function isDeleted(post) {
   return String(post.deleted).toUpperCase() === "TRUE" || post.status === "deleted";
 }
@@ -42,16 +49,23 @@ function shortText(text, max = 160) {
   return value.length > max ? value.slice(0, max).trim() + "..." : value;
 }
 
+function getPostImage(post) {
+  return post.image || post.image_url || "";
+}
+
 function imageThumb(post) {
-  if (!post.image) return "";
+  const imageUrl = getPostImage(post);
+  if (!imageUrl) {
+    return `<div class="dashboard-post-thumb empty-thumb">No Image</div>`;
+  }
 
   return `
     <img
       class="dashboard-post-thumb"
-      src="${esc(post.image)}"
+      src="${esc(imageUrl)}"
       alt="${esc(post.title)}"
       loading="lazy"
-      onerror="this.style.display='none'"
+      onerror="this.outerHTML='<div class=&quot;dashboard-post-thumb empty-thumb&quot;>Image unavailable</div>'"
     >
   `;
 }
@@ -115,7 +129,7 @@ function preview() {
   const msg = postMessageText.value;
   const imageFile = postImage.files && postImage.files[0];
 
-  if (!type && !date && !title && !msg && !imageFile) {
+  if (!type && !date && !title && !msg && !imageFile && !existingImageUrl.value) {
     postPreview.innerHTML = '<p class="preview-empty">Preview will appear here while you type.</p>';
     return;
   }
@@ -267,7 +281,7 @@ function editPost(post) {
   postTitle.value = post.title;
   postMessageText.value = post.message;
   postDate.value = post.date;
-  existingImageUrl.value = post.image || "";
+  existingImageUrl.value = post.image || post.image_url || "";
   existingImageKey.value = post.image_key || "";
 
   postFormTitle.textContent = "Edit Post";
@@ -329,12 +343,53 @@ async function loadSettings() {
     "messenger",
     "google_maps",
     "address",
-    "office_hours",
-    "logo_url"
+    "office_hours"
   ].forEach((key) => {
     document.getElementById("set_" + key).value = s[key] || "";
   });
+
+  const logoUrl = s.logo_url || "";
+  set_logo_url.value = logoUrl;
+
+  if (logoUrl) {
+    logoPreview.src = logoUrl;
+    logoPreview.classList.remove("hidden");
+  } else {
+    logoPreview.src = "";
+    logoPreview.classList.add("hidden");
+  }
 }
+
+uploadLogoBtn.addEventListener("click", async () => {
+  if (!set_logo_file.files[0]) {
+    setMiniMsg("logoUploadMessage", "Please choose a logo image first.", "error");
+    return;
+  }
+
+  setMiniMsg("logoUploadMessage", "Uploading logo...", "");
+
+  const fd = new FormData();
+  fd.append("logo", set_logo_file.files[0]);
+
+  const res = await fetch("/api/upload-logo", {
+    method: "POST",
+    headers: authHeaders(),
+    body: fd
+  });
+
+  const data = await res.json();
+
+  if (!data.success) {
+    setMiniMsg("logoUploadMessage", data.message || "Logo upload failed.", "error");
+    return;
+  }
+
+  set_logo_url.value = data.url;
+  logoPreview.src = data.url;
+  logoPreview.classList.remove("hidden");
+
+  setMiniMsg("logoUploadMessage", "Logo uploaded. Click Save Settings to apply.", "success");
+});
 
 settingsForm.addEventListener("submit", async (e) => {
   e.preventDefault();
