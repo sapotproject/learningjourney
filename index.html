@@ -3,70 +3,35 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Learning Journey Child Growth Center</title>
+<title><?= SCHOOL_NAME ?></title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
 body{background:#f4f6f9}
-
-/* HEADER - SAME DESIGN, ONLY IMPROVED WITH GRADIENT + REAL SCHOOL LOGO */
-.header{
-  background:linear-gradient(135deg,#5d341f 0%,#76492d 35%,#8b5a3c 68%,#a66a3f 100%);
-  color:#fff;
-  text-align:center;
-  padding:30px 20px;
-  box-shadow:0 3px 14px rgba(0,0,0,.15)
-}
-.header-inner{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:16px;
-  max-width:900px;
-  margin:0 auto;
-}
-.school-logo{
-  width:82px;
-  height:82px;
-  object-fit:contain;
-  display:block;
-  flex-shrink:0;
-}
-.header-text{text-align:left}
-.header h1{font-size:26px;font-weight:700}
-.header p{margin-top:6px;font-size:14px;opacity:.95}
-
+.header{background:linear-gradient(135deg,#8b5a3c,#a66a3f);color:#fff;text-align:center;padding:30px 20px}
+.header h1{font-size:26px;font-weight:700}.header p{margin-top:6px;font-size:14px;opacity:.95}
 .line{height:4px;background:#f2b705}
 .nav{background:#5a2a1a;display:flex;flex-wrap:wrap;justify-content:center}
 .nav a{color:#fff;text-decoration:none;padding:14px 18px;font-size:14px;font-weight:600}
 .nav a:hover,.nav a.active{background:#f2b705;color:#5a2a1a}
 .container{max-width:1100px;margin:auto;padding:20px}
-
 .card,.box{background:#fff;border-radius:18px;padding:20px;box-shadow:0 6px 18px rgba(0,0,0,.08);border-left:10px solid #f2b705;position:relative}
 .card{margin-top:20px}
-
 .tag{background:#7a1f1f;color:#fff;padding:6px 12px;border-radius:20px;font-size:12px;display:inline-block;font-weight:bold}
 .date{position:absolute;right:20px;top:20px;font-size:13px;color:#555}
 .card h2{margin-top:15px;font-size:20px;color:#5a2a1a;line-height:1.3}
 .card p{margin-top:10px;font-size:14px;color:#333;line-height:1.6}
 .btn{margin-top:15px;display:inline-block;background:#f2b705;color:#5a2a1a;padding:10px 16px;border-radius:10px;font-weight:bold;text-decoration:none}
 .btn:hover{background:#d9a400}
-
 h3{color:#5a2a1a;margin-top:25px;margin-bottom:15px;font-size:20px}
-
-/* QUICK ACTIONS */
 .quick-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}
 .box{text-align:center}.icon{font-size:28px;margin-bottom:10px}.box p{font-size:14px;color:#333;font-weight:600}
-
-/* FEATURED LATEST UPDATE */
 .featured-card{padding:18px}
 .featured-layout{display:grid;grid-template-columns:340px 1fr;gap:20px;align-items:center}
-.featured-layout .post-image{margin:0;width:100%;height:200px;aspect-ratio:auto}
+.featured-layout .post-image{margin:0;width:100%;height:200px;aspect-ratio:auto;object-fit:cover;border-radius:14px;background:#eee;display:block}
 .featured-content{min-width:0}
 .featured-content h2{margin-top:12px;font-size:22px}
 .featured-content p{font-size:14px;line-height:1.6}
 .featured-content .date-inline{font-size:13px;color:#555;margin-left:10px}
-
-/* COMPACT LATEST CATEGORY CARDS */
 .latest-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:5px}
 .compact-card{background:#fff;border-radius:18px;padding:14px;box-shadow:0 6px 18px rgba(0,0,0,.08);border-left:10px solid #f2b705;display:flex;flex-direction:column;min-height:100%}
 .compact-card .post-image{width:100%;height:145px;object-fit:cover;border-radius:14px;margin:0 0 12px;background:#eee;display:block}
@@ -79,53 +44,40 @@ h3{color:#5a2a1a;margin-top:25px;margin-bottom:15px;font-size:20px}
 .section-title-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:25px;margin-bottom:15px}
 .section-title-row h3{margin:0}
 .empty-card{color:#777;font-size:13px;line-height:1.5}
-
-@media(max-width:1000px){
-  .latest-grid{grid-template-columns:repeat(2,1fr)}
-}
-
+@media(max-width:1000px){.latest-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:768px){
-  .header-inner{flex-direction:column;gap:10px}
-  .header-text{text-align:center}
-  .school-logo{width:78px;height:78px}
-  .quick-grid{grid-template-columns:repeat(2,1fr)}
-  .latest-grid{grid-template-columns:1fr}
-  .nav a{padding:12px 10px;font-size:13px}
-  .header h1{font-size:22px}
-  .date{position:static;margin-top:10px}
-  .featured-layout{display:block}
-  .featured-layout .post-image{width:100%;height:auto;aspect-ratio:16/9;margin:16px 0 4px;object-fit:cover}
-  .featured-content .date-inline{display:block;margin-left:0;margin-top:10px}
-  .compact-card .post-image{height:180px}
+.quick-grid{grid-template-columns:repeat(2,1fr)}
+.latest-grid{grid-template-columns:1fr}
+.nav a{padding:12px 10px;font-size:13px}
+.header h1{font-size:22px}
+.date{position:static;margin-top:10px}
+.featured-layout{display:block}
+.featured-layout .post-image{width:100%;height:auto;aspect-ratio:16/9;margin:16px 0 4px;object-fit:cover}
+.featured-content .date-inline{display:block;margin-left:0;margin-top:10px}
+.compact-card .post-image{height:180px}
 }
 </style>
 </head>
 <body>
 <div class="header">
-  <div class="header-inner">
-    <img src="assets/images/school-logo.png" alt="Learning Journey Child Growth Center Logo" class="school-logo">
-    <div class="header-text">
-      <h1>Learning Journey Child Growth Center, Inc.</h1>
-      <p>Where Learning is a Journey and NOT a Race.</p>
-    </div>
-  </div>
+  <h1><?= SCHOOL_NAME ?></h1>
+  <p><?= SCHOOL_TAGLINE ?></p>
 </div>
 <div class="line"></div>
 <nav class="nav">
-  <a href="index.html">Home</a>
-  <a href="announcements.html">Announcements</a>
-  <a href="news.html">News</a>
-  <a href="events.html">Events</a>
-  <a href="calendar.html">Calendar</a>
-  <a href="schoolforms.html">School Forms</a>
-  <a href="gallery.html">Gallery</a>
-  <a href="about.html">About</a>
-  <a href="contact.html">Contact</a>
-  <a href="admin.html">Teacher Login</a>
+  <a href="<?= APP_URL ?>">Home</a>
+  <a href="<?= APP_URL ?>">Announcements</a>
+  <a href="<?= APP_URL ?>">News</a>
+  <a href="<?= APP_URL ?>">Events</a>
+  <a href="<?= APP_URL ?>">Calendar</a>
+  <a href="<?= APP_URL ?>">School Forms</a>
+  <a href="<?= APP_URL ?>">Gallery</a>
+  <a href="<?= APP_URL ?>">About</a>
+  <a href="<?= APP_URL ?>">Contact</a>
+  <a href="<?= APP_URL ?>?page=admin">Teacher Login</a>
 </nav>
 
 <div class="container">
-
   <section id="latestSection" class="card featured-card">
     <div class="tag">Latest Update</div>
     <h2>Loading latest post...</h2>
@@ -150,9 +102,187 @@ h3{color:#5a2a1a;margin-top:25px;margin-bottom:15px;font-size:20px}
     <div id="remindersSection"></div>
     <div id="advisorySection"></div>
   </div>
-
 </div>
 
-<script src="assets/js/home.js"></script>
+<script>
+const APP_URL = "<?= APP_URL ?>";
+
+const latestSection = document.getElementById("latestSection");
+const newsSection = document.getElementById("newsSection");
+const eventsSection = document.getElementById("eventsSection");
+const remindersSection = document.getElementById("remindersSection");
+const advisorySection = document.getElementById("advisorySection");
+
+function escapeHtml(value){
+  return String(value ?? "")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+
+function cleanText(value){return String(value ?? "").trim();}
+
+function normalizeCategory(type){
+  const value = cleanText(type).toLowerCase();
+  if(value==="news"||value==="latest news") return "news";
+  if(value==="event"||value==="events"||value==="school event"||value==="school events") return "event";
+  if(value==="reminder"||value==="reminders"||value==="important reminder"||value==="important reminders") return "reminder";
+  if(value==="school advisory"||value==="school advisories"||value==="advisory"||value==="advisories"||value==="announcement"||value==="announcements"||value==="news advisory"||value==="news advisories") return "school advisory";
+  return value;
+}
+
+function labelFor(type){
+  const c = normalizeCategory(type);
+  if(c==="news") return "News";
+  if(c==="event") return "Event";
+  if(c==="reminder") return "Reminder";
+  if(c==="school advisory") return "School Advisory";
+  return cleanText(type)||"Update";
+}
+
+function parseDateTime(value){
+  if(!value) return 0;
+  const raw = String(value).trim();
+  if(!raw) return 0;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(raw)){
+    const d = new Date(raw+"T00:00:00+08:00");
+    return isNaN(d.getTime()) ? 0 : d.getTime();
+  }
+  if(/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/.test(raw)){
+    const d = new Date(raw.replace(" ","T")+"+08:00");
+    return isNaN(d.getTime()) ? 0 : d.getTime();
+  }
+  const d = new Date(raw);
+  return isNaN(d.getTime()) ? 0 : d.getTime();
+}
+
+function formatDate(value){
+  if(!value) return "";
+  const raw = String(value).trim();
+  let d;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(raw)) d = new Date(raw+"T00:00:00+08:00");
+  else if(/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/.test(raw)) d = new Date(raw.replace(" ","T")+"+08:00");
+  else d = new Date(raw);
+  if(!isNaN(d.getTime())) return d.toLocaleDateString("en-PH",{year:"numeric",month:"short",day:"numeric"});
+  return raw;
+}
+
+function normalizePost(post,index){
+  const date = cleanText(post.date);
+  const createdAt = cleanText(post.created_at);
+  const createdTime = parseDateTime(createdAt);
+  const dateTime = parseDateTime(date);
+  return {
+    id: cleanText(post.id)||"post-"+index,
+    type: cleanText(post.type),
+    category: normalizeCategory(post.type),
+    label: labelFor(post.type),
+    title: cleanText(post.title),
+    message: cleanText(post.message),
+    date,
+    created_at: createdAt,
+    dateDisplay: formatDate(date||createdAt),
+    image: cleanText(post.image),
+    sortTime: createdTime || dateTime || 0,
+    rowOrder: Number(post.row_order || index)
+  };
+}
+
+function renderLatestPost(post){
+  const img = post.image ? `<img src="${escapeHtml(post.image)}" alt="${escapeHtml(post.title)}" class="post-image">` : "";
+  const dateInline = post.dateDisplay ? `<span class="date-inline">${escapeHtml(post.dateDisplay)}</span>` : "";
+
+  if(post.image){
+    latestSection.innerHTML = `
+      <div class="featured-layout">
+        ${img}
+        <div class="featured-content">
+          <div><span class="tag">${escapeHtml(post.label)}</span>${dateInline}</div>
+          <h2>${escapeHtml(post.title)}</h2>
+          <p>${escapeHtml(post.message)}</p>
+          <a href="#" class="btn">Read More</a>
+        </div>
+      </div>`;
+    return;
+  }
+
+  latestSection.innerHTML = `
+    <div class="tag">${escapeHtml(post.label)}</div>
+    ${post.dateDisplay ? `<div class="date">${escapeHtml(post.dateDisplay)}</div>` : ""}
+    <h2>${escapeHtml(post.title)}</h2>
+    <p>${escapeHtml(post.message)}</p>
+    <a href="#" class="btn">Read More</a>`;
+}
+
+function renderCompactPost(post){
+  const img = post.image ? `<img src="${escapeHtml(post.image)}" alt="${escapeHtml(post.title)}" class="post-image">` : "";
+  return `
+    <article class="compact-card">
+      ${img}
+      <div class="tag-row">
+        <span class="tag">${escapeHtml(post.label)}</span>
+        ${post.dateDisplay ? `<span class="small-date">${escapeHtml(post.dateDisplay)}</span>` : ""}
+      </div>
+      <h2>${escapeHtml(post.title)}</h2>
+      <p>${escapeHtml(post.message)}</p>
+      <a href="#" class="btn">Read More</a>
+    </article>`;
+}
+
+function renderEmptyCard(label){
+  return `<article class="compact-card"><div class="empty-card">No ${escapeHtml(label)} posted yet.</div></article>`;
+}
+
+function getLatestByCategory(posts,category,excludedId){
+  return posts.find(p => p.category === category && p.id !== excludedId) || null;
+}
+
+function renderHomepage(posts){
+  if(!posts.length){
+    latestSection.innerHTML = `<div class="tag">Latest Update</div><h2>No school updates yet.</h2><p>Published posts will appear here once available.</p>`;
+    newsSection.innerHTML = renderEmptyCard("news");
+    eventsSection.innerHTML = renderEmptyCard("events");
+    remindersSection.innerHTML = renderEmptyCard("reminders");
+    advisorySection.innerHTML = renderEmptyCard("school advisories");
+    return;
+  }
+
+  const topPost = posts[0];
+  renderLatestPost(topPost);
+
+  const latestNews = getLatestByCategory(posts,"news",topPost.id);
+  const latestEvent = getLatestByCategory(posts,"event",topPost.id);
+  const latestReminder = getLatestByCategory(posts,"reminder",topPost.id);
+  const latestAdvisory = getLatestByCategory(posts,"school advisory",topPost.id);
+
+  newsSection.innerHTML = latestNews ? renderCompactPost(latestNews) : renderEmptyCard("news");
+  eventsSection.innerHTML = latestEvent ? renderCompactPost(latestEvent) : renderEmptyCard("events");
+  remindersSection.innerHTML = latestReminder ? renderCompactPost(latestReminder) : renderEmptyCard("reminders");
+  advisorySection.innerHTML = latestAdvisory ? renderCompactPost(latestAdvisory) : renderEmptyCard("school advisories");
+}
+
+async function loadPosts(){
+  try{
+    const response = await fetch(APP_URL + "?action=getPosts&cacheBust=" + Date.now());
+    const result = await response.json();
+    if(!result.success) throw new Error(result.message || "Unable to load posts.");
+    const posts = (result.posts || [])
+      .map(normalizePost)
+      .filter(p => p.title || p.message)
+      .sort((a,b) => {
+        if(b.sortTime !== a.sortTime) return b.sortTime - a.sortTime;
+        return b.rowOrder - a.rowOrder;
+      });
+    renderHomepage(posts);
+  }catch(error){
+    latestSection.innerHTML = `<div class="tag">Latest Update</div><h2>Unable to load posts</h2><p>${escapeHtml(error.message || "Please refresh the page.")}</p>`;
+    newsSection.innerHTML = renderEmptyCard("news");
+    eventsSection.innerHTML = renderEmptyCard("events");
+    remindersSection.innerHTML = renderEmptyCard("reminders");
+    advisorySection.innerHTML = renderEmptyCard("school advisories");
+  }
+}
+
+loadPosts();
+</script>
 </body>
 </html>

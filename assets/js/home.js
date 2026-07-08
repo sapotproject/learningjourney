@@ -1,11 +1,10 @@
 /* =========================================================
    Learning Journey Homepage Renderer
-   Homepage Fetch Fix v2
+   JSONP Fix v3
 
    Purpose:
    - Keep approved homepage design unchanged.
-   - Fix latest post logic.
-   - Fix "Failed to fetch" caused by CORS preflight headers.
+   - Avoid fetch/CORS issue by using JSONP for getPosts.
    - Top card = newest post overall.
    - Category cards = latest per category, excluding top card.
    ========================================================= */
@@ -98,6 +97,7 @@ function parseDateTime(value) {
 function getPostSortTime(post) {
   const createdAtTime = parseDateTime(post.created_at || post.createdAt || post.timestamp);
   const dateTime = parseDateTime(post.date || post.post_date || post.event_date);
+
   return createdAtTime || dateTime || 0;
 }
 
@@ -282,38 +282,47 @@ function renderHomepage(posts) {
   advisorySection.innerHTML = latestAdvisory ? renderCompactPost(latestAdvisory) : renderEmptyCard("school advisories");
 }
 
-async function fetchPostsFromAppsScript() {
-  const url = `${APPS_SCRIPT_URL}?action=getPosts&cacheBust=${Date.now()}`;
+function loadPostsJsonp() {
+  return new Promise((resolve, reject) => {
+    const callbackName = "ljPostsCallback_" + Date.now() + "_" + Math.floor(Math.random() * 100000);
+    const script = document.createElement("script");
+    const timeout = setTimeout(() => {
+      cleanup();
+      reject(new Error("Post request timed out."));
+    }, 20000);
 
-  /*
-    Important:
-    Do not add custom headers here.
-    Custom headers trigger CORS preflight, and Google Apps Script web apps
-    often fail OPTIONS/preflight requests.
-  */
-  const response = await fetch(url, {
-    method: "GET",
-    cache: "no-store"
+    function cleanup() {
+      clearTimeout(timeout);
+      if (script.parentNode) script.parentNode.removeChild(script);
+      try { delete window[callbackName]; } catch (error) { window[callbackName] = undefined; }
+    }
+
+    window[callbackName] = function(result) {
+      cleanup();
+
+      if (!result || !result.success) {
+        reject(new Error((result && result.message) || "Unable to load posts."));
+        return;
+      }
+
+      resolve(Array.isArray(result.posts) ? result.posts : []);
+    };
+
+    script.onerror = function() {
+      cleanup();
+      reject(new Error("Unable to reach post server."));
+    };
+
+    script.src = `${APPS_SCRIPT_URL}?action=getPosts&callback=${encodeURIComponent(callbackName)}&cacheBust=${Date.now()}`;
+    document.body.appendChild(script);
   });
-
-  if (!response.ok) {
-    throw new Error("Post server returned HTTP " + response.status);
-  }
-
-  const result = await response.json();
-
-  if (!result.success) {
-    throw new Error(result.message || "Unable to load posts.");
-  }
-
-  return Array.isArray(result.posts) ? result.posts : [];
 }
 
 async function loadHomepagePosts() {
   renderLoadingState();
 
   try {
-    const rawPosts = await fetchPostsFromAppsScript();
+    const rawPosts = await loadPostsJsonp();
 
     const posts = rawPosts
       .map(normalizePost)

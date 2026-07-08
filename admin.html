@@ -3,164 +3,110 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Teacher Login | Learning Journey Child Growth Center, Inc.</title>
-
+<title>Teacher Login | <?= SCHOOL_NAME ?></title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-body{min-height:100vh;background:#f4f6f9;color:#2f261f}
-
-.login-page{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:24px;
-  background:
-    radial-gradient(circle at top left,rgba(242,183,5,.18),transparent 35%),
-    linear-gradient(135deg,#5d341f 0%,#76492d 35%,#8b5a3c 68%,#a66a3f 100%);
-}
-
-.login-card{
-  width:100%;
-  max-width:430px;
-  background:#fff;
-  border-radius:22px;
-  padding:30px 26px;
-  box-shadow:0 18px 45px rgba(0,0,0,.22);
-  text-align:center;
-}
-
-.school-logo{
-  width:92px;
-  height:92px;
-  object-fit:contain;
-  display:block;
-  margin:0 auto 14px;
-}
-
-.login-card h1{
-  color:#5a2a1a;
-  font-size:26px;
-  font-weight:700;
-  line-height:1.25;
-}
-
-.subtitle{
-  margin-top:6px;
-  color:#6f6258;
-  font-size:14px;
-  line-height:1.5;
-}
-
-.home-link{
-  display:inline-block;
-  margin-top:14px;
-  color:#7a1f1f;
-  font-size:14px;
-  font-weight:700;
-  text-decoration:none;
-}
-
-.home-link:hover{text-decoration:underline}
-
-.login-form{
-  margin-top:24px;
-  text-align:left;
-}
-
-.login-form label{
-  display:block;
-  margin-bottom:7px;
-  font-size:14px;
-  font-weight:700;
-  color:#5a2a1a;
-}
-
-.login-form input{
-  width:100%;
-  border:1px solid #e8ded3;
-  border-radius:12px;
-  padding:12px 13px;
-  font-size:15px;
-  outline:none;
-  background:#fff;
-  margin-bottom:15px;
-}
-
-.login-form input:focus{
-  border-color:#a66a3f;
-  box-shadow:0 0 0 3px rgba(166,106,63,.16);
-}
-
-.login-form button{
-  width:100%;
-  border:none;
-  border-radius:12px;
-  background:#7a1f1f;
-  color:#fff;
-  padding:12px 16px;
-  font-size:16px;
-  font-weight:700;
-  cursor:pointer;
-  transition:.15s ease;
-}
-
-.login-form button:hover{background:#681818;transform:translateY(-1px)}
-.login-form button:disabled{opacity:.65;cursor:not-allowed;transform:none}
-
-.form-message{
-  margin-top:14px;
-  min-height:22px;
-  font-size:14px;
-  font-weight:700;
-  text-align:center;
-}
-
-.form-message.success{color:#1f7a3f}
-.form-message.error{color:#b42318}
-
-.login-note{
-  margin-top:18px;
-  font-size:13px;
-  color:#6f6258;
-}
-
-@media(max-width:480px){
-  .login-card{padding:24px 20px;border-radius:18px}
-  .school-logo{width:82px;height:82px}
-  .login-card h1{font-size:22px}
-}
+body{background:#f4f6f9;min-height:100vh;color:#2f261f}
+.header{background:linear-gradient(135deg,#5d341f 0%,#76492d 35%,#8b5a3c 68%,#a66a3f 100%);color:#fff;padding:24px 20px;box-shadow:0 3px 14px rgba(0,0,0,.15)}
+.header-inner{max-width:900px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand h1{font-size:22px;line-height:1.25}.brand p{margin-top:4px;font-size:14px;color:#ffe9a8}
+.home-btn{background:#f2b705;color:#5a2a1a;border-radius:12px;padding:10px 14px;font-weight:700;font-size:14px;text-decoration:none}
+.container{max-width:480px;margin:40px auto;padding:0 20px}
+.card{background:#fff;border-radius:18px;padding:24px;box-shadow:0 6px 18px rgba(0,0,0,.08);border-left:10px solid #f2b705}
+.card h2{color:#5a2a1a;font-size:24px;margin-bottom:8px}.card p{color:#6f6258;font-size:14px;line-height:1.5;margin-bottom:18px}
+.form-row{margin-bottom:15px}.form-row label{display:block;margin-bottom:7px;font-size:14px;font-weight:700;color:#5a2a1a}
+.form-row input{width:100%;border:1px solid #e8ded3;border-radius:12px;padding:12px 13px;font-size:15px;outline:none;background:#fff}
+.form-row input:focus{border-color:#a66a3f;box-shadow:0 0 0 3px rgba(166,106,63,.16)}
+.login-btn{width:100%;border:none;border-radius:12px;padding:12px 16px;font-size:15px;font-weight:700;cursor:pointer;background:#7a1f1f;color:#fff}
+.message{margin-top:14px;min-height:22px;font-size:14px;font-weight:700}.message.success{color:#1f7a3f}.message.error{color:#b42318}
+@media(max-width:600px){.header-inner{flex-direction:column;align-items:flex-start}.home-btn{width:100%;text-align:center}.brand h1{font-size:19px}}
 </style>
 </head>
-
 <body>
-<main class="login-page">
-  <section class="login-card">
+<header class="header">
+  <div class="header-inner">
+    <div class="brand">
+      <h1><?= SCHOOL_NAME ?></h1>
+      <p>Teacher Login</p>
+    </div>
+    <a href="<?= APP_URL ?>" class="home-btn">← Back to Home</a>
+  </div>
+</header>
 
-    <img src="assets/images/school-logo.png" alt="Learning Journey Child Growth Center Logo" class="school-logo">
+<main class="container">
+  <section class="card">
+    <h2>Teacher Login</h2>
+    <p>Sign in to publish school announcements, news, events, reminders, and advisories.</p>
 
-    <h1>Teacher Login</h1>
-    <p class="subtitle">Learning Journey Child Growth Center, Inc.</p>
+    <form id="loginForm">
+      <div class="form-row">
+        <label for="username">Username</label>
+        <input type="text" id="username" autocomplete="username" required>
+      </div>
 
-    <a href="index.html" class="home-link">← Back to Home</a>
+      <div class="form-row">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="current-password" required>
+      </div>
 
-    <form id="loginForm" class="login-form">
-      <label for="username">Username</label>
-      <input type="text" id="username" name="username" autocomplete="username" required>
-
-      <label for="password">Password</label>
-      <input type="password" id="password" name="password" autocomplete="current-password" required>
-
-      <button type="submit" id="loginBtn">Login</button>
-
-      <p id="loginMessage" class="form-message" aria-live="polite"></p>
+      <button type="submit" class="login-btn" id="loginBtn">Login</button>
+      <p id="loginMessage" class="message"></p>
     </form>
-
-    <p class="login-note">Authorized school personnel only.</p>
-
   </section>
 </main>
 
-<script src="assets/js/admin.js"></script>
+<script>
+const APP_URL = "<?= APP_URL ?>";
+const loginForm = document.getElementById("loginForm");
+const loginBtn = document.getElementById("loginBtn");
+const loginMessage = document.getElementById("loginMessage");
+
+function setMessage(text,type){
+  loginMessage.textContent = text || "";
+  loginMessage.className = "message";
+  if(type) loginMessage.classList.add(type);
+}
+
+loginForm.addEventListener("submit", async function(event){
+  event.preventDefault();
+
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value;
+
+  loginBtn.disabled = true;
+  loginBtn.textContent = "Logging in...";
+  setMessage("Checking account...", "");
+
+  try{
+    const formData = new URLSearchParams();
+    formData.append("action","login");
+    formData.append("username",username);
+    formData.append("password",password);
+
+    const response = await fetch(APP_URL,{method:"POST",body:formData});
+    const result = await response.json();
+
+    if(!result.success){
+      setMessage(result.message || "Login failed.", "error");
+      return;
+    }
+
+    sessionStorage.setItem("lj_logged_in","true");
+    sessionStorage.setItem("lj_token",result.token);
+    sessionStorage.setItem("lj_username",result.username || username);
+    sessionStorage.setItem("lj_name",result.name || username);
+    sessionStorage.setItem("lj_role",result.role || "teacher");
+
+    setMessage("Login successful. Redirecting...", "success");
+    window.location.href = APP_URL + "?page=dashboard";
+
+  }catch(error){
+    setMessage("Unable to login. Please try again.", "error");
+  }finally{
+    loginBtn.disabled = false;
+    loginBtn.textContent = "Login";
+  }
+});
+</script>
 </body>
 </html>

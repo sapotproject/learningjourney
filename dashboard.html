@@ -3,270 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Teacher Dashboard | Learning Journey Child Growth Center, Inc.</title>
-
+<title>Teacher Dashboard | <?= SCHOOL_NAME ?></title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
 body{background:#f4f6f9;color:#2f261f}
-
-.header{
-  background:linear-gradient(135deg,#5d341f 0%,#76492d 35%,#8b5a3c 68%,#a66a3f 100%);
-  color:#fff;
-  padding:22px 20px;
-  box-shadow:0 3px 14px rgba(0,0,0,.15)
-}
-
-.header-inner{
-  max-width:1100px;
-  margin:auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:18px;
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:14px;
-}
-
-.school-logo{
-  width:64px;
-  height:64px;
-  object-fit:contain;
-  display:block;
-  flex-shrink:0;
-}
-
-.brand h1{
-  font-size:22px;
-  line-height:1.25;
-}
-
-.brand p{
-  margin-top:4px;
-  font-size:14px;
-  color:#ffe9a8;
-}
-
-.header-actions{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  flex-wrap:wrap;
-  justify-content:flex-end;
-}
-
-.header-actions a,
-.header-actions button{
-  border:none;
-  border-radius:12px;
-  padding:10px 14px;
-  font-weight:700;
-  font-size:14px;
-  cursor:pointer;
-  text-decoration:none;
-}
-
-.home-btn{background:#f2b705;color:#5a2a1a}
-.logout-btn{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35)!important;color:#fff}
-
+.header{background:linear-gradient(135deg,#5d341f 0%,#76492d 35%,#8b5a3c 68%,#a66a3f 100%);color:#fff;padding:22px 20px;box-shadow:0 3px 14px rgba(0,0,0,.15)}
+.header-inner{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand h1{font-size:22px;line-height:1.25}.brand p{margin-top:4px;font-size:14px;color:#ffe9a8}
+.header-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.header-actions a,.header-actions button{border:none;border-radius:12px;padding:10px 14px;font-weight:700;font-size:14px;cursor:pointer;text-decoration:none}
+.home-btn{background:#f2b705;color:#5a2a1a}.logout-btn{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35)!important;color:#fff}
 .container{max-width:1100px;margin:auto;padding:22px 20px 50px}
-
-.welcome-card{
-  background:#fff8ea;
-  border:1px solid #f0dfba;
-  border-radius:18px;
-  padding:20px;
-  margin-bottom:20px;
-}
-
-.welcome-card h2{color:#5a2a1a;font-size:24px}
-.welcome-card p{color:#6f6258;font-size:14px;margin-top:6px}
-
-.dashboard-grid{
-  display:grid;
-  grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);
-  gap:20px;
-}
-
-.card{
-  background:#fff;
-  border-radius:18px;
-  padding:20px;
-  box-shadow:0 6px 18px rgba(0,0,0,.08);
-  border-left:10px solid #f2b705;
-}
-
+.welcome-card{background:#fff8ea;border:1px solid #f0dfba;border-radius:18px;padding:20px;margin-bottom:20px}
+.welcome-card h2{color:#5a2a1a;font-size:24px}.welcome-card p{color:#6f6258;font-size:14px;margin-top:6px}
+.dashboard-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr);gap:20px}
+.card{background:#fff;border-radius:18px;padding:20px;box-shadow:0 6px 18px rgba(0,0,0,.08);border-left:10px solid #f2b705}
 .card h3{color:#5a2a1a;font-size:20px;margin-bottom:16px}
-
-.form-row{margin-bottom:15px}
-
-.form-row label{
-  display:block;
-  margin-bottom:7px;
-  font-size:14px;
-  font-weight:700;
-  color:#5a2a1a;
-}
-
-.form-row input,
-.form-row select,
-.form-row textarea{
-  width:100%;
-  border:1px solid #e8ded3;
-  border-radius:12px;
-  padding:12px 13px;
-  font-size:15px;
-  outline:none;
-  background:#fff;
-}
-
+.form-row{margin-bottom:15px}.form-row label{display:block;margin-bottom:7px;font-size:14px;font-weight:700;color:#5a2a1a}
+.form-row input,.form-row select,.form-row textarea{width:100%;border:1px solid #e8ded3;border-radius:12px;padding:12px 13px;font-size:15px;outline:none;background:#fff}
 .form-row textarea{resize:vertical;min-height:150px}
-
-.form-row input:focus,
-.form-row select:focus,
-.form-row textarea:focus{
-  border-color:#a66a3f;
-  box-shadow:0 0 0 3px rgba(166,106,63,.16);
-}
-
-.upload-box{
-  border:1px dashed #d8c5b7;
-  background:#fffdf8;
-  border-radius:16px;
-  padding:16px;
-}
-
-.file-input{
-  border:none!important;
-  padding:0!important;
-  border-radius:0!important;
-  box-shadow:none!important;
-}
-
-.upload-preview{
-  display:none;
-  width:100%;
-  max-height:220px;
-  object-fit:cover;
-  border-radius:14px;
-  margin-top:12px;
-  background:#eee;
-}
-
-.upload-status{
-  margin-top:8px;
-  color:#6f6258;
-  font-size:12px;
-  line-height:1.4;
-}
-
-.form-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  margin-top:8px;
-}
-
-.form-actions button{
-  border:none;
-  border-radius:12px;
-  padding:12px 16px;
-  font-size:15px;
-  font-weight:700;
-  cursor:pointer;
-  transition:.15s ease;
-}
-
-.publish-btn{background:#7a1f1f;color:#fff}
-.clear-btn{background:#fff;color:#5a2a1a;border:1px solid #e8ded3!important}
-
-.form-actions button:hover{transform:translateY(-1px);opacity:.94}
-.form-actions button:disabled{opacity:.65;cursor:not-allowed;transform:none}
-
-.form-message{
-  margin-top:14px;
-  min-height:22px;
-  font-size:14px;
-  font-weight:700;
-}
-
-.form-message.success{color:#1f7a3f}
-.form-message.error{color:#b42318}
-
-.preview-box{
-  border:1px dashed #e8ded3;
-  background:#fffdf8;
-  border-radius:16px;
-  padding:18px;
-  min-height:220px;
-}
-
+.form-row input:focus,.form-row select:focus,.form-row textarea:focus{border-color:#a66a3f;box-shadow:0 0 0 3px rgba(166,106,63,.16)}
+.upload-box{border:1px dashed #d8c5b7;background:#fffdf8;border-radius:16px;padding:16px}
+.file-input{border:none!important;padding:0!important;border-radius:0!important;box-shadow:none!important}
+.upload-preview{display:none;width:100%;max-height:220px;object-fit:cover;border-radius:14px;margin-top:12px;background:#eee}
+.upload-status{margin-top:8px;color:#6f6258;font-size:12px;line-height:1.4}
+.form-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.form-actions button{border:none;border-radius:12px;padding:12px 16px;font-size:15px;font-weight:700;cursor:pointer;transition:.15s ease}
+.publish-btn{background:#7a1f1f;color:#fff}.clear-btn{background:#fff;color:#5a2a1a;border:1px solid #e8ded3!important}
+.form-actions button:hover{transform:translateY(-1px);opacity:.94}.form-actions button:disabled{opacity:.65;cursor:not-allowed;transform:none}
+.form-message{margin-top:14px;min-height:22px;font-size:14px;font-weight:700}.form-message.success{color:#1f7a3f}.form-message.error{color:#b42318}
+.preview-box{border:1px dashed #e8ded3;background:#fffdf8;border-radius:16px;padding:18px;min-height:220px}
 .preview-empty{color:#777;font-size:14px;line-height:1.5}
-
-.preview-image{
-  width:100%;
-  max-height:210px;
-  object-fit:cover;
-  border-radius:14px;
-  background:#eee;
-  margin-bottom:14px;
-  display:block;
-}
-
-.preview-tag{
-  background:#7a1f1f;
-  color:#fff;
-  padding:6px 12px;
-  border-radius:20px;
-  font-size:12px;
-  display:inline-block;
-  font-weight:bold;
-}
-
-.preview-date{margin-top:10px;font-size:13px;color:#555}
-.preview-title{margin-top:12px;font-size:20px;color:#5a2a1a;line-height:1.3}
+.preview-image{width:100%;max-height:210px;object-fit:cover;border-radius:14px;background:#eee;margin-bottom:14px;display:block}
+.preview-tag{background:#7a1f1f;color:#fff;padding:6px 12px;border-radius:20px;font-size:12px;display:inline-block;font-weight:bold}
+.preview-date{margin-top:10px;font-size:13px;color:#555}.preview-title{margin-top:12px;font-size:20px;color:#5a2a1a;line-height:1.3}
 .preview-message{margin-top:10px;font-size:14px;color:#333;line-height:1.6;white-space:pre-wrap}
-
-.tip-list{
-  margin-top:16px;
-  padding-left:18px;
-  color:#6f6258;
-  font-size:13px;
-  line-height:1.6;
-}
-
-@media(max-width:850px){
-  .header-inner{flex-direction:column;align-items:flex-start}
-  .header-actions{justify-content:flex-start}
-  .dashboard-grid{grid-template-columns:1fr}
-}
-
-@media(max-width:520px){
-  .brand{align-items:flex-start}
-  .school-logo{width:56px;height:56px}
-  .brand h1{font-size:18px}
-  .form-actions button,.header-actions a,.header-actions button{width:100%;text-align:center}
-  .header-actions{width:100%}
-}
+.tip-list{margin-top:16px;padding-left:18px;color:#6f6258;font-size:13px;line-height:1.6}
+@media(max-width:850px){.header-inner{flex-direction:column;align-items:flex-start}.header-actions{justify-content:flex-start}.dashboard-grid{grid-template-columns:1fr}}
+@media(max-width:520px){.brand h1{font-size:18px}.form-actions button,.header-actions a,.header-actions button{width:100%;text-align:center}.header-actions{width:100%}}
 </style>
 </head>
-
 <body>
 <header class="header">
   <div class="header-inner">
     <div class="brand">
-      <img src="assets/images/school-logo.png" alt="Learning Journey Child Growth Center Logo" class="school-logo">
-      <div>
-        <h1>Learning Journey Child Growth Center, Inc.</h1>
-        <p>Teacher Dashboard</p>
-      </div>
+      <h1><?= SCHOOL_NAME ?></h1>
+      <p>Teacher Dashboard</p>
     </div>
 
     <div class="header-actions">
-      <a href="index.html" class="home-btn">← Back to Home</a>
+      <a href="<?= APP_URL ?>" class="home-btn">← Back to Home</a>
       <button id="logoutBtn" class="logout-btn">Logout</button>
     </div>
   </div>
@@ -313,9 +99,8 @@ body{background:#f4f6f9;color:#2f261f}
         <div class="upload-box">
           <input type="file" id="imageFile" name="imageFile" accept="image/jpeg,image/png,image/webp,image/gif" class="file-input">
           <img id="uploadPreview" class="upload-preview" alt="Selected image preview">
-          <p id="uploadStatus" class="upload-status">Optional. Choose an image from your device. It will upload to Cloudflare R2 when you publish.</p>
+          <p id="uploadStatus" class="upload-status">Optional. Choose an image from your device. It will upload to Google Drive when you publish.</p>
         </div>
-        <input type="hidden" id="image" name="image">
       </div>
 
       <div class="form-actions">
@@ -328,7 +113,6 @@ body{background:#f4f6f9;color:#2f261f}
 
     <aside class="card">
       <h3>Live Post Preview</h3>
-
       <article id="postPreview" class="preview-box">
         <p class="preview-empty">Preview will appear here while you type.</p>
       </article>
@@ -343,6 +127,236 @@ body{background:#f4f6f9;color:#2f261f}
   </section>
 </main>
 
-<script src="assets/js/dashboard.js"></script>
+<script>
+const APP_URL = "<?= APP_URL ?>";
+
+const token = sessionStorage.getItem("lj_token");
+const loggedIn = sessionStorage.getItem("lj_logged_in");
+
+if (loggedIn !== "true" || !token) {
+  window.location.href = APP_URL + "?page=admin";
+}
+
+const currentUser = sessionStorage.getItem("lj_name") || sessionStorage.getItem("lj_username") || "Teacher";
+
+const postForm = document.getElementById("postForm");
+const publishBtn = document.getElementById("publishBtn");
+const clearBtn = document.getElementById("clearBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const postMessage = document.getElementById("postMessage");
+const postPreview = document.getElementById("postPreview");
+const imageFileInput = document.getElementById("imageFile");
+const uploadPreview = document.getElementById("uploadPreview");
+const uploadStatus = document.getElementById("uploadStatus");
+
+let selectedImageData = null;
+
+function setPostMessage(message,type){
+  postMessage.textContent = message || "";
+  postMessage.className = "form-message";
+  if(type) postMessage.classList.add(type);
+}
+
+function escapeHtml(value){
+  return String(value || "")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+
+async function validateSessionOnLoad(){
+  try{
+    const response = await fetch(APP_URL + "?action=validateSession&token=" + encodeURIComponent(token) + "&cacheBust=" + Date.now());
+    const result = await response.json();
+    if(!result.success){
+      sessionStorage.clear();
+      window.location.href = APP_URL + "?page=admin";
+    }
+  }catch(error){
+    sessionStorage.clear();
+    window.location.href = APP_URL + "?page=admin";
+  }
+}
+
+function getFormValues(){
+  return {
+    type: document.getElementById("type").value.trim(),
+    date: document.getElementById("date").value,
+    title: document.getElementById("title").value.trim(),
+    message: document.getElementById("message").value.trim(),
+    author: currentUser
+  };
+}
+
+function formatDateForPreview(value){
+  if(!value) return "";
+  const date = new Date(value + "T00:00:00");
+  if(isNaN(date.getTime())) return value;
+  return date.toLocaleDateString("en-PH",{year:"numeric",month:"short",day:"numeric"});
+}
+
+function renderPreview(){
+  const post = getFormValues();
+  const imageUrl = selectedImageData ? selectedImageData.dataUrl : "";
+
+  if(!post.type && !post.date && !post.title && !post.message && !imageUrl){
+    postPreview.innerHTML = '<p class="preview-empty">Preview will appear here while you type.</p>';
+    return;
+  }
+
+  const imageHtml = imageUrl ? `<img src="${escapeHtml(imageUrl)}" alt="${escapeHtml(post.title || "Post image")}" class="preview-image">` : "";
+
+  postPreview.innerHTML = `
+    ${imageHtml}
+    ${post.type ? `<span class="preview-tag">${escapeHtml(post.type)}</span>` : ""}
+    ${post.date ? `<p class="preview-date">${escapeHtml(formatDateForPreview(post.date))}</p>` : ""}
+    <h2 class="preview-title">${escapeHtml(post.title || "Untitled Post")}</h2>
+    <p class="preview-message">${escapeHtml(post.message || "No message yet.")}</p>
+  `;
+}
+
+function readFileAsBase64(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = String(reader.result || "");
+      const commaIndex = result.indexOf(",");
+      const base64 = commaIndex >= 0 ? result.slice(commaIndex + 1) : result;
+      resolve({base64,dataUrl:result});
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+imageFileInput.addEventListener("change", async function(){
+  const file = imageFileInput.files && imageFileInput.files[0];
+  selectedImageData = null;
+
+  if(!file){
+    uploadPreview.style.display = "none";
+    uploadPreview.src = "";
+    uploadStatus.textContent = "Optional. Choose an image from your device. It will upload to Google Drive when you publish.";
+    renderPreview();
+    return;
+  }
+
+  const allowedTypes = ["image/jpeg","image/png","image/webp","image/gif"];
+  if(!allowedTypes.includes(file.type)){
+    imageFileInput.value = "";
+    uploadStatus.textContent = "Please choose a JPG, PNG, WebP, or GIF image.";
+    renderPreview();
+    return;
+  }
+
+  const maxBytes = 3 * 1024 * 1024;
+  if(file.size > maxBytes){
+    imageFileInput.value = "";
+    uploadStatus.textContent = "Image is too large. Please choose an image below 3 MB.";
+    renderPreview();
+    return;
+  }
+
+  try{
+    const fileData = await readFileAsBase64(file);
+    selectedImageData = {
+      name:file.name,
+      type:file.type,
+      base64:fileData.base64,
+      dataUrl:fileData.dataUrl
+    };
+    uploadPreview.src = fileData.dataUrl;
+    uploadPreview.style.display = "block";
+    uploadStatus.textContent = "Image selected: " + file.name;
+    renderPreview();
+  }catch(error){
+    imageFileInput.value = "";
+    selectedImageData = null;
+    uploadStatus.textContent = "Unable to read selected image.";
+    renderPreview();
+  }
+});
+
+function resetForm(){
+  postForm.reset();
+  document.getElementById("date").valueAsDate = new Date();
+  selectedImageData = null;
+  uploadPreview.style.display = "none";
+  uploadPreview.src = "";
+  uploadStatus.textContent = "Optional. Choose an image from your device. It will upload to Google Drive when you publish.";
+  renderPreview();
+}
+
+clearBtn.addEventListener("click",function(){
+  resetForm();
+  setPostMessage("","");
+});
+
+logoutBtn.addEventListener("click",async function(){
+  try{
+    const formData = new URLSearchParams();
+    formData.append("action","logout");
+    formData.append("token",token);
+    await fetch(APP_URL,{method:"POST",body:formData});
+  }catch(error){}
+  sessionStorage.clear();
+  window.location.href = APP_URL + "?page=admin";
+});
+
+postForm.addEventListener("input",renderPreview);
+
+postForm.addEventListener("submit",async function(event){
+  event.preventDefault();
+
+  const post = getFormValues();
+
+  if(!post.type || !post.date || !post.title || !post.message){
+    setPostMessage("Please complete all required fields before publishing.","error");
+    renderPreview();
+    return;
+  }
+
+  publishBtn.disabled = true;
+  publishBtn.textContent = "Publishing...";
+  setPostMessage("Publishing post, please wait...","");
+
+  try{
+    const formData = new URLSearchParams();
+    formData.append("action","createPost");
+    formData.append("token",token);
+    formData.append("type",post.type);
+    formData.append("date",post.date);
+    formData.append("title",post.title);
+    formData.append("message",post.message);
+    formData.append("author",post.author);
+
+    if(selectedImageData){
+      formData.append("image_base64",selectedImageData.base64);
+      formData.append("image_name",selectedImageData.name);
+      formData.append("image_type",selectedImageData.type);
+    }
+
+    const response = await fetch(APP_URL,{method:"POST",body:formData});
+    const result = await response.json();
+
+    if(!result.success){
+      setPostMessage(result.message || "Failed to publish post.","error");
+      return;
+    }
+
+    resetForm();
+    setPostMessage("Post published successfully.","success");
+
+  }catch(error){
+    setPostMessage("Unable to publish. Please try again.","error");
+  }finally{
+    publishBtn.disabled = false;
+    publishBtn.textContent = "Publish Post";
+  }
+});
+
+document.getElementById("date").valueAsDate = new Date();
+renderPreview();
+validateSessionOnLoad();
+</script>
 </body>
 </html>
