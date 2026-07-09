@@ -1185,3 +1185,23 @@ h3 {
   font-size: 14px;
   line-height: 1.5;
 }
+
+
+
+/* Final logo size adjustment */
+.header .school-logo {
+  width: 82px !important;
+  height: 82px !important;
+  max-width: 82px !important;
+  max-height: 82px !important;
+  object-fit: contain !important;
+}
+
+@media (max-width: 768px) {
+  .header .school-logo {
+    width: 72px !important;
+    height: 72px !important;
+    max-width: 72px !important;
+    max-height: 72px !important;
+  }
+}
