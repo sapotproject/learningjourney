@@ -1145,3 +1145,43 @@ h3 {
     font-size: 12px !important;
   }
 }
+
+
+/* Slightly larger school logo while keeping compact header */
+.school-logo {
+  width: 72px !important;
+  height: 72px !important;
+}
+
+@media (max-width: 768px) {
+  .school-logo {
+    width: 64px !important;
+    height: 64px !important;
+  }
+}
+
+/* Announcements page split sections */
+.announcement-group {
+  margin-top: 24px;
+}
+
+.announcement-group-title {
+  background: #fffdf8;
+  border-left: 10px solid #f2b705;
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.05);
+}
+
+.announcement-group-title h3 {
+  margin: 0;
+  color: #5a2a1a;
+}
+
+.announcement-group-title p {
+  margin-top: 6px;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.5;
+}

@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Announcements</title>
-  <link rel="stylesheet" href="/assets/css/style.css?v=public-pages-v1"/>
+  <link rel="stylesheet" href="/assets/css/style.css?v=announcements-split-v1"/>
 </head>
 <body>
   <header class="header">
@@ -31,7 +31,6 @@
     <a class="teacher-login-link" href="/admin.html">Teacher Login</a>
   </nav>
 
-
   <main class="container">
     <section class="page-hero">
       <span class="tag">Announcements</span>
@@ -39,29 +38,56 @@
       <p>School advisories and important reminders for parents.</p>
     </section>
 
-    <section class="archive-layout" 
-      data-page-mode="announcements" 
-      data-empty-text="No announcements posted yet.">
-      <article id="archiveMain" class="archive-main card">
-        <h2>Loading...</h2>
-        <p>Please wait while we retrieve school updates.</p>
-      </article>
+    <section class="announcement-group">
+      <div class="announcement-group-title">
+        <h3>School Advisory</h3>
+        <p>Official school advisories and important notices.</p>
+      </div>
 
-      <aside class="archive-sidebar card">
-        <h3>Previous Posts</h3>
-        <div id="archiveHistory" class="archive-history">
-          <p class="loading-text">Loading history...</p>
-        </div>
-      </aside>
+      <section class="archive-layout">
+        <article id="advisoryMain" class="archive-main card">
+          <h2>Loading school advisories...</h2>
+          <p>Please wait while we retrieve school updates.</p>
+        </article>
+
+        <aside class="archive-sidebar card">
+          <h3>Previous School Advisories</h3>
+          <div id="advisoryHistory" class="archive-history">
+            <p class="loading-text">Loading history...</p>
+          </div>
+        </aside>
+      </section>
     </section>
 
-    <p id="archiveStatus" class="load-status"></p>
+    <section class="announcement-group">
+      <div class="announcement-group-title">
+        <h3>Reminders</h3>
+        <p>Parent reminders and follow-up notices.</p>
+      </div>
+
+      <section class="archive-layout">
+        <article id="reminderMain" class="archive-main card">
+          <h2>Loading reminders...</h2>
+          <p>Please wait while we retrieve reminders.</p>
+        </article>
+
+        <aside class="archive-sidebar card">
+          <h3>Previous Reminders</h3>
+          <div id="reminderHistory" class="archive-history">
+            <p class="loading-text">Loading history...</p>
+          </div>
+        </aside>
+      </section>
+    </section>
+
+    <p id="announcementStatus" class="load-status"></p>
   </main>
 
-  <script src="/assets/js/page-posts.js?v=public-pages-v1"></script>
   <footer class="footer">
     <p id="footerSchoolName">Learning Journey Child Growth Center, Inc.</p>
     <p id="footerAddress"></p>
   </footer>
+
+  <script src="/assets/js/announcements-page.js?v=announcements-split-v1"></script>
 </body>
 </html>
