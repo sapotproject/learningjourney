@@ -165,7 +165,7 @@ function renderLatest(post) {
       <div class="featured-layout">
         ${image}
         <div class="featured-content">
-          <div><span class="tag category-tag-large">${esc(post.label)}</span>${date}</div>
+          <div>${featured}<span class="tag category-tag-large">${esc(post.label)}</span>${date}</div>
           <h2>${esc(post.title)}</h2>
           <p>${esc(excerpt(post.message, 220))}</p>
           ${readButton(post.id)}
@@ -176,7 +176,7 @@ function renderLatest(post) {
   }
 
   latestSection.innerHTML = `
-    <div class="tag category-tag-large">${esc(post.label)}</div>
+    ${featured}<div class="tag category-tag-large">${esc(post.label)}</div>
     ${post.dateDisplay ? `<div class="date">${esc(post.dateDisplay)}</div>` : ""}
     <h2>${esc(post.title)}</h2>
     <p>${esc(excerpt(post.message, 220))}</p>
@@ -210,12 +210,7 @@ function findCategory(posts, category, topId) {
 }
 
 function findTopPost(posts) {
-  const sorted = [...posts].sort((a, b) => {
-    if (a.priority !== b.priority) return a.priority - b.priority;
-    if (b.sortTime !== a.sortTime) return b.sortTime - a.sortTime;
-    return b.rowOrder - a.rowOrder;
-  });
-  return sorted[0] || null;
+  return posts.find((post) => Number(post.pinned || 0) === 1) || posts[0] || null;
 }
 
 function renderPosts(posts) {

@@ -16,7 +16,7 @@ export async function onRequestGet(context) {
     `SELECT *
      FROM posts
      WHERE deleted = 0 AND status = 'published'
-     ORDER BY datetime(created_at) DESC`
+     ORDER BY pinned DESC, datetime(created_at) DESC`
   ).all();
 
   return publicJson({

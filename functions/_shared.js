@@ -162,6 +162,7 @@ export function postPublicRow(row) {
     created_at: row.created_at,
     image: row.image_url || "",
     image_url: row.image_url || "",
+    pinned: row.pinned ? 1 : 0,
     status: row.status,
     deleted: row.deleted ? "TRUE" : "FALSE",
     last_edited_by: row.last_edited_by || "",

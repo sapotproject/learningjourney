@@ -82,3 +82,54 @@
     display: flex !important;
   }
 }
+
+
+
+/* Featured Homepage Post + mobile footer link polish */
+.checkbox-label {
+  display: flex !important;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+  line-height: 1.45;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  accent-color: #7a1f1f;
+  flex: 0 0 20px;
+}
+
+.checkbox-label span {
+  color: #5a2a1a;
+  font-weight: 800;
+}
+
+.featured-dashboard-badge,
+.featured-home-badge {
+  display: inline-block;
+  background: #f2b705;
+  color: #5a2a1a;
+  border-radius: 999px;
+  padding: 6px 11px;
+  font-size: 12px;
+  font-weight: 900;
+  margin: 0 8px 8px 0;
+}
+
+.featured-preview-tag {
+  background: #f2b705 !important;
+  color: #5a2a1a !important;
+  margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+  .footer-teacher-link a {
+    font-size: 16px !important;
+    font-weight: 800 !important;
+    color: rgba(255,255,255,.88) !important;
+    padding: 8px 6px !important;
+  }
+}

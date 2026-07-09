@@ -6,10 +6,23 @@ import {
   audit,
   uuid,
   sanitizeFilename,
-  guessExt,
   mediaUrl,
   postAdminRow
 } from "../_shared.js";
+
+function normalizePinned(value) {
+  const s = String(value ?? "0").toLowerCase().trim();
+  return ["1", "true", "yes", "on", "pinned"].includes(s) ? 1 : 0;
+}
+
+async function unpinOthers(env, exceptId = "") {
+  if (exceptId) {
+    await env.DB.prepare(`UPDATE posts SET pinned = 0 WHERE id <> ?`).bind(exceptId).run();
+    return;
+  }
+
+  await env.DB.prepare(`UPDATE posts SET pinned = 0`).run();
+}
 
 export async function onRequestGet(context) {
   const user = await requireAuth(context.request, context.env);
@@ -18,7 +31,7 @@ export async function onRequestGet(context) {
   const rows = await context.env.DB.prepare(
     `SELECT *
      FROM posts
-     ORDER BY datetime(created_at) DESC`
+     ORDER BY pinned DESC, datetime(created_at) DESC`
   ).all();
 
   return json({
@@ -40,6 +53,7 @@ export async function onRequestPost(context) {
   const date = String(form.get("date") || "").trim();
   const existingImageUrl = String(form.get("existing_image_url") || "").trim();
   const existingImageKey = String(form.get("existing_image_key") || "").trim();
+  const pinned = normalizePinned(form.get("pinned"));
 
   if (!type || !title || !message || !date) {
     return bad("Type, title, message, and date are required.");
@@ -80,28 +94,32 @@ export async function onRequestPost(context) {
 
     if (!existing) return bad("Post not found.", 404);
 
+    if (pinned) await unpinOthers(context.env, id);
+
     await context.env.DB.prepare(
       `UPDATE posts
-       SET type = ?, title = ?, message = ?, date = ?, image_url = ?, image_key = ?,
+       SET type = ?, title = ?, message = ?, date = ?, image_url = ?, image_key = ?, pinned = ?,
            updated_at = CURRENT_TIMESTAMP, last_edited_by = ?, last_edited_at = CURRENT_TIMESTAMP
        WHERE id = ?`
-    ).bind(type, title, message, date, imageUrl, imageKey, user.name || user.username, id).run();
+    ).bind(type, title, message, date, imageUrl, imageKey, pinned, user.name || user.username, id).run();
 
-    await audit(context.env, user.username, "Edited Post", title, id);
+    await audit(context.env, user.username, pinned ? "Edited and Featured Post" : "Edited Post", title, id);
 
     return json({
       success: true,
-      message: "Post updated successfully.",
+      message: pinned ? "Post updated and featured on homepage." : "Post updated successfully.",
       id
     });
   }
 
   const newId = uuid();
 
+  if (pinned) await unpinOthers(context.env, newId);
+
   await context.env.DB.prepare(
     `INSERT INTO posts
-     (id, type, title, message, author, date, image_url, image_key, status, deleted)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'published', 0)`
+     (id, type, title, message, author, date, image_url, image_key, pinned, status, deleted)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'published', 0)`
   ).bind(
     newId,
     type,
@@ -110,14 +128,15 @@ export async function onRequestPost(context) {
     user.name || user.username,
     date,
     imageUrl,
-    imageKey
+    imageKey,
+    pinned
   ).run();
 
-  await audit(context.env, user.username, "Published Post", title, newId);
+  await audit(context.env, user.username, pinned ? "Published Featured Post" : "Published Post", title, newId);
 
   return json({
     success: true,
-    message: "Post published successfully.",
+    message: pinned ? "Post published and featured on homepage." : "Post published successfully.",
     id: newId
   });
 }
@@ -138,10 +157,38 @@ export async function onRequestPatch(context) {
 
   if (!post) return bad("Post not found.", 404);
 
+  if (action === "pin") {
+    await unpinOthers(context.env, id);
+
+    await context.env.DB.prepare(
+      `UPDATE posts
+       SET pinned = 1, deleted = 0, status = 'published', updated_at = CURRENT_TIMESTAMP,
+           last_edited_by = ?, last_edited_at = CURRENT_TIMESTAMP
+       WHERE id = ?`
+    ).bind(user.name || user.username, id).run();
+
+    await audit(context.env, user.username, "Featured Post on Homepage", post.title, id);
+
+    return json({ success: true, message: "Post is now featured on the homepage." });
+  }
+
+  if (action === "unpin") {
+    await context.env.DB.prepare(
+      `UPDATE posts
+       SET pinned = 0, updated_at = CURRENT_TIMESTAMP,
+           last_edited_by = ?, last_edited_at = CURRENT_TIMESTAMP
+       WHERE id = ?`
+    ).bind(user.name || user.username, id).run();
+
+    await audit(context.env, user.username, "Removed Homepage Feature", post.title, id);
+
+    return json({ success: true, message: "Post removed from homepage feature." });
+  }
+
   if (action === "delete") {
     await context.env.DB.prepare(
       `UPDATE posts
-       SET deleted = 1, status = 'deleted', deleted_by = ?, deleted_at = CURRENT_TIMESTAMP
+       SET pinned = 0, deleted = 1, status = 'deleted', deleted_by = ?, deleted_at = CURRENT_TIMESTAMP
        WHERE id = ?`
     ).bind(user.name || user.username, id).run();
 

@@ -58,6 +58,22 @@ function getPostImage(post) {
   return post.image || post.image_url || "";
 }
 
+function isPinned(post) {
+  return Number(post.pinned || 0) === 1 || String(post.pinned).toLowerCase() === "true";
+}
+
+function featuredBadge(post) {
+  return isPinned(post) ? `<span class="featured-dashboard-badge">⭐ Featured on Homepage</span>` : "";
+}
+
+function featureButton(post) {
+  if (isPinned(post)) {
+    return `<button class="small-btn clear-btn" onclick="postAction('${esc(post.id)}','unpin')">Unpin from Homepage</button>`;
+  }
+
+  return `<button class="small-btn restore-btn" onclick="postAction('${esc(post.id)}','pin')">Set as Homepage Feature</button>`;
+}
+
 function imageThumb(post) {
   const imageUrl = getPostImage(post);
 
@@ -139,6 +155,7 @@ function preview() {
   const title = postTitle.value;
   const message = postMessageText.value;
   const imageFile = postImage.files && postImage.files[0];
+  const pinned = postPinned && postPinned.checked;
 
   if (!type && !date && !title && !message && !imageFile && !existingImageUrl.value) {
     postPreview.innerHTML = '<p class="preview-empty">Preview will appear here while you type.</p>';
@@ -156,6 +173,7 @@ function preview() {
 
   postPreview.innerHTML = `
     ${imageHtml}
+    ${pinned ? `<span class="preview-tag featured-preview-tag">⭐ Featured on Homepage</span>` : ""}
     ${type ? `<span class="preview-tag">${esc(type)}</span>` : ""}
     ${date ? `<p class="preview-date">${esc(date)}</p>` : ""}
     <h2 class="preview-title">${esc(title || "Untitled Post")}</h2>
@@ -163,7 +181,7 @@ function preview() {
   `;
 }
 
-["postType", "postDate", "postTitle", "postMessageText", "postImage"].forEach((id) => {
+["postType", "postDate", "postTitle", "postMessageText", "postImage", "postPinned"].forEach((id) => {
   const el = document.getElementById(id);
   el.addEventListener("input", preview);
   el.addEventListener("change", preview);
@@ -182,6 +200,7 @@ postForm.addEventListener("submit", async (event) => {
   fd.append("date", postDate.value);
   fd.append("existing_image_url", existingImageUrl.value);
   fd.append("existing_image_key", existingImageKey.value);
+  fd.append("pinned", postPinned && postPinned.checked ? "1" : "0");
 
   if (postImage.files[0]) {
     fd.append("image", postImage.files[0]);
@@ -212,6 +231,7 @@ function clearPost() {
   postId.value = "";
   existingImageUrl.value = "";
   existingImageKey.value = "";
+  if (postPinned) postPinned.checked = false;
   postFormTitle.textContent = "Create New Post";
   savePostBtn.textContent = "Publish Post";
   postDate.valueAsDate = new Date();
@@ -253,11 +273,13 @@ function postItem(post) {
         ${imageThumb(post)}
         <div class="dashboard-post-body">
           <h4>${esc(post.title)}</h4>
+          ${featuredBadge(post)}
           <div class="post-meta">
             ${esc(post.type)} • ${esc(post.date)} • ${esc(post.author || "")}
           </div>
           <p>${esc(shortText(post.message, 170))}</p>
           <div class="post-actions">
+            ${featureButton(post)}
             <button class="small-btn edit-btn" onclick='editPost(${JSON.stringify(post).replaceAll("'", "&#039;")})'>Edit</button>
             <button class="small-btn delete-btn" onclick="postAction('${esc(post.id)}','delete')">Move to Recycle Bin</button>
           </div>
@@ -296,6 +318,7 @@ function editPost(post) {
   postDate.value = post.date;
   existingImageUrl.value = post.image || post.image_url || "";
   existingImageKey.value = post.image_key || "";
+  if (postPinned) postPinned.checked = isPinned(post);
 
   postFormTitle.textContent = "Edit Post";
   savePostBtn.textContent = "Update Post";
@@ -305,7 +328,14 @@ function editPost(post) {
 }
 
 async function postAction(id, action) {
-  if (!confirm(action === "delete" ? "Move to Recycle Bin?" : "Restore post?")) return;
+  const messages = {
+    delete: "Move to Recycle Bin?",
+    restore: "Restore post?",
+    pin: "Show this post at the top of the homepage? This will replace the current featured post.",
+    unpin: "Remove this post from the homepage top feature?"
+  };
+
+  if (!confirm(messages[action] || "Continue?")) return;
 
   const res = await fetch("/api/posts", {
     method: "PATCH",
