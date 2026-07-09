@@ -192,6 +192,8 @@ function findCategory(posts, category, topId) {
 function renderPosts(posts) {
   allPosts = posts;
 
+  if (!latestSection) return;
+
   if (!posts.length) {
     latestSection.innerHTML = `
       <div class="tag">Latest Update</div>
