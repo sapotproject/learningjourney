@@ -1205,3 +1205,48 @@ h3 {
     max-height: 72px !important;
   }
 }
+
+
+
+/* Footer portal and branding - subtle only */
+.footer-meta {
+  margin-top: 12px;
+  font-size: 12px;
+  color: rgba(255,255,255,.78);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.footer-meta strong {
+  color: #f2b705;
+  letter-spacing: .2px;
+}
+
+.footer-teacher-link {
+  margin-top: 8px;
+}
+
+.footer-teacher-link a {
+  color: rgba(255,255,255,.62);
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.footer-teacher-link a:hover {
+  color: #f2b705;
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .footer-meta {
+    gap: 5px;
+    font-size: 11px;
+  }
+
+  .footer-dot {
+    display: none;
+  }
+}
