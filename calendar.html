@@ -7,7 +7,7 @@
   <link id="dynamicFavicon" rel="icon" href="/assets/images/default-logo.png">
   <link id="dynamicAppleIcon" rel="apple-touch-icon" href="/assets/images/default-logo.png">
   <link rel="manifest" href="/site.webmanifest">
-  <link rel="stylesheet" href="/assets/css/style.css?v=calendar-priority-icon-v1"/>
+  <link rel="stylesheet" href="/assets/css/style.css?v=mobile-menu-v1"/>
 </head>
 <body>
   <header class="header">
@@ -22,7 +22,13 @@
 
   <div class="line"></div>
 
-  <nav class="nav">
+  <div class="mobile-menu-bar">
+    <button id="mobileMenuToggle" class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mainNav">
+      ☰ Menu
+    </button>
+  </div>
+
+  <nav class="nav" id="mainNav">
     <a href="/">Home</a>
     <a href="/about.html">About</a>
     <a href="/admissions.html">Admissions</a>
@@ -34,6 +40,7 @@
     <a href="/gallery.html">Gallery</a>
     <a href="/contact.html">Contact</a>
   </nav>
+
 
   <main class="container">
     <section class="page-hero">
@@ -48,6 +55,7 @@
         <h2 id="calendarTitle">Loading...</h2>
         <button id="nextMonthBtn" class="small-btn clear-btn" type="button">Next</button>
       </div>
+
       <div id="calendarGrid" class="calendar-grid"></div>
     </section>
 
@@ -63,16 +71,19 @@
 
   <footer class="footer">
     <p id="footerSchoolName">Learning Journey Child Growth Center, Inc.</p>
+
     <div class="footer-meta">
       <span>Powered by <strong>SCHOOLSPH.COM</strong></span>
       <span class="footer-dot">•</span>
       <span><strong>RACSMEDIA</strong></span>
     </div>
+
     <div class="footer-teacher-link">
       <a href="/admin.html">Teacher/Admin Portal</a>
     </div>
   </footer>
 
-  <script src="/assets/js/calendar.js?v=calendar-priority-icon-v1"></script>
+  <script src="/assets/js/menu.js?v=mobile-menu-v1"></script>
+  <script src="/assets/js/calendar.js?v=mobile-menu-v1"></script>
 </body>
 </html>

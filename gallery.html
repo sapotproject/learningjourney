@@ -7,7 +7,7 @@
   <link id="dynamicFavicon" rel="icon" href="/assets/images/default-logo.png">
   <link id="dynamicAppleIcon" rel="apple-touch-icon" href="/assets/images/default-logo.png">
   <link rel="manifest" href="/site.webmanifest">
-  <link rel="stylesheet" href="/assets/css/style.css?v=calendar-priority-icon-v1"/>
+  <link rel="stylesheet" href="/assets/css/style.css?v=mobile-menu-v1"/>
 </head>
 <body>
   <header class="header">
@@ -22,7 +22,13 @@
 
   <div class="line"></div>
 
-  <nav class="nav">
+  <div class="mobile-menu-bar">
+    <button id="mobileMenuToggle" class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mainNav">
+      ☰ Menu
+    </button>
+  </div>
+
+  <nav class="nav" id="mainNav">
     <a href="/">Home</a>
     <a href="/about.html">About</a>
     <a href="/admissions.html">Admissions</a>
@@ -35,9 +41,10 @@
     <a href="/contact.html">Contact</a>
   </nav>
 
+
   <main class="container">
     <section class="page-hero">
-      <span class="tag">Gallery</span>
+      <span class="tag category-tag-large">Gallery</span>
       <h2>Gallery</h2>
       <p>School photos and memories will appear here soon.</p>
     </section>
@@ -95,6 +102,7 @@
     </div>
   </footer>
 
-<script src="/assets/js/settings-page.js?v=calendar-priority-icon-v1"></script>
+  <script src="/assets/js/menu.js?v=mobile-menu-v1"></script>
+  <script src="/assets/js/settings-page.js?v=mobile-menu-v1"></script>
 </body>
 </html>
