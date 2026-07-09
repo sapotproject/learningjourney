@@ -59,6 +59,18 @@ function applySettings(settings) {
 
   const contactMaps = document.getElementById("contactMaps");
   if (contactMaps && maps) contactMaps.href = maps;
+
+  const admissionPhone = document.getElementById("admissionPhone");
+  if (admissionPhone) admissionPhone.textContent = phone || "Not available yet.";
+
+  const admissionEmail = document.getElementById("admissionEmail");
+  if (admissionEmail) admissionEmail.textContent = email || "Not available yet.";
+
+  const admissionCall = document.getElementById("admissionCall");
+  if (admissionCall && phone) admissionCall.href = "tel:" + phone;
+
+  const admissionMessenger = document.getElementById("admissionMessenger");
+  if (admissionMessenger && messenger) admissionMessenger.href = messenger;
 }
 
 async function loadSettings() {
