@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Events</title>
+  <link rel="stylesheet" href="/assets/css/style.css?v=public-pages-v1"/>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <img id="schoolLogo" class="school-logo hidden" src="" alt="School Logo"/>
+      <div class="school-text">
+        <h1 id="schoolName">Learning Journey Child Growth Center, Inc.</h1>
+        <p id="schoolTagline">Where Learning is a Journey and Not a Race</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="line"></div>
+
+  <nav class="nav">
+    <a href="/">Home</a>
+    <a href="/announcements.html">Announcements</a>
+    <a href="/news.html">News</a>
+    <a href="/events.html">Events</a>
+    <a href="/schoolforms.html">School Forms</a>
+    <a href="/gallery.html">Gallery</a>
+    <a href="/about.html">About</a>
+    <a href="/contact.html">Contact</a>
+    <a class="teacher-login-link" href="/admin.html">Teacher Login</a>
+  </nav>
+
+
+  <main class="container">
+    <section class="page-hero">
+      <span class="tag">Events</span>
+      <h2>Events</h2>
+      <p>Upcoming and recent school events.</p>
+    </section>
+
+    <section class="archive-layout" 
+      data-page-mode="event" 
+      data-empty-text="No events posted yet.">
+      <article id="archiveMain" class="archive-main card">
+        <h2>Loading...</h2>
+        <p>Please wait while we retrieve school updates.</p>
+      </article>
+
+      <aside class="archive-sidebar card">
+        <h3>Previous Posts</h3>
+        <div id="archiveHistory" class="archive-history">
+          <p class="loading-text">Loading history...</p>
+        </div>
+      </aside>
+    </section>
+
+    <p id="archiveStatus" class="load-status"></p>
+  </main>
+
+  <script src="/assets/js/page-posts.js?v=public-pages-v1"></script>
+  <footer class="footer">
+    <p id="footerSchoolName">Learning Journey Child Growth Center, Inc.</p>
+    <p id="footerAddress"></p>
+  </footer>
+</body>
+</html>
