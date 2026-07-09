@@ -936,31 +936,3 @@ h3 {
     font-size: 18px !important;
   }
 }
-
-/* Restore old brown gradient header - do not redesign */
-.header {
-  background: linear-gradient(135deg, #8b5a3c 0%, #a66a3f 100%) !important;
-}
-
-.admin-header {
-  background: linear-gradient(135deg, #5d341f 0%, #76492d 35%, #8b5a3c 68%, #a66a3f 100%) !important;
-}
-
-/* Remove automatic logo frame / white box / rounded square */
-.school-logo {
-  background: transparent !important;
-  padding: 0 !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  object-fit: contain !important;
-}
-
-/* Logo preview in dashboard should also not look framed */
-.logo-preview {
-  background: transparent !important;
-  padding: 0 !important;
-  box-shadow: none !important;
-  border: none !important;
-  border-radius: 0 !important;
-  object-fit: contain !important;
-}
