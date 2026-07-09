@@ -154,9 +154,18 @@ function readButton(id) {
   return `<button class="btn" onclick="openPost('${esc(id)}')">Read More</button>`;
 }
 
+function isPinned(post) {
+  return Number(post.pinned || 0) === 1 || String(post.pinned).toLowerCase() === "true";
+}
+
+function featuredBadgeHome(post) {
+  return isPinned(post) ? `<span class="featured-home-badge">⭐ Featured</span>` : "";
+}
+
 function renderLatest(post) {
   if (!latestSection) return;
 
+  const featured = featuredBadgeHome(post);
   const image = post.image ? `<img src="${esc(post.image)}" alt="${esc(post.title)}" class="post-image" onerror="this.style.display='none'">` : "";
   const date = post.dateDisplay ? `<span class="date-inline">${esc(post.dateDisplay)}</span>` : "";
 
@@ -315,45 +324,62 @@ async function loadPublicData() {
 
 loadPublicData();
 
+function closeImageModal() {
+  const modal = document.getElementById("imageModal");
+  const img = document.getElementById("imageModalImg");
 
-function createImageModal() {
-  let modal = document.getElementById("imageModal");
-  if (modal) return modal;
-
-  modal = document.createElement("div");
-  modal.id = "imageModal";
-  modal.className = "image-modal";
-  modal.innerHTML = '<button class="image-close-btn" type="button">Close</button><img id="imageModalImg" src="" alt="Post image">';
-  document.body.appendChild(modal);
-
-  modal.addEventListener("click", (event) => {
-    if (event.target === modal || event.target.classList.contains("image-close-btn")) {
-      modal.classList.remove("show");
-      const img = document.getElementById("imageModalImg");
-      if (img) img.src = "";
-    }
-  });
-
-  return modal;
+  if (modal) modal.classList.remove("show");
+  if (img) img.src = "";
 }
 
 function openImageFull(src, alt) {
   if (!src) return;
-  const modal = createImageModal();
+
+  let modal = document.getElementById("imageModal");
+
+  if (!modal) {
+    modal = document.createElement("div");
+    modal.id = "imageModal";
+    modal.className = "image-modal";
+    modal.innerHTML = '<button class="image-close-btn" type="button">Close</button><img id="imageModalImg" src="" alt="Post image">';
+    document.body.appendChild(modal);
+  }
+
   const img = document.getElementById("imageModalImg");
+
   if (!img) {
     window.open(src, "_blank", "noopener");
     return;
   }
+
   img.src = src;
   img.alt = alt || "Post image";
   modal.classList.add("show");
 }
 
 document.addEventListener("click", (event) => {
+  const closeBtn = event.target.closest(".image-close-btn");
+
+  if (closeBtn) {
+    event.preventDefault();
+    event.stopPropagation();
+    closeImageModal();
+    return;
+  }
+
+  const imageModal = document.getElementById("imageModal");
+
+  if (imageModal && event.target === imageModal) {
+    closeImageModal();
+    return;
+  }
+
   const img = event.target.closest("img.post-image, img.modal-img, img.archive-main-image");
+
   if (!img) return;
+
   event.preventDefault();
   event.stopPropagation();
+
   openImageFull(img.currentSrc || img.src, img.alt);
 });

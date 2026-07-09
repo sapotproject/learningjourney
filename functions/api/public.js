@@ -1,7 +1,18 @@
 import { publicJson, postPublicRow } from "../_shared.js";
 
+async function ensurePinnedColumn(env) {
+  const info = await env.DB.prepare(`PRAGMA table_info(posts)`).all();
+  const hasPinned = (info.results || []).some((col) => col.name === "pinned");
+
+  if (!hasPinned) {
+    await env.DB.prepare(`ALTER TABLE posts ADD COLUMN pinned INTEGER NOT NULL DEFAULT 0`).run();
+  }
+}
+
 export async function onRequestGet(context) {
   const env = context.env;
+
+  await ensurePinnedColumn(env);
 
   const settingsRows = await env.DB.prepare(
     `SELECT key, value FROM settings`

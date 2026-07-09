@@ -10,6 +10,15 @@ import {
   postAdminRow
 } from "../_shared.js";
 
+async function ensurePinnedColumn(env) {
+  const info = await env.DB.prepare(`PRAGMA table_info(posts)`).all();
+  const hasPinned = (info.results || []).some((col) => col.name === "pinned");
+
+  if (!hasPinned) {
+    await env.DB.prepare(`ALTER TABLE posts ADD COLUMN pinned INTEGER NOT NULL DEFAULT 0`).run();
+  }
+}
+
 function normalizePinned(value) {
   const s = String(value ?? "0").toLowerCase().trim();
   return ["1", "true", "yes", "on", "pinned"].includes(s) ? 1 : 0;
@@ -28,6 +37,8 @@ export async function onRequestGet(context) {
   const user = await requireAuth(context.request, context.env);
   if (!user) return bad("Unauthorized.", 401);
 
+  await ensurePinnedColumn(context.env);
+
   const rows = await context.env.DB.prepare(
     `SELECT *
      FROM posts
@@ -43,6 +54,8 @@ export async function onRequestGet(context) {
 export async function onRequestPost(context) {
   const user = await requireAuth(context.request, context.env);
   if (!user) return bad("Unauthorized.", 401);
+
+  await ensurePinnedColumn(context.env);
 
   const form = await context.request.formData();
 
@@ -145,6 +158,8 @@ export async function onRequestPatch(context) {
   const user = await requireAuth(context.request, context.env);
   if (!user) return bad("Unauthorized.", 401);
 
+  await ensurePinnedColumn(context.env);
+
   const body = await context.request.json();
   const id = String(body.id || "").trim();
   const action = String(body.action || "").trim();
@@ -215,6 +230,8 @@ export async function onRequestPatch(context) {
 export async function onRequestDelete(context) {
   const admin = await requireAdmin(context.request, context.env);
   if (!admin) return bad("Admin only.", 403);
+
+  await ensurePinnedColumn(context.env);
 
   const body = await context.request.json();
   const id = String(body.id || "").trim();

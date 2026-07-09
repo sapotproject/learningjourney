@@ -133,3 +133,40 @@
     padding: 8px 6px !important;
   }
 }
+
+
+/* Featured homepage repair and mobile footer sizing */
+.featured-home-badge,
+.featured-dashboard-badge,
+.featured-preview-tag {
+  display: inline-block;
+  background: #f2b705;
+  color: #5a2a1a;
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 900;
+  margin-right: 8px;
+  margin-bottom: 8px;
+}
+
+.featured-dashboard-badge {
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 768px) {
+  .footer p {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+  }
+
+  .footer-meta {
+    font-size: 14px !important;
+  }
+
+  .footer-teacher-link a {
+    font-size: 12px !important;
+    font-weight: 500 !important;
+  }
+}

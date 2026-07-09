@@ -347,6 +347,12 @@ async function postAction(id, action) {
   });
 
   const data = await res.json();
+
+  if (!data.success) {
+    alert(data.message || "Action failed.");
+    return;
+  }
+
   alert(data.message || "Done.");
   loadPosts();
 }
