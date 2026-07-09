@@ -42,11 +42,18 @@ export async function onRequestPost(context) {
 
   const url = mediaUrl(context.env, key);
 
-  await audit(context.env, admin.username, "Uploaded Logo", key, "");
+  // Apply the logo immediately to website settings.
+  await context.env.DB.prepare(
+    `INSERT INTO settings (key, value, description, updated_at)
+     VALUES ('logo_url', ?, 'School logo URL', CURRENT_TIMESTAMP)
+     ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`
+  ).bind(url).run();
+
+  await audit(context.env, admin.username, "Uploaded and Applied Logo", key, "");
 
   return json({
     success: true,
-    message: "Logo uploaded successfully.",
+    message: "Logo uploaded and applied successfully.",
     key,
     url
   });
