@@ -1092,3 +1092,56 @@ h3 {
     grid-template-columns: 1fr;
   }
 }
+
+/* Fix long post content wrapping on public post pages */
+.archive-message,
+.modal-message,
+.preview-message,
+.card p,
+.compact-card p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Reduce top header height without redesigning */
+.header {
+  padding: 18px 20px !important;
+}
+
+.header-inner {
+  gap: 12px !important;
+}
+
+.school-logo {
+  width: 64px !important;
+  height: 64px !important;
+}
+
+.school-text h1 {
+  font-size: 24px !important;
+}
+
+.school-text p {
+  margin-top: 4px !important;
+  font-size: 13px !important;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 16px 16px !important;
+  }
+
+  .school-logo {
+    width: 58px !important;
+    height: 58px !important;
+  }
+
+  .school-text h1 {
+    font-size: 20px !important;
+  }
+
+  .school-text p {
+    font-size: 12px !important;
+  }
+}
