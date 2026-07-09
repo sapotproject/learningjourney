@@ -936,3 +936,870 @@ h3 {
     font-size: 18px !important;
   }
 }
+
+/* Restore old brown gradient header - do not redesign */
+.header {
+  background: linear-gradient(135deg, #8b5a3c 0%, #a66a3f 100%) !important;
+}
+
+.admin-header {
+  background: linear-gradient(135deg, #5d341f 0%, #76492d 35%, #8b5a3c 68%, #a66a3f 100%) !important;
+}
+
+/* Remove automatic logo frame / white box / rounded square */
+.school-logo {
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  object-fit: contain !important;
+}
+
+/* Logo preview in dashboard should also not look framed */
+.logo-preview {
+  background: transparent !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  object-fit: contain !important;
+}
+
+
+/* Public pages / archive layout */
+.page-hero {
+  background: #fff;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  border-left: 10px solid #f2b705;
+  margin-top: 20px;
+}
+
+.page-hero h2 {
+  color: #5a2a1a;
+  margin-top: 12px;
+  font-size: 26px;
+}
+
+.page-hero p {
+  margin-top: 8px;
+  color: #444;
+  line-height: 1.6;
+}
+
+.archive-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+  gap: 20px;
+  align-items: start;
+}
+
+.archive-main-image {
+  width: 100%;
+  max-height: 390px;
+  object-fit: cover;
+  border-radius: 16px;
+  background: #eee;
+  margin-bottom: 16px;
+}
+
+.archive-meta {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #666;
+}
+
+.archive-message {
+  white-space: pre-wrap;
+  margin-top: 16px;
+  color: #333;
+  line-height: 1.75;
+  font-size: 15px;
+}
+
+.archive-sidebar h3 {
+  margin-top: 0;
+}
+
+.archive-history {
+  display: grid;
+  gap: 10px;
+}
+
+.history-item {
+  width: 100%;
+  text-align: left;
+  border: 1px solid #eadfce;
+  background: #fffdf8;
+  border-radius: 14px;
+  padding: 12px;
+  cursor: pointer;
+}
+
+.history-item:hover {
+  border-color: #f2b705;
+  background: #fff7dd;
+}
+
+.history-tag {
+  display: inline-block;
+  background: #7a1f1f;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 999px;
+  padding: 4px 8px;
+  margin-bottom: 7px;
+}
+
+.history-item strong {
+  display: block;
+  color: #5a2a1a;
+  line-height: 1.25;
+  font-size: 14px;
+}
+
+.history-item small {
+  display: block;
+  color: #666;
+  margin-top: 5px;
+}
+
+.static-grid,
+.contact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.static-content p {
+  line-height: 1.75;
+  margin-top: 12px;
+}
+
+.contact-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+@media (max-width: 900px) {
+  .archive-layout,
+  .static-grid,
+  .contact-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Fix long post content wrapping on public post pages */
+.archive-message,
+.modal-message,
+.preview-message,
+.card p,
+.compact-card p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Reduce top header height without redesigning */
+.header {
+  padding: 18px 20px !important;
+}
+
+.header-inner {
+  gap: 12px !important;
+}
+
+.school-logo {
+  width: 64px !important;
+  height: 64px !important;
+}
+
+.school-text h1 {
+  font-size: 24px !important;
+}
+
+.school-text p {
+  margin-top: 4px !important;
+  font-size: 13px !important;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 16px 16px !important;
+  }
+
+  .school-logo {
+    width: 58px !important;
+    height: 58px !important;
+  }
+
+  .school-text h1 {
+    font-size: 20px !important;
+  }
+
+  .school-text p {
+    font-size: 12px !important;
+  }
+}
+
+
+/* Slightly larger school logo while keeping compact header */
+.school-logo {
+  width: 72px !important;
+  height: 72px !important;
+}
+
+@media (max-width: 768px) {
+  .school-logo {
+    width: 64px !important;
+    height: 64px !important;
+  }
+}
+
+/* Announcements page split sections */
+.announcement-group {
+  margin-top: 24px;
+}
+
+.announcement-group-title {
+  background: #fffdf8;
+  border-left: 10px solid #f2b705;
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.05);
+}
+
+.announcement-group-title h3 {
+  margin: 0;
+  color: #5a2a1a;
+}
+
+.announcement-group-title p {
+  margin-top: 6px;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+
+
+/* Final logo size adjustment */
+.header .school-logo {
+  width: 82px !important;
+  height: 82px !important;
+  max-width: 82px !important;
+  max-height: 82px !important;
+  object-fit: contain !important;
+}
+
+@media (max-width: 768px) {
+  .header .school-logo {
+    width: 72px !important;
+    height: 72px !important;
+    max-width: 72px !important;
+    max-height: 72px !important;
+  }
+}
+
+
+
+/* Footer portal and branding - subtle only */
+.footer-meta {
+  margin-top: 12px;
+  font-size: 12px;
+  color: rgba(255,255,255,.78);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.footer-meta strong {
+  color: #f2b705;
+  letter-spacing: .2px;
+}
+
+.footer-teacher-link {
+  margin-top: 8px;
+}
+
+.footer-teacher-link a {
+  color: rgba(255,255,255,.62);
+  font-size: 11px;
+  text-decoration: none;
+}
+
+.footer-teacher-link a:hover {
+  color: #f2b705;
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .footer-meta {
+    gap: 5px;
+    font-size: 11px;
+  }
+
+  .footer-dot {
+    display: none;
+  }
+}
+
+
+
+/* Footer clean version: no address, larger teacher portal link */
+.footer #footerAddress {
+  display: none !important;
+}
+
+.footer-meta {
+  margin-top: 12px;
+  font-size: 12px;
+  color: rgba(255,255,255,.78);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.footer-meta strong {
+  color: #f2b705;
+  letter-spacing: .2px;
+}
+
+.footer-teacher-link {
+  margin-top: 12px;
+}
+
+.footer-teacher-link a {
+  display: inline-block;
+  color: rgba(255,255,255,.82);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.22);
+}
+
+.footer-teacher-link a:hover {
+  color: #5a2a1a;
+  background: #f2b705;
+  border-color: #f2b705;
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .footer-meta {
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+  }
+
+  .footer-dot {
+    display: block;
+  }
+
+  .footer-teacher-link a {
+    font-size: 15px;
+    padding: 10px 14px;
+  }
+}
+
+
+
+/* Footer clean version: no address, larger teacher portal link */
+.footer #footerAddress {
+  display: none !important;
+}
+
+.footer-meta {
+  margin-top: 12px;
+  font-size: 12px;
+  color: rgba(255,255,255,.78);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.footer-meta strong {
+  color: #f2b705;
+  letter-spacing: .2px;
+}
+
+.footer-teacher-link {
+  margin-top: 12px;
+}
+
+.footer-teacher-link a {
+  display: inline-block;
+  color: rgba(255,255,255,.82);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.22);
+}
+
+.footer-teacher-link a:hover {
+  color: #5a2a1a;
+  background: #f2b705;
+  border-color: #f2b705;
+  text-decoration: none;
+}
+
+/* Admissions and Gallery professional sections */
+.admission-grid,
+.gallery-category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.admission-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.simple-list {
+  margin-top: 12px;
+  padding-left: 20px;
+  color: #333;
+  line-height: 1.8;
+  font-size: 14px;
+}
+
+.gallery-category-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.08);
+  border-left: 10px solid #f2b705;
+}
+
+.gallery-icon {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.gallery-category-card h2 {
+  color: #5a2a1a;
+  font-size: 19px;
+  margin-bottom: 8px;
+}
+
+.gallery-category-card p {
+  color: #333;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.gallery-category-card span {
+  display: inline-block;
+  margin-top: 14px;
+  color: #777;
+  font-size: 13px;
+  background: #fff7dd;
+  padding: 8px 10px;
+  border-radius: 999px;
+}
+
+.gallery-note p {
+  line-height: 1.7;
+}
+
+@media (max-width: 768px) {
+  .footer-meta {
+    flex-direction: column;
+    gap: 4px;
+    font-size: 12px;
+  }
+
+  .footer-dot {
+    display: block;
+  }
+
+  .footer-teacher-link a {
+    font-size: 15px;
+    padding: 10px 14px;
+  }
+
+  .admission-grid,
+  .gallery-category-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+/* Calendar, priority, icon, mobile menu, and image open polish */
+.category-tag-large {
+  font-size: 13px !important;
+  padding: 7px 13px !important;
+}
+
+.history-tag {
+  font-size: 12px !important;
+}
+
+.footer-teacher-link {
+  margin-top: 9px !important;
+}
+
+.footer-teacher-link a {
+  border: none !important;
+  padding: 3px 4px !important;
+  border-radius: 0 !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: rgba(255,255,255,.66) !important;
+}
+
+.footer-teacher-link a:hover {
+  background: transparent !important;
+  color: #f2b705 !important;
+  text-decoration: underline !important;
+}
+
+.post-image,
+.modal-img,
+.archive-main-image {
+  cursor: zoom-in;
+}
+
+.image-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.86);
+  z-index: 2000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.image-modal.show {
+  display: flex;
+}
+
+.image-modal img {
+  max-width: 96vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.image-close-btn {
+  position: fixed;
+  right: 16px;
+  top: 16px;
+  background: #f2b705;
+  color: #5a2a1a;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 14px;
+  font-weight: 800;
+  cursor: pointer;
+  z-index: 2100;
+}
+
+.calendar-wrap {
+  margin-top: 20px;
+}
+
+.calendar-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.calendar-toolbar h2 {
+  color: #5a2a1a;
+  font-size: 22px;
+  margin: 0;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+}
+
+.calendar-day-name {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: #5a2a1a;
+  padding: 8px;
+}
+
+.calendar-cell {
+  min-height: 92px;
+  background: #fffdf8;
+  border: 1px solid #eadfce;
+  border-radius: 14px;
+  padding: 9px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.calendar-cell.empty {
+  background: transparent;
+  border: none;
+  cursor: default;
+}
+
+.calendar-cell.today {
+  outline: 2px solid #f2b705;
+}
+
+.calendar-cell.has-event {
+  background: #fff7dd;
+  border-color: #f2b705;
+}
+
+.calendar-date-num {
+  display: block;
+  color: #5a2a1a;
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.calendar-event-count {
+  display: inline-block;
+  margin-top: 8px;
+  font-size: 11px;
+  color: #fff;
+  background: #7a1f1f;
+  border-radius: 999px;
+  padding: 4px 7px;
+}
+
+.calendar-event-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.calendar-event-card {
+  background: #fffdf8;
+  border: 1px solid #eadfce;
+  border-left: 8px solid #f2b705;
+  border-radius: 16px;
+  padding: 14px;
+}
+
+.calendar-event-card h3 {
+  margin: 10px 0 5px;
+  color: #5a2a1a;
+}
+
+.calendar-event-card p {
+  line-height: 1.6;
+}
+
+.calendar-event-date {
+  color: #666;
+  font-size: 13px;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 768px) {
+  .nav a {
+    font-size: 15px !important;
+    padding: 14px 12px !important;
+  }
+
+  .category-tag-large {
+    font-size: 14px !important;
+  }
+
+  .calendar-grid {
+    gap: 5px;
+  }
+
+  .calendar-day-name {
+    font-size: 11px;
+    padding: 5px 2px;
+  }
+
+  .calendar-cell {
+    min-height: 68px;
+    padding: 6px;
+    border-radius: 10px;
+  }
+
+  .calendar-date-num {
+    font-size: 13px;
+  }
+
+  .calendar-event-count {
+    font-size: 10px;
+    padding: 3px 5px;
+  }
+
+  .footer-teacher-link a {
+    font-size: 13px !important;
+  }
+}
+
+
+/* Make page title/hero section more distinct from normal content cards */
+.page-hero {
+  background: linear-gradient(135deg, #fffaf0 0%, #ffffff 60%, #fff7dd 100%) !important;
+  border-left: 14px solid #f2b705 !important;
+  border-radius: 22px !important;
+  padding: 26px 28px !important;
+  box-shadow: 0 10px 26px rgba(90, 42, 26, 0.10) !important;
+  margin-top: 22px !important;
+  margin-bottom: 24px !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-hero::after {
+  content: "";
+  position: absolute;
+  right: -45px;
+  top: -45px;
+  width: 150px;
+  height: 150px;
+  background: rgba(242, 183, 5, 0.16);
+  border-radius: 50%;
+}
+
+.page-hero .tag {
+  background: #7a1f1f !important;
+  color: #fff !important;
+  font-size: 14px !important;
+  padding: 8px 15px !important;
+  border-radius: 999px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.2px;
+}
+
+.page-hero h2 {
+  color: #5a2a1a !important;
+  font-size: 34px !important;
+  line-height: 1.15 !important;
+  margin-top: 16px !important;
+  margin-bottom: 8px !important;
+  font-weight: 900 !important;
+}
+
+.page-hero p {
+  color: #3f332b !important;
+  font-size: 17px !important;
+  line-height: 1.6 !important;
+  max-width: 760px;
+}
+
+/* Mobile title adjustment */
+@media (max-width: 768px) {
+  .page-hero {
+    padding: 22px 20px !important;
+    border-left-width: 10px !important;
+    border-radius: 18px !important;
+  }
+
+  .page-hero h2 {
+    font-size: 28px !important;
+  }
+
+  .page-hero p {
+    font-size: 15px !important;
+  }
+
+  .page-hero .tag {
+    font-size: 13px !important;
+    padding: 7px 13px !important;
+  }
+}
+
+/* Make page title/hero section more distinct from normal content cards */
+.page-hero {
+  background: linear-gradient(135deg, #fffaf0 0%, #ffffff 60%, #fff7dd 100%) !important;
+  border-left: 14px solid #f2b705 !important;
+  border-radius: 22px !important;
+  padding: 26px 28px !important;
+  box-shadow: 0 10px 26px rgba(90, 42, 26, 0.10) !important;
+  margin-top: 22px !important;
+  margin-bottom: 24px !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-hero::after {
+  content: "";
+  position: absolute;
+  right: -45px;
+  top: -45px;
+  width: 150px;
+  height: 150px;
+  background: rgba(242, 183, 5, 0.16);
+  border-radius: 50%;
+}
+
+.page-hero .tag {
+  background: #7a1f1f !important;
+  color: #fff !important;
+  font-size: 14px !important;
+  padding: 8px 15px !important;
+  border-radius: 999px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.2px;
+}
+
+.page-hero h2 {
+  color: #5a2a1a !important;
+  font-size: 34px !important;
+  line-height: 1.15 !important;
+  margin-top: 16px !important;
+  margin-bottom: 8px !important;
+  font-weight: 900 !important;
+}
+
+.page-hero p {
+  color: #3f332b !important;
+  font-size: 17px !important;
+  line-height: 1.6 !important;
+  max-width: 760px;
+}
+
+/* Mobile title adjustment */
+@media (max-width: 768px) {
+  .page-hero {
+    padding: 22px 20px !important;
+    border-left-width: 10px !important;
+    border-radius: 18px !important;
+  }
+
+  .page-hero h2 {
+    font-size: 28px !important;
+  }
+
+  .page-hero p {
+    font-size: 15px !important;
+  }
+
+  .page-hero .tag {
+    font-size: 13px !important;
+    padding: 7px 13px !important;
+  }
+}
