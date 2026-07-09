@@ -5,7 +5,6 @@ import {
   audit,
   uuid,
   sanitizeFilename,
-  guessExt,
   mediaUrl
 } from "../_shared.js";
 
@@ -30,8 +29,7 @@ export async function onRequestPost(context) {
     return bad("Logo is too large. Maximum size is 2 MB.");
   }
 
-  const ext = guessExt(logo.type, logo.name);
-  const safe = sanitizeFilename(logo.name || `logo.${ext}`);
+  const safe = sanitizeFilename(logo.name || "school-logo");
   const key = `logos/${uuid()}-${safe}`;
 
   await context.env.MEDIA.put(key, await logo.arrayBuffer(), {
@@ -42,7 +40,6 @@ export async function onRequestPost(context) {
 
   const url = mediaUrl(context.env, key);
 
-  // Apply the logo immediately to website settings.
   await context.env.DB.prepare(
     `INSERT INTO settings (key, value, description, updated_at)
      VALUES ('logo_url', ?, 'School logo URL', CURRENT_TIMESTAMP)

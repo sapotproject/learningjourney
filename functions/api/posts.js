@@ -8,7 +8,7 @@ import {
   sanitizeFilename,
   guessExt,
   mediaUrl,
-  postPublicRow
+  postAdminRow
 } from "../_shared.js";
 
 export async function onRequestGet(context) {
@@ -23,7 +23,7 @@ export async function onRequestGet(context) {
 
   return json({
     success: true,
-    posts: (rows.results || []).map(postPublicRow)
+    posts: (rows.results || []).map(postAdminRow)
   });
 }
 
@@ -52,6 +52,7 @@ export async function onRequestPost(context) {
 
   if (image && typeof image === "object" && image.size > 0) {
     const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
     if (!allowed.includes(image.type)) {
       return bad("Only JPG, PNG, WebP, and GIF images are allowed.");
     }
@@ -60,14 +61,15 @@ export async function onRequestPost(context) {
       return bad("Image is too large. Maximum size is 3 MB.");
     }
 
-    const ext = guessExt(image.type, image.name);
-    const safe = sanitizeFilename(image.name || `post.${ext}`);
+    const safe = sanitizeFilename(image.name || "post-image");
     imageKey = `posts/${new Date().toISOString().slice(0, 10)}/${uuid()}-${safe}`;
+
     await context.env.MEDIA.put(imageKey, await image.arrayBuffer(), {
       httpMetadata: {
         contentType: image.type
       }
     });
+
     imageUrl = mediaUrl(context.env, imageKey);
   }
 

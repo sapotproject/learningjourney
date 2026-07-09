@@ -1,1 +1,90 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Learning Journey Child Growth Center, Inc.</title><link rel="stylesheet" href="assets/css/style.css"/></head><body><header class="header"><div class="header-inner"><img id="schoolLogo" class="school-logo hidden" src="" alt="School Logo"/><div class="school-text"><h1 id="schoolName">Learning Journey Child Growth Center, Inc.</h1><p id="schoolTagline">Where Learning is a Journey and Not a Race</p></div></div></header><div class="line"></div><nav class="nav"><a href="/">Home</a><a href="#latest">Announcements</a><a href="#categories">News</a><a href="#categories">Events</a><a href="#categories">Reminders</a><a href="#quick-actions">Contact</a><a href="/admin.html">Teacher Login</a></nav><main class="container"><section id="latest" class="card featured-card"><div class="tag">Latest Update</div><h2>Loading latest post...</h2><p>Please wait while we retrieve the latest school update.</p></section><h3 id="quick-actions">Quick Actions</h3><section class="quick-grid"><a id="callAction" class="box" href="javascript:void(0)"><div class="icon">📞</div><p>Call School</p></a><a id="mapsAction" class="box" href="javascript:void(0)" target="_blank" rel="noopener"><div class="icon">📍</div><p>Google Maps</p></a><a id="messengerAction" class="box" href="javascript:void(0)" target="_blank" rel="noopener"><div class="icon">💬</div><p>Messenger</p></a><a id="emailAction" class="box" href="javascript:void(0)"><div class="icon">✉️</div><p>Email</p></a></section><div id="categories" class="section-title-row"><h3>Latest Updates by Category</h3></div><section class="latest-grid"><div id="newsSection"></div><div id="eventsSection"></div><div id="remindersSection"></div><div id="advisorySection"></div></section><p id="loadStatus" class="load-status"></p></main><footer class="footer"><p id="footerSchoolName">Learning Journey Child Growth Center, Inc.</p><p id="footerAddress"></p></footer><div id="postModal" class="modal"><div class="modal-card"><div id="modalContent"></div><div class="modal-actions"><button class="close-btn" onclick="closeModal()">Back to Home</button></div></div></div><script src="assets/js/public.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Learning Journey Child Growth Center, Inc.</title>
+  <link rel="stylesheet" href="/assets/css/style.css?v=clean-v2"/>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <img id="schoolLogo" class="school-logo hidden" src="" alt="School Logo"/>
+      <div class="school-text">
+        <h1 id="schoolName">Learning Journey Child Growth Center, Inc.</h1>
+        <p id="schoolTagline">Where Learning is a Journey and Not a Race</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="line"></div>
+
+  <nav class="nav">
+    <a href="/">Home</a>
+    <a href="#latest">Announcements</a>
+    <a href="#categories">News</a>
+    <a href="#categories">Events</a>
+    <a href="#categories">Reminders</a>
+    <a href="#quick-actions">Contact</a>
+    <a class="teacher-login-link" href="/admin.html">Teacher Login</a>
+  </nav>
+
+  <main class="container">
+    <section id="latest" class="card featured-card">
+      <div class="tag">Latest Update</div>
+      <h2>Loading latest post...</h2>
+      <p>Please wait while we retrieve the latest school update.</p>
+    </section>
+
+    <h3 id="quick-actions">Quick Actions</h3>
+
+    <section class="quick-grid">
+      <a id="callAction" class="box" href="javascript:void(0)">
+        <div class="icon">📞</div>
+        <p>Call School</p>
+      </a>
+      <a id="mapsAction" class="box" href="javascript:void(0)" target="_blank" rel="noopener">
+        <div class="icon">📍</div>
+        <p>Google Maps</p>
+      </a>
+      <a id="messengerAction" class="box" href="javascript:void(0)" target="_blank" rel="noopener">
+        <div class="icon">💬</div>
+        <p>Messenger</p>
+      </a>
+      <a id="emailAction" class="box" href="javascript:void(0)">
+        <div class="icon">✉️</div>
+        <p>Email</p>
+      </a>
+    </section>
+
+    <div id="categories" class="section-title-row">
+      <h3>Latest Updates by Category</h3>
+    </div>
+
+    <section class="latest-grid">
+      <div id="newsSection"></div>
+      <div id="eventsSection"></div>
+      <div id="remindersSection"></div>
+      <div id="advisorySection"></div>
+    </section>
+
+    <p id="loadStatus" class="load-status"></p>
+  </main>
+
+  <footer class="footer">
+    <p id="footerSchoolName">Learning Journey Child Growth Center, Inc.</p>
+    <p id="footerAddress"></p>
+  </footer>
+
+  <div id="postModal" class="modal">
+    <div class="modal-card">
+      <div id="modalContent"></div>
+      <div class="modal-actions">
+        <button class="close-btn" onclick="closeModal()">Back to Home</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/assets/js/public.js?v=clean-v2"></script>
+</body>
+</html>

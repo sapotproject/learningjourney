@@ -22,10 +22,6 @@ export function bad(message, status = 400) {
   return json({ success: false, message }, status);
 }
 
-export function nowISO() {
-  return new Date().toISOString();
-}
-
 export function uuid() {
   return crypto.randomUUID();
 }
@@ -112,10 +108,7 @@ export async function verifyToken(token, env) {
 export async function requireAuth(request, env) {
   const auth = request.headers.get("Authorization") || "";
   const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
-  const user = await verifyToken(token, env);
-
-  if (!user) return null;
-  return user;
+  return verifyToken(token, env);
 }
 
 export async function requireAdmin(request, env) {
@@ -168,11 +161,19 @@ export function postPublicRow(row) {
     date: row.date,
     created_at: row.created_at,
     image: row.image_url || "",
+    image_url: row.image_url || "",
     status: row.status,
     deleted: row.deleted ? "TRUE" : "FALSE",
     last_edited_by: row.last_edited_by || "",
     last_edited_at: row.last_edited_at || "",
     deleted_by: row.deleted_by || "",
     deleted_at: row.deleted_at || ""
+  };
+}
+
+export function postAdminRow(row) {
+  return {
+    ...postPublicRow(row),
+    image_key: row.image_key || ""
   };
 }

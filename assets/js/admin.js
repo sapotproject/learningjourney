@@ -1,7 +1,10 @@
-<<<<<<< HEAD
-=======
-let token = localStorage.getItem("lj_token") || "";
-let currentUser = JSON.parse(localStorage.getItem("lj_user") || "null");
+// Clear old persistent login from previous versions.
+// This prevents admin.html from auto-opening the dashboard because of an old localStorage token.
+localStorage.removeItem("lj_token");
+localStorage.removeItem("lj_user");
+
+let token = sessionStorage.getItem("lj_token") || "";
+let currentUser = JSON.parse(sessionStorage.getItem("lj_user") || "null");
 
 const loginPanel = document.getElementById("loginPanel");
 const dashboardPanel = document.getElementById("dashboardPanel");
@@ -11,8 +14,8 @@ function authHeaders() {
   return { Authorization: "Bearer " + token };
 }
 
-function esc(v) {
-  return String(v || "")
+function esc(value) {
+  return String(value || "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
@@ -35,6 +38,13 @@ function setMsg(id, text, className) {
   if (className) el.classList.add(className);
 }
 
+function setMiniMsg(id, text, className) {
+  const el = document.getElementById(id);
+  el.textContent = text || "";
+  el.className = "mini-message";
+  if (className) el.classList.add(className);
+}
+
 function isDeleted(post) {
   return String(post.deleted).toUpperCase() === "TRUE" || post.status === "deleted";
 }
@@ -44,16 +54,24 @@ function shortText(text, max = 160) {
   return value.length > max ? value.slice(0, max).trim() + "..." : value;
 }
 
+function getPostImage(post) {
+  return post.image || post.image_url || "";
+}
+
 function imageThumb(post) {
-  if (!post.image) return "";
+  const imageUrl = getPostImage(post);
+
+  if (!imageUrl) {
+    return `<div class="dashboard-post-thumb empty-thumb">No Image</div>`;
+  }
 
   return `
     <img
       class="dashboard-post-thumb"
-      src="${esc(post.image)}"
+      src="${esc(imageUrl)}"
       alt="${esc(post.title)}"
       loading="lazy"
-      onerror="this.style.display='none'"
+      onerror="this.outerHTML='<div class=&quot;dashboard-post-thumb empty-thumb&quot;>Image unavailable</div>'"
     >
   `;
 }
@@ -63,18 +81,21 @@ function start() {
     hide(loginPanel);
     show(dashboardPanel);
     show(logoutBtn);
-
     document.getElementById("postDate").valueAsDate = new Date();
     loadAll();
   } else {
+    token = "";
+    currentUser = null;
+    sessionStorage.removeItem("lj_token");
+    sessionStorage.removeItem("lj_user");
     show(loginPanel);
     hide(dashboardPanel);
     hide(logoutBtn);
   }
 }
 
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
+document.getElementById("loginForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
 
   setMsg("loginMessage", "Logging in...", "");
 
@@ -97,14 +118,16 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   token = data.token;
   currentUser = data.user;
 
-  localStorage.setItem("lj_token", token);
-  localStorage.setItem("lj_user", JSON.stringify(currentUser));
+  sessionStorage.setItem("lj_token", token);
+  sessionStorage.setItem("lj_user", JSON.stringify(currentUser));
 
   start();
 });
 
 logoutBtn.onclick = () => {
-  localStorage.clear();
+  sessionStorage.clear();
+  localStorage.removeItem("lj_token");
+  localStorage.removeItem("lj_user");
   token = "";
   currentUser = null;
   start();
@@ -114,10 +137,10 @@ function preview() {
   const type = postType.value;
   const date = postDate.value;
   const title = postTitle.value;
-  const msg = postMessageText.value;
+  const message = postMessageText.value;
   const imageFile = postImage.files && postImage.files[0];
 
-  if (!type && !date && !title && !msg && !imageFile) {
+  if (!type && !date && !title && !message && !imageFile && !existingImageUrl.value) {
     postPreview.innerHTML = '<p class="preview-empty">Preview will appear here while you type.</p>';
     return;
   }
@@ -136,17 +159,18 @@ function preview() {
     ${type ? `<span class="preview-tag">${esc(type)}</span>` : ""}
     ${date ? `<p class="preview-date">${esc(date)}</p>` : ""}
     <h2 class="preview-title">${esc(title || "Untitled Post")}</h2>
-    <p class="preview-message">${esc(msg || "No message yet.")}</p>
+    <p class="preview-message">${esc(message || "No message yet.")}</p>
   `;
 }
 
 ["postType", "postDate", "postTitle", "postMessageText", "postImage"].forEach((id) => {
-  document.getElementById(id).addEventListener("input", preview);
-  document.getElementById(id).addEventListener("change", preview);
+  const el = document.getElementById(id);
+  el.addEventListener("input", preview);
+  el.addEventListener("change", preview);
 });
 
-postForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+postForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
 
   setMsg("postMessage", "Saving post...", "");
 
@@ -206,6 +230,7 @@ async function loadPosts() {
 
   if (!data.success) {
     allPosts.innerHTML = '<p class="loading-text">' + esc(data.message || "Unable to load.") + "</p>";
+    if (res.status === 401 || res.status === 403) logoutBtn.click();
     return;
   }
 
@@ -269,7 +294,7 @@ function editPost(post) {
   postTitle.value = post.title;
   postMessageText.value = post.message;
   postDate.value = post.date;
-  existingImageUrl.value = post.image || "";
+  existingImageUrl.value = post.image || post.image_url || "";
   existingImageKey.value = post.image_key || "";
 
   postFormTitle.textContent = "Edit Post";
@@ -321,7 +346,7 @@ async function loadSettings() {
   const data = await res.json();
   if (!data.success) return;
 
-  const s = data.settings || {};
+  const settings = data.settings || {};
 
   [
     "school_name",
@@ -331,15 +356,56 @@ async function loadSettings() {
     "messenger",
     "google_maps",
     "address",
-    "office_hours",
-    "logo_url"
+    "office_hours"
   ].forEach((key) => {
-    document.getElementById("set_" + key).value = s[key] || "";
+    document.getElementById("set_" + key).value = settings[key] || "";
   });
+
+  const logoUrl = settings.logo_url || "";
+  set_logo_url.value = logoUrl;
+
+  if (logoUrl) {
+    logoPreview.src = logoUrl;
+    logoPreview.classList.remove("hidden");
+  } else {
+    logoPreview.src = "";
+    logoPreview.classList.add("hidden");
+  }
 }
 
-settingsForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+uploadLogoBtn.addEventListener("click", async () => {
+  if (!set_logo_file.files[0]) {
+    setMiniMsg("logoUploadMessage", "Please choose a logo image first.", "error");
+    return;
+  }
+
+  setMiniMsg("logoUploadMessage", "Uploading logo...", "");
+
+  const fd = new FormData();
+  fd.append("logo", set_logo_file.files[0]);
+
+  const res = await fetch("/api/upload-logo", {
+    method: "POST",
+    headers: authHeaders(),
+    body: fd
+  });
+
+  const data = await res.json();
+
+  if (!data.success) {
+    setMiniMsg("logoUploadMessage", data.message || "Logo upload failed.", "error");
+    return;
+  }
+
+  set_logo_url.value = data.url;
+  logoPreview.src = data.url;
+  logoPreview.classList.remove("hidden");
+
+  setMiniMsg("logoUploadMessage", "Logo uploaded and applied. Refresh the homepage to check.", "success");
+});
+
+settingsForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
 
   const settings = {};
 
@@ -401,8 +467,8 @@ async function loadUsers() {
   `).join("");
 }
 
-userForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+userForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
 
   const body = {
     username: user_username.value,
@@ -480,4 +546,3 @@ function loadAll() {
 }
 
 start();
->>>>>>> parent of ce1fd15 (c)
