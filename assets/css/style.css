@@ -170,3 +170,10 @@
     font-weight: 500 !important;
   }
 }
+
+/* School name font style */
+.school-text h1,
+.admin-brand h1,
+#footerSchoolName {
+  font-family: "Kristen ITC", "Comic Sans MS", cursive;
+}
