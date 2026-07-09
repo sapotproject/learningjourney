@@ -1,0 +1,13 @@
+{
+  "name": "Learning Journey Child Growth Center, Inc.",
+  "short_name": "Learning Journey",
+  "description": "School updates and announcements for Learning Journey Child Growth Center, Inc.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#8b5a3c",
+  "theme_color": "#8b5a3c",
+  "icons": [
+    { "src": "/assets/images/default-logo.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "/assets/images/default-logo.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}

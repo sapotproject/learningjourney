@@ -80,6 +80,14 @@ function normalizePost(post, index) {
   };
 }
 
+function setDynamicIcons(logo) {
+  if (!logo) return;
+  const favicon = byId("dynamicFavicon");
+  const appleIcon = byId("dynamicAppleIcon");
+  if (favicon) favicon.href = logo;
+  if (appleIcon) appleIcon.href = logo;
+}
+
 function applySettings(settings) {
   settings = settings || {};
   const schoolName = clean(settings.school_name) || "Learning Journey Child Growth Center, Inc.";
@@ -95,6 +103,7 @@ function applySettings(settings) {
     if (logo) {
       logoEl.src = logo;
       logoEl.classList.remove("hidden");
+      setDynamicIcons(logo);
     } else {
       logoEl.removeAttribute("src");
       logoEl.classList.add("hidden");
@@ -115,7 +124,7 @@ function renderMain(post) {
 
   archiveMain.innerHTML = `
     ${post.image ? `<img class="archive-main-image" src="${esc(post.image)}" alt="${esc(post.title)}" onerror="this.style.display='none'">` : ""}
-    <span class="tag">${esc(post.label)}</span>
+    <span class="tag category-tag-large">${esc(post.label)}</span>
     <h2>${esc(post.title)}</h2>
     <div class="archive-meta">
       ${esc(post.dateDisplay)}${post.author ? ` • Posted by ${esc(post.author)}` : ""}
@@ -200,3 +209,46 @@ async function loadPage() {
 }
 
 loadPage();
+
+
+function createImageModal() {
+  let modal = document.getElementById("imageModal");
+  if (modal) return modal;
+
+  modal = document.createElement("div");
+  modal.id = "imageModal";
+  modal.className = "image-modal";
+  modal.innerHTML = '<button class="image-close-btn" type="button">Close</button><img id="imageModalImg" src="" alt="Post image">';
+  document.body.appendChild(modal);
+
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal || event.target.classList.contains("image-close-btn")) {
+      modal.classList.remove("show");
+      const img = document.getElementById("imageModalImg");
+      if (img) img.src = "";
+    }
+  });
+
+  return modal;
+}
+
+function openImageFull(src, alt) {
+  if (!src) return;
+  const modal = createImageModal();
+  const img = document.getElementById("imageModalImg");
+  if (!img) {
+    window.open(src, "_blank", "noopener");
+    return;
+  }
+  img.src = src;
+  img.alt = alt || "Post image";
+  modal.classList.add("show");
+}
+
+document.addEventListener("click", (event) => {
+  const img = event.target.closest("img.post-image, img.modal-img, img.archive-main-image");
+  if (!img) return;
+  event.preventDefault();
+  event.stopPropagation();
+  openImageFull(img.currentSrc || img.src, img.alt);
+});

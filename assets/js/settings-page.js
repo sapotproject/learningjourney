@@ -11,6 +11,14 @@ function setText(id, value) {
   if (el) el.textContent = value || "";
 }
 
+function setDynamicIcons(logo) {
+  if (!logo) return;
+  const favicon = byId("dynamicFavicon");
+  const appleIcon = byId("dynamicAppleIcon");
+  if (favicon) favicon.href = logo;
+  if (appleIcon) appleIcon.href = logo;
+}
+
 function applySettings(settings) {
   settings = settings || {};
 
@@ -39,6 +47,7 @@ function applySettings(settings) {
     if (logo) {
       logoEl.src = logo;
       logoEl.classList.remove("hidden");
+      setDynamicIcons(logo);
     } else {
       logoEl.removeAttribute("src");
       logoEl.classList.add("hidden");

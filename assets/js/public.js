@@ -56,6 +56,14 @@ function label(type) {
   return clean(type) || "Update";
 }
 
+function priorityRank(category) {
+  if (category === "school advisory") return 1;
+  if (category === "reminder") return 2;
+  if (category === "event") return 3;
+  if (category === "news") return 4;
+  return 9;
+}
+
 function parseTime(value) {
   if (!value) return 0;
   const d = new Date(String(value).replace(" ", "T"));
@@ -73,11 +81,14 @@ function formatDate(value) {
 }
 
 function normalizePost(post, index) {
+  const cat = normalizeCategory(post.type);
+
   return {
     ...post,
     id: clean(post.id) || "post-" + index,
     type: clean(post.type),
-    category: normalizeCategory(post.type),
+    category: cat,
+    priority: priorityRank(cat),
     label: label(post.type),
     title: clean(post.title),
     message: clean(post.message),
@@ -87,6 +98,14 @@ function normalizePost(post, index) {
     sortTime: parseTime(post.created_at) || parseTime(post.date) || 0,
     rowOrder: index
   };
+}
+
+function setDynamicIcons(logo) {
+  if (!logo) return;
+  const favicon = byId("dynamicFavicon");
+  const appleIcon = byId("dynamicAppleIcon");
+  if (favicon) favicon.href = logo;
+  if (appleIcon) appleIcon.href = logo;
 }
 
 function applySettings(settings) {
@@ -111,6 +130,7 @@ function applySettings(settings) {
     if (logo) {
       logoEl.src = logo;
       logoEl.classList.remove("hidden");
+      setDynamicIcons(logo);
     } else {
       logoEl.removeAttribute("src");
       logoEl.classList.add("hidden");
@@ -145,7 +165,7 @@ function renderLatest(post) {
       <div class="featured-layout">
         ${image}
         <div class="featured-content">
-          <div><span class="tag">${esc(post.label)}</span>${date}</div>
+          <div><span class="tag category-tag-large">${esc(post.label)}</span>${date}</div>
           <h2>${esc(post.title)}</h2>
           <p>${esc(excerpt(post.message, 220))}</p>
           ${readButton(post.id)}
@@ -156,7 +176,7 @@ function renderLatest(post) {
   }
 
   latestSection.innerHTML = `
-    <div class="tag">${esc(post.label)}</div>
+    <div class="tag category-tag-large">${esc(post.label)}</div>
     ${post.dateDisplay ? `<div class="date">${esc(post.dateDisplay)}</div>` : ""}
     <h2>${esc(post.title)}</h2>
     <p>${esc(excerpt(post.message, 220))}</p>
@@ -171,7 +191,7 @@ function compactCard(post) {
     <article class="compact-card">
       ${image}
       <div class="tag-row">
-        <span class="tag">${esc(post.label)}</span>
+        <span class="tag category-tag-large">${esc(post.label)}</span>
         ${post.dateDisplay ? `<span class="small-date">${esc(post.dateDisplay)}</span>` : ""}
       </div>
       <h2>${esc(post.title)}</h2>
@@ -189,10 +209,17 @@ function findCategory(posts, category, topId) {
   return posts.find((post) => post.category === category && post.id !== topId) || null;
 }
 
+function findTopPost(posts) {
+  const sorted = [...posts].sort((a, b) => {
+    if (a.priority !== b.priority) return a.priority - b.priority;
+    if (b.sortTime !== a.sortTime) return b.sortTime - a.sortTime;
+    return b.rowOrder - a.rowOrder;
+  });
+  return sorted[0] || null;
+}
+
 function renderPosts(posts) {
   allPosts = posts;
-
-  if (!latestSection) return;
 
   if (!posts.length) {
     latestSection.innerHTML = `
@@ -208,7 +235,7 @@ function renderPosts(posts) {
     return;
   }
 
-  const topPost = posts[0];
+  const topPost = findTopPost(posts);
   renderLatest(topPost);
 
   const news = findCategory(posts, "news", topPost.id);
@@ -228,7 +255,7 @@ function openPost(id) {
 
   modalContent.innerHTML = `
     ${post.image ? `<img src="${esc(post.image)}" class="modal-img" alt="${esc(post.title)}" onerror="this.style.display='none'">` : ""}
-    <span class="tag">${esc(post.label)}</span>
+    <span class="tag category-tag-large">${esc(post.label)}</span>
     <h1 class="modal-title">${esc(post.title)}</h1>
     <div class="modal-meta">${esc(post.dateDisplay)}${post.author ? ` • Posted by ${esc(post.author)}` : ""}</div>
     <div class="modal-message">${esc(post.message)}</div>
@@ -292,3 +319,46 @@ async function loadPublicData() {
 }
 
 loadPublicData();
+
+
+function createImageModal() {
+  let modal = document.getElementById("imageModal");
+  if (modal) return modal;
+
+  modal = document.createElement("div");
+  modal.id = "imageModal";
+  modal.className = "image-modal";
+  modal.innerHTML = '<button class="image-close-btn" type="button">Close</button><img id="imageModalImg" src="" alt="Post image">';
+  document.body.appendChild(modal);
+
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal || event.target.classList.contains("image-close-btn")) {
+      modal.classList.remove("show");
+      const img = document.getElementById("imageModalImg");
+      if (img) img.src = "";
+    }
+  });
+
+  return modal;
+}
+
+function openImageFull(src, alt) {
+  if (!src) return;
+  const modal = createImageModal();
+  const img = document.getElementById("imageModalImg");
+  if (!img) {
+    window.open(src, "_blank", "noopener");
+    return;
+  }
+  img.src = src;
+  img.alt = alt || "Post image";
+  modal.classList.add("show");
+}
+
+document.addEventListener("click", (event) => {
+  const img = event.target.closest("img.post-image, img.modal-img, img.archive-main-image");
+  if (!img) return;
+  event.preventDefault();
+  event.stopPropagation();
+  openImageFull(img.currentSrc || img.src, img.alt);
+});
