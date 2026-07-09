@@ -3,6 +3,15 @@ const announcementStatus = document.getElementById("announcementStatus");
 let advisoryPosts = [];
 let reminderPosts = [];
 
+function byId(id) {
+  return document.getElementById(id);
+}
+
+function setText(id, value) {
+  const el = byId(id);
+  if (el) el.textContent = value || "";
+}
+
 function esc(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -73,26 +82,27 @@ function applySettings(settings) {
   const schoolName = clean(settings.school_name) || "Learning Journey Child Growth Center, Inc.";
   const tagline = clean(settings.school_tagline) || "Where Learning is a Journey and Not a Race";
   const logo = clean(settings.logo_url);
-  const address = clean(settings.address);
 
-  document.getElementById("schoolName").textContent = schoolName;
-  document.getElementById("schoolTagline").textContent = tagline;
-  document.getElementById("footerSchoolName").textContent = schoolName;
-  document.getElementById("footerAddress").textContent = address;
+  setText("schoolName", schoolName);
+  setText("schoolTagline", tagline);
+  setText("footerSchoolName", schoolName);
 
-  const logoEl = document.getElementById("schoolLogo");
+  const logoEl = byId("schoolLogo");
 
-  if (logo) {
-    logoEl.src = logo;
-    logoEl.classList.remove("hidden");
-  } else {
-    logoEl.removeAttribute("src");
-    logoEl.classList.add("hidden");
+  if (logoEl) {
+    if (logo) {
+      logoEl.src = logo;
+      logoEl.classList.remove("hidden");
+    } else {
+      logoEl.removeAttribute("src");
+      logoEl.classList.add("hidden");
+    }
   }
 }
 
 function renderMain(post, mainId) {
-  const main = document.getElementById(mainId);
+  const main = byId(mainId);
+  if (!main) return;
 
   main.innerHTML = `
     ${post.image ? `<img class="archive-main-image" src="${esc(post.image)}" alt="${esc(post.title)}" onerror="this.style.display='none'">` : ""}
@@ -106,7 +116,9 @@ function renderMain(post, mainId) {
 }
 
 function renderHistory(posts, selectedId, historyId, selectFunctionName) {
-  const history = document.getElementById(historyId);
+  const history = byId(historyId);
+  if (!history) return;
+
   const previous = posts.filter((post) => post.id !== selectedId);
 
   if (!previous.length) {
@@ -130,8 +142,8 @@ function selectAdvisory(id) {
   renderMain(post, "advisoryMain");
   renderHistory(advisoryPosts, post.id, "advisoryHistory", "selectAdvisory");
 
-  if (window.innerWidth < 900) {
-    document.getElementById("advisoryMain").scrollIntoView({ behavior: "smooth", block: "start" });
+  if (window.innerWidth < 900 && byId("advisoryMain")) {
+    byId("advisoryMain").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 }
 
@@ -142,23 +154,28 @@ function selectReminder(id) {
   renderMain(post, "reminderMain");
   renderHistory(reminderPosts, post.id, "reminderHistory", "selectReminder");
 
-  if (window.innerWidth < 900) {
-    document.getElementById("reminderMain").scrollIntoView({ behavior: "smooth", block: "start" });
+  if (window.innerWidth < 900 && byId("reminderMain")) {
+    byId("reminderMain").scrollIntoView({ behavior: "smooth", block: "start" });
   }
 }
 
 function renderEmpty(mainId, historyId, title) {
-  document.getElementById(mainId).innerHTML = `
-    <h2>${esc(title)}</h2>
-    <p>Please check again later.</p>
-  `;
+  const main = byId(mainId);
+  const history = byId(historyId);
 
-  document.getElementById(historyId).innerHTML = `<p class="loading-text">No history yet.</p>`;
+  if (main) {
+    main.innerHTML = `
+      <h2>${esc(title)}</h2>
+      <p>Please check again later.</p>
+    `;
+  }
+
+  if (history) history.innerHTML = `<p class="loading-text">No history yet.</p>`;
 }
 
 async function loadAnnouncements() {
   try {
-    announcementStatus.textContent = "Loading announcements...";
+    if (announcementStatus) announcementStatus.textContent = "Loading announcements...";
 
     const res = await fetch("/api/public", {
       headers: { Accept: "application/json" }
@@ -189,13 +206,18 @@ async function loadAnnouncements() {
       renderEmpty("reminderMain", "reminderHistory", "No reminders posted yet.");
     }
 
-    announcementStatus.textContent = data.generated_at
-      ? "Last updated: " + new Date(data.generated_at).toLocaleString("en-PH")
-      : "";
+    if (announcementStatus) {
+      announcementStatus.textContent = data.generated_at
+        ? "Last updated: " + new Date(data.generated_at).toLocaleString("en-PH")
+        : "";
+    }
   } catch (error) {
-    document.getElementById("advisoryMain").innerHTML = `<h2>Unable to load school advisories</h2><p>${esc(error.message || "Please refresh the page.")}</p>`;
-    document.getElementById("reminderMain").innerHTML = `<h2>Unable to load reminders</h2><p>${esc(error.message || "Please refresh the page.")}</p>`;
-    announcementStatus.textContent = "";
+    const advisoryMain = byId("advisoryMain");
+    const reminderMain = byId("reminderMain");
+
+    if (advisoryMain) advisoryMain.innerHTML = `<h2>Unable to load school advisories</h2><p>${esc(error.message || "Please refresh the page.")}</p>`;
+    if (reminderMain) reminderMain.innerHTML = `<h2>Unable to load reminders</h2><p>${esc(error.message || "Please refresh the page.")}</p>`;
+    if (announcementStatus) announcementStatus.textContent = "";
   }
 }
 

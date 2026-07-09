@@ -9,6 +9,15 @@ const loadStatus = document.getElementById("loadStatus");
 
 let allPosts = [];
 
+function byId(id) {
+  return document.getElementById(id);
+}
+
+function setText(id, value) {
+  const el = byId(id);
+  if (el) el.textContent = value || "";
+}
+
 function esc(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -90,28 +99,35 @@ function applySettings(settings) {
   const email = clean(settings.email);
   const maps = clean(settings.google_maps);
   const messenger = clean(settings.messenger);
-  const address = clean(settings.address);
 
   document.title = schoolName;
-  document.getElementById("schoolName").textContent = schoolName;
-  document.getElementById("schoolTagline").textContent = tagline;
-  document.getElementById("footerSchoolName").textContent = schoolName;
-  document.getElementById("footerAddress").textContent = address;
+  setText("schoolName", schoolName);
+  setText("schoolTagline", tagline);
+  setText("footerSchoolName", schoolName);
 
-  const logoEl = document.getElementById("schoolLogo");
+  const logoEl = byId("schoolLogo");
 
-  if (logo) {
-    logoEl.src = logo;
-    logoEl.classList.remove("hidden");
-  } else {
-    logoEl.removeAttribute("src");
-    logoEl.classList.add("hidden");
+  if (logoEl) {
+    if (logo) {
+      logoEl.src = logo;
+      logoEl.classList.remove("hidden");
+    } else {
+      logoEl.removeAttribute("src");
+      logoEl.classList.add("hidden");
+    }
   }
 
-  if (phone) document.getElementById("callAction").href = "tel:" + phone;
-  if (email) document.getElementById("emailAction").href = "mailto:" + email;
-  if (maps) document.getElementById("mapsAction").href = maps;
-  if (messenger) document.getElementById("messengerAction").href = messenger;
+  const callAction = byId("callAction");
+  if (callAction && phone) callAction.href = "tel:" + phone;
+
+  const emailAction = byId("emailAction");
+  if (emailAction && email) emailAction.href = "mailto:" + email;
+
+  const mapsAction = byId("mapsAction");
+  if (mapsAction && maps) mapsAction.href = maps;
+
+  const messengerAction = byId("messengerAction");
+  if (messengerAction && messenger) messengerAction.href = messenger;
 }
 
 function readButton(id) {
@@ -119,6 +135,8 @@ function readButton(id) {
 }
 
 function renderLatest(post) {
+  if (!latestSection) return;
+
   const image = post.image ? `<img src="${esc(post.image)}" alt="${esc(post.title)}" class="post-image" onerror="this.style.display='none'">` : "";
   const date = post.dateDisplay ? `<span class="date-inline">${esc(post.dateDisplay)}</span>` : "";
 
@@ -181,10 +199,10 @@ function renderPosts(posts) {
       <p>Published posts will appear here once available.</p>
     `;
 
-    newsSection.innerHTML = emptyCard("news");
-    eventsSection.innerHTML = emptyCard("events");
-    remindersSection.innerHTML = emptyCard("reminders");
-    advisorySection.innerHTML = emptyCard("school advisories");
+    if (newsSection) newsSection.innerHTML = emptyCard("news");
+    if (eventsSection) eventsSection.innerHTML = emptyCard("events");
+    if (remindersSection) remindersSection.innerHTML = emptyCard("reminders");
+    if (advisorySection) advisorySection.innerHTML = emptyCard("school advisories");
     return;
   }
 
@@ -196,15 +214,15 @@ function renderPosts(posts) {
   const reminder = findCategory(posts, "reminder", topPost.id);
   const advisory = findCategory(posts, "school advisory", topPost.id);
 
-  newsSection.innerHTML = news ? compactCard(news) : emptyCard("news");
-  eventsSection.innerHTML = event ? compactCard(event) : emptyCard("events");
-  remindersSection.innerHTML = reminder ? compactCard(reminder) : emptyCard("reminders");
-  advisorySection.innerHTML = advisory ? compactCard(advisory) : emptyCard("school advisories");
+  if (newsSection) newsSection.innerHTML = news ? compactCard(news) : emptyCard("news");
+  if (eventsSection) eventsSection.innerHTML = event ? compactCard(event) : emptyCard("events");
+  if (remindersSection) remindersSection.innerHTML = reminder ? compactCard(reminder) : emptyCard("reminders");
+  if (advisorySection) advisorySection.innerHTML = advisory ? compactCard(advisory) : emptyCard("school advisories");
 }
 
 function openPost(id) {
   const post = allPosts.find((item) => item.id === id);
-  if (!post) return;
+  if (!post || !modal || !modalContent) return;
 
   modalContent.innerHTML = `
     ${post.image ? `<img src="${esc(post.image)}" class="modal-img" alt="${esc(post.title)}" onerror="this.style.display='none'">` : ""}
@@ -218,16 +236,18 @@ function openPost(id) {
 }
 
 function closeModal() {
-  modal.classList.remove("show");
+  if (modal) modal.classList.remove("show");
 }
 
-modal.addEventListener("click", (event) => {
-  if (event.target === modal) closeModal();
-});
+if (modal) {
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) closeModal();
+  });
+}
 
 async function loadPublicData() {
   try {
-    loadStatus.textContent = "Loading school updates...";
+    if (loadStatus) loadStatus.textContent = "Loading school updates...";
 
     const res = await fetch("/api/public", {
       headers: { Accept: "application/json" }
@@ -246,22 +266,26 @@ async function loadPublicData() {
 
     renderPosts(posts);
 
-    loadStatus.textContent = data.generated_at
-      ? "Last updated: " + new Date(data.generated_at).toLocaleString("en-PH")
-      : "";
+    if (loadStatus) {
+      loadStatus.textContent = data.generated_at
+        ? "Last updated: " + new Date(data.generated_at).toLocaleString("en-PH")
+        : "";
+    }
   } catch (error) {
-    latestSection.innerHTML = `
-      <div class="tag">Latest Update</div>
-      <h2>Unable to load school updates</h2>
-      <p>Please refresh the page or try again later.</p>
-    `;
+    if (latestSection) {
+      latestSection.innerHTML = `
+        <div class="tag">Latest Update</div>
+        <h2>Unable to load school updates</h2>
+        <p>Please refresh the page or try again later.</p>
+      `;
+    }
 
-    newsSection.innerHTML = emptyCard("news");
-    eventsSection.innerHTML = emptyCard("events");
-    remindersSection.innerHTML = emptyCard("reminders");
-    advisorySection.innerHTML = emptyCard("school advisories");
+    if (newsSection) newsSection.innerHTML = emptyCard("news");
+    if (eventsSection) eventsSection.innerHTML = emptyCard("events");
+    if (remindersSection) remindersSection.innerHTML = emptyCard("reminders");
+    if (advisorySection) advisorySection.innerHTML = emptyCard("school advisories");
 
-    loadStatus.textContent = error.message || "Unable to load data.";
+    if (loadStatus) loadStatus.textContent = error.message || "Unable to load data.";
   }
 }
 

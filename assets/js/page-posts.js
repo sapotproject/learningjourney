@@ -5,6 +5,15 @@ const archiveStatus = document.getElementById("archiveStatus");
 
 let pagePosts = [];
 
+function byId(id) {
+  return document.getElementById(id);
+}
+
+function setText(id, value) {
+  const el = byId(id);
+  if (el) el.textContent = value || "";
+}
+
 function esc(value) {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -76,20 +85,20 @@ function applySettings(settings) {
   const schoolName = clean(settings.school_name) || "Learning Journey Child Growth Center, Inc.";
   const tagline = clean(settings.school_tagline) || "Where Learning is a Journey and Not a Race";
   const logo = clean(settings.logo_url);
-  const address = clean(settings.address);
 
-  document.getElementById("schoolName").textContent = schoolName;
-  document.getElementById("schoolTagline").textContent = tagline;
-  document.getElementById("footerSchoolName").textContent = schoolName;
-  document.getElementById("footerAddress").textContent = address;
+  setText("schoolName", schoolName);
+  setText("schoolTagline", tagline);
+  setText("footerSchoolName", schoolName);
 
-  const logoEl = document.getElementById("schoolLogo");
-  if (logo) {
-    logoEl.src = logo;
-    logoEl.classList.remove("hidden");
-  } else {
-    logoEl.removeAttribute("src");
-    logoEl.classList.add("hidden");
+  const logoEl = byId("schoolLogo");
+  if (logoEl) {
+    if (logo) {
+      logoEl.src = logo;
+      logoEl.classList.remove("hidden");
+    } else {
+      logoEl.removeAttribute("src");
+      logoEl.classList.add("hidden");
+    }
   }
 }
 
@@ -102,6 +111,8 @@ function matchMode(post, mode) {
 }
 
 function renderMain(post) {
+  if (!archiveMain) return;
+
   archiveMain.innerHTML = `
     ${post.image ? `<img class="archive-main-image" src="${esc(post.image)}" alt="${esc(post.title)}" onerror="this.style.display='none'">` : ""}
     <span class="tag">${esc(post.label)}</span>
@@ -114,6 +125,8 @@ function renderMain(post) {
 }
 
 function renderHistory(selectedId) {
+  if (!archiveHistory) return;
+
   const history = pagePosts.filter((post) => post.id !== selectedId);
 
   if (!history.length) {
@@ -137,17 +150,19 @@ function selectPost(id) {
   renderMain(post);
   renderHistory(post.id);
 
-  if (window.innerWidth < 900) {
+  if (window.innerWidth < 900 && archiveMain) {
     archiveMain.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 }
 
 async function loadPage() {
+  if (!layout) return;
+
   const mode = layout.dataset.pageMode;
   const emptyText = layout.dataset.emptyText || "No posts yet.";
 
   try {
-    archiveStatus.textContent = "Loading posts...";
+    if (archiveStatus) archiveStatus.textContent = "Loading posts...";
 
     const res = await fetch("/api/public", {
       headers: { Accept: "application/json" }
@@ -164,21 +179,23 @@ async function loadPage() {
       .sort((a, b) => b.sortTime !== a.sortTime ? b.sortTime - a.sortTime : b.rowOrder - a.rowOrder);
 
     if (!pagePosts.length) {
-      archiveMain.innerHTML = `<h2>${esc(emptyText)}</h2><p>Please check again later.</p>`;
-      archiveHistory.innerHTML = `<p class="loading-text">No history yet.</p>`;
-      archiveStatus.textContent = "";
+      if (archiveMain) archiveMain.innerHTML = `<h2>${esc(emptyText)}</h2><p>Please check again later.</p>`;
+      if (archiveHistory) archiveHistory.innerHTML = `<p class="loading-text">No history yet.</p>`;
+      if (archiveStatus) archiveStatus.textContent = "";
       return;
     }
 
     selectPost(pagePosts[0].id);
 
-    archiveStatus.textContent = data.generated_at
-      ? "Last updated: " + new Date(data.generated_at).toLocaleString("en-PH")
-      : "";
+    if (archiveStatus) {
+      archiveStatus.textContent = data.generated_at
+        ? "Last updated: " + new Date(data.generated_at).toLocaleString("en-PH")
+        : "";
+    }
   } catch (error) {
-    archiveMain.innerHTML = `<h2>Unable to load posts</h2><p>${esc(error.message || "Please refresh the page.")}</p>`;
-    archiveHistory.innerHTML = `<p class="loading-text">Unable to load history.</p>`;
-    archiveStatus.textContent = "";
+    if (archiveMain) archiveMain.innerHTML = `<h2>Unable to load posts</h2><p>${esc(error.message || "Please refresh the page.")}</p>`;
+    if (archiveHistory) archiveHistory.innerHTML = `<p class="loading-text">Unable to load history.</p>`;
+    if (archiveStatus) archiveStatus.textContent = "";
   }
 }
 

@@ -2,6 +2,15 @@ function clean(value) {
   return String(value ?? "").trim();
 }
 
+function byId(id) {
+  return document.getElementById(id);
+}
+
+function setText(id, value) {
+  const el = byId(id);
+  if (el) el.textContent = value || "";
+}
+
 function applySettings(settings) {
   settings = settings || {};
 
@@ -15,61 +24,51 @@ function applySettings(settings) {
   const messenger = clean(settings.messenger);
   const maps = clean(settings.google_maps);
 
-  const schoolNameEls = ["schoolName", "footerSchoolName", "aboutSchoolName"];
-  schoolNameEls.forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = schoolName;
+  ["schoolName", "footerSchoolName", "aboutSchoolName"].forEach((id) => {
+    setText(id, schoolName);
   });
 
-  const taglineEls = ["schoolTagline", "aboutTagline"];
-  taglineEls.forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) el.textContent = tagline;
+  ["schoolTagline", "aboutTagline"].forEach((id) => {
+    setText(id, tagline);
   });
 
-  const footerAddress = document.getElementById("footerAddress");
-  if (footerAddress) footerAddress.textContent = address;
+  setText("footerAddress", address);
 
-  const logoEl = document.getElementById("schoolLogo");
-  if (logoEl && logo) {
-    logoEl.src = logo;
-    logoEl.classList.remove("hidden");
+  const logoEl = byId("schoolLogo");
+  if (logoEl) {
+    if (logo) {
+      logoEl.src = logo;
+      logoEl.classList.remove("hidden");
+    } else {
+      logoEl.removeAttribute("src");
+      logoEl.classList.add("hidden");
+    }
   }
 
-  const contactAddress = document.getElementById("contactAddress");
-  if (contactAddress) contactAddress.textContent = address || "Not available yet.";
+  setText("contactAddress", address || "Not available yet.");
+  setText("contactHours", hours || "Not available yet.");
+  setText("contactPhone", phone || "Not available yet.");
+  setText("contactEmail", email || "Not available yet.");
 
-  const contactHours = document.getElementById("contactHours");
-  if (contactHours) contactHours.textContent = hours || "Not available yet.";
-
-  const contactPhone = document.getElementById("contactPhone");
-  if (contactPhone) contactPhone.textContent = phone || "Not available yet.";
-
-  const contactEmail = document.getElementById("contactEmail");
-  if (contactEmail) contactEmail.textContent = email || "Not available yet.";
-
-  const contactCall = document.getElementById("contactCall");
+  const contactCall = byId("contactCall");
   if (contactCall && phone) contactCall.href = "tel:" + phone;
 
-  const contactMail = document.getElementById("contactMail");
+  const contactMail = byId("contactMail");
   if (contactMail && email) contactMail.href = "mailto:" + email;
 
-  const contactMessenger = document.getElementById("contactMessenger");
+  const contactMessenger = byId("contactMessenger");
   if (contactMessenger && messenger) contactMessenger.href = messenger;
 
-  const contactMaps = document.getElementById("contactMaps");
+  const contactMaps = byId("contactMaps");
   if (contactMaps && maps) contactMaps.href = maps;
 
-  const admissionPhone = document.getElementById("admissionPhone");
-  if (admissionPhone) admissionPhone.textContent = phone || "Not available yet.";
+  setText("admissionPhone", phone || "Not available yet.");
+  setText("admissionEmail", email || "Not available yet.");
 
-  const admissionEmail = document.getElementById("admissionEmail");
-  if (admissionEmail) admissionEmail.textContent = email || "Not available yet.";
-
-  const admissionCall = document.getElementById("admissionCall");
+  const admissionCall = byId("admissionCall");
   if (admissionCall && phone) admissionCall.href = "tel:" + phone;
 
-  const admissionMessenger = document.getElementById("admissionMessenger");
+  const admissionMessenger = byId("admissionMessenger");
   if (admissionMessenger && messenger) admissionMessenger.href = messenger;
 }
 
