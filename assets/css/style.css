@@ -177,3 +177,132 @@
 #footerSchoolName {
   font-family: "Kristen ITC", "Comic Sans MS", cursive;
 }
+
+
+/* Safe QA Polish Batch 1 */
+
+/* Revert school name font back to original safe web font */
+.school-text h1,
+.admin-brand h1,
+#footerSchoolName {
+  font-family: Arial, Helvetica, sans-serif !important;
+}
+
+/* Header polish: compact spacing, bigger logo, closer school name */
+.header {
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+  position: sticky;
+  top: 0;
+  z-index: 1600;
+}
+
+.header-inner {
+  gap: 8px !important;
+}
+
+.header .school-logo {
+  width: 92px !important;
+  height: 92px !important;
+  max-width: 92px !important;
+  max-height: 92px !important;
+}
+
+/* Keep footer cleaner: school + RACSMEDIA should be stronger than portal link */
+.footer p {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+}
+
+.footer-meta {
+  font-size: 13px !important;
+}
+
+.footer-teacher-link a {
+  font-size: 12px !important;
+  font-weight: 500 !important;
+}
+
+/* Sticky mobile hamburger menu */
+.mobile-menu-bar {
+  position: sticky;
+  top: 116px;
+  z-index: 1550;
+}
+
+@media (max-width: 768px) {
+  /* Make sticky header smaller on phones so it will not cover too much screen */
+  .header {
+    padding: 8px 10px !important;
+  }
+
+  .header-inner {
+    flex-direction: row !important;
+    justify-content: center !important;
+    gap: 7px !important;
+  }
+
+  .header .school-logo {
+    width: 64px !important;
+    height: 64px !important;
+    max-width: 64px !important;
+    max-height: 64px !important;
+  }
+
+  .school-text h1 {
+    font-size: 17px !important;
+    line-height: 1.15 !important;
+    text-align: left !important;
+  }
+
+  .school-text p {
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+    text-align: left !important;
+    margin-top: 3px !important;
+  }
+
+  .mobile-menu-bar {
+    top: 82px;
+    z-index: 1550;
+  }
+
+  .mobile-menu-toggle {
+    margin-top: 7px !important;
+    margin-bottom: 7px !important;
+  }
+
+  .nav.nav-open {
+    position: fixed;
+    top: 142px;
+    left: 0;
+    right: 0;
+    max-height: calc(100vh - 142px);
+    overflow: auto;
+    z-index: 1540;
+    box-shadow: 0 18px 30px rgba(0,0,0,.24);
+  }
+
+  .footer p {
+    font-size: 15px !important;
+    font-weight: 800 !important;
+  }
+
+  .footer-meta {
+    font-size: 14px !important;
+  }
+
+  .footer-teacher-link a {
+    font-size: 12px !important;
+    font-weight: 500 !important;
+  }
+}
+
+/* Calendar future events note */
+.calendar-section-note {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-top: 6px;
+  margin-bottom: 12px;
+}

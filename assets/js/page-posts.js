@@ -158,10 +158,6 @@ function selectPost(id) {
 
   renderMain(post);
   renderHistory(post.id);
-
-  if (window.innerWidth < 900 && archiveMain) {
-    archiveMain.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
 }
 
 async function loadPage() {

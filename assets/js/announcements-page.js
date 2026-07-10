@@ -150,10 +150,6 @@ function selectAdvisory(id) {
 
   renderMain(post, "advisoryMain");
   renderHistory(advisoryPosts, post.id, "advisoryHistory", "selectAdvisory");
-
-  if (window.innerWidth < 900 && byId("advisoryMain")) {
-    byId("advisoryMain").scrollIntoView({ behavior: "smooth", block: "start" });
-  }
 }
 
 function selectReminder(id) {
@@ -162,10 +158,6 @@ function selectReminder(id) {
 
   renderMain(post, "reminderMain");
   renderHistory(reminderPosts, post.id, "reminderHistory", "selectReminder");
-
-  if (window.innerWidth < 900 && byId("reminderMain")) {
-    byId("reminderMain").scrollIntoView({ behavior: "smooth", block: "start" });
-  }
 }
 
 function renderEmpty(mainId, historyId, title) {
