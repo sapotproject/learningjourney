@@ -500,3 +500,25 @@
     font-weight: 700 !important;
   }
 }
+
+/* Calendar event images */
+.calendar-event-image {
+  width: 100%;
+  max-height: 230px;
+  object-fit: cover;
+  border-radius: 14px;
+  background: #eee;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.calendar-image-btn {
+  margin-bottom: 2px;
+}
+
+@media (max-width: 768px) {
+  .calendar-event-image {
+    max-height: 190px;
+  }
+}
+

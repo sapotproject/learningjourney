@@ -51,6 +51,10 @@ function formatDate(value) {
   return d ? d.toLocaleDateString("en-PH", { year: "numeric", month: "short", day: "numeric" }) : value;
 }
 
+function getImage(post) {
+  return clean(post.image || post.image_url || post.imageUrl || "");
+}
+
 function setDynamicIcons(logo) {
   if (!logo) return;
 
@@ -91,7 +95,8 @@ function normalizeEvent(post, index) {
     message: clean(post.message),
     date: dateValue,
     dateObj: d,
-    dateDisplay: formatDate(dateValue)
+    dateDisplay: formatDate(dateValue),
+    image: getImage(post)
   };
 }
 
@@ -158,6 +163,16 @@ function renderCalendar() {
   renderUpcomingBeyondMonth();
 }
 
+function eventImageHtml(event) {
+  if (!event.image) return "";
+
+  return `
+    <button class="image-open-btn calendar-image-btn" type="button" onclick="openImageModal('${esc(event.image)}')">
+      <img class="calendar-event-image" src="${esc(event.image)}" alt="${esc(event.title)}" loading="lazy">
+    </button>
+  `;
+}
+
 function renderEvents(targetEl, events, emptyText) {
   if (!targetEl) return;
 
@@ -168,6 +183,7 @@ function renderEvents(targetEl, events, emptyText) {
 
   targetEl.innerHTML = events.map((event) => `
     <article class="calendar-event-card">
+      ${eventImageHtml(event)}
       <span class="tag category-tag-large">Event</span>
       <h3>${esc(event.title)}</h3>
       <p class="calendar-event-date">${esc(event.dateDisplay)}</p>
