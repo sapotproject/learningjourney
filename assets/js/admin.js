@@ -6,12 +6,23 @@ localStorage.removeItem("lj_user");
 let token = sessionStorage.getItem("lj_token") || "";
 let currentUser = JSON.parse(sessionStorage.getItem("lj_user") || "null");
 
+let publishedPostCache = [];
+let deletedPostCache = [];
+let publishedVisibleCount = 10;
+let deletedVisibleCount = 10;
+
+const POST_IMAGE_MAX_BYTES = 500 * 1024;
+
 const loginPanel = document.getElementById("loginPanel");
 const dashboardPanel = document.getElementById("dashboardPanel");
 const logoutBtn = document.getElementById("logoutBtn");
 
 function authHeaders() {
   return { Authorization: "Bearer " + token };
+}
+
+function byId(id) {
+  return document.getElementById(id);
 }
 
 function esc(value) {
@@ -24,24 +35,30 @@ function esc(value) {
 }
 
 function show(el) {
-  el.classList.remove("hidden");
+  if (el) el.classList.remove("hidden");
 }
 
 function hide(el) {
-  el.classList.add("hidden");
+  if (el) el.classList.add("hidden");
 }
 
 function setMsg(id, text, className) {
-  const el = document.getElementById(id);
+  const el = byId(id);
+  if (!el) return;
+
   el.textContent = text || "";
   el.className = "form-message";
+
   if (className) el.classList.add(className);
 }
 
 function setMiniMsg(id, text, className) {
-  const el = document.getElementById(id);
+  const el = byId(id);
+  if (!el) return;
+
   el.textContent = text || "";
   el.className = "mini-message";
+
   if (className) el.classList.add(className);
 }
 
@@ -92,12 +109,22 @@ function imageThumb(post) {
   `;
 }
 
+function fileTooLarge(file, maxBytes) {
+  return file && file.size > maxBytes;
+}
+
+function formatKb(bytes) {
+  return Math.ceil(bytes / 1024) + " KB";
+}
+
 function start() {
   if (token && currentUser) {
     hide(loginPanel);
     show(dashboardPanel);
     show(logoutBtn);
-    document.getElementById("postDate").valueAsDate = new Date();
+
+    if (byId("postDate")) byId("postDate").valueAsDate = new Date();
+
     loadAll();
   } else {
     token = "";
@@ -110,7 +137,7 @@ function start() {
   }
 }
 
-document.getElementById("loginForm").addEventListener("submit", async (event) => {
+byId("loginForm").addEventListener("submit", async (event) => {
   event.preventDefault();
 
   setMsg("loginMessage", "Logging in...", "");
@@ -149,6 +176,23 @@ logoutBtn.onclick = () => {
   start();
 };
 
+function updateCurrentImageBox() {
+  const box = byId("currentImageBox");
+  const previewImg = byId("currentPostImagePreview");
+  const removeBox = byId("removePostImage");
+
+  if (!box || !previewImg) return;
+
+  if (postId.value && existingImageUrl.value) {
+    previewImg.src = existingImageUrl.value;
+    box.classList.remove("hidden");
+  } else {
+    previewImg.src = "";
+    box.classList.add("hidden");
+    if (removeBox) removeBox.checked = false;
+  }
+}
+
 function preview() {
   const type = postType.value;
   const date = postDate.value;
@@ -156,6 +200,11 @@ function preview() {
   const message = postMessageText.value;
   const imageFile = postImage.files && postImage.files[0];
   const pinned = postPinned && postPinned.checked;
+  const removeImage = removePostImage && removePostImage.checked;
+
+  if (imageFile && fileTooLarge(imageFile, POST_IMAGE_MAX_BYTES)) {
+    setMsg("postMessage", `Image is too large (${formatKb(imageFile.size)}). Maximum is 500 KB.`, "error");
+  }
 
   if (!type && !date && !title && !message && !imageFile && !existingImageUrl.value) {
     postPreview.innerHTML = '<p class="preview-empty">Preview will appear here while you type.</p>';
@@ -164,11 +213,13 @@ function preview() {
 
   let imageHtml = "";
 
-  if (imageFile) {
+  if (imageFile && !fileTooLarge(imageFile, POST_IMAGE_MAX_BYTES)) {
     const tempUrl = URL.createObjectURL(imageFile);
     imageHtml = `<img class="preview-image" src="${tempUrl}" alt="Preview image">`;
-  } else if (existingImageUrl.value) {
+  } else if (existingImageUrl.value && !removeImage) {
     imageHtml = `<img class="preview-image" src="${esc(existingImageUrl.value)}" alt="Current image">`;
+  } else if (existingImageUrl.value && removeImage) {
+    imageHtml = `<p class="preview-empty">Current image will be removed after saving.</p>`;
   }
 
   postPreview.innerHTML = `
@@ -181,14 +232,46 @@ function preview() {
   `;
 }
 
-["postType", "postDate", "postTitle", "postMessageText", "postImage", "postPinned"].forEach((id) => {
-  const el = document.getElementById(id);
+["postType", "postDate", "postTitle", "postMessageText", "postImage", "postPinned", "removePostImage"].forEach((id) => {
+  const el = byId(id);
+  if (!el) return;
+
   el.addEventListener("input", preview);
   el.addEventListener("change", preview);
 });
 
+if (byId("postSearch")) {
+  postSearch.addEventListener("input", () => {
+    publishedVisibleCount = 10;
+    renderPostLists();
+  });
+}
+
+if (byId("postFilter")) {
+  postFilter.addEventListener("change", () => {
+    publishedVisibleCount = 10;
+    renderPostLists();
+  });
+}
+
+if (byId("clearPostFilters")) {
+  clearPostFilters.addEventListener("click", () => {
+    postSearch.value = "";
+    postFilter.value = "all";
+    publishedVisibleCount = 10;
+    renderPostLists();
+  });
+}
+
 postForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+
+  const imageFile = postImage.files && postImage.files[0];
+
+  if (fileTooLarge(imageFile, POST_IMAGE_MAX_BYTES)) {
+    setMsg("postMessage", `Image is too large (${formatKb(imageFile.size)}). Maximum is 500 KB.`, "error");
+    return;
+  }
 
   setMsg("postMessage", "Saving post...", "");
 
@@ -200,10 +283,11 @@ postForm.addEventListener("submit", async (event) => {
   fd.append("date", postDate.value);
   fd.append("existing_image_url", existingImageUrl.value);
   fd.append("existing_image_key", existingImageKey.value);
+  fd.append("remove_image", removePostImage && removePostImage.checked ? "1" : "0");
   fd.append("pinned", postPinned && postPinned.checked ? "1" : "0");
 
-  if (postImage.files[0]) {
-    fd.append("image", postImage.files[0]);
+  if (imageFile) {
+    fd.append("image", imageFile);
   }
 
   const res = await fetch("/api/posts", {
@@ -231,10 +315,15 @@ function clearPost() {
   postId.value = "";
   existingImageUrl.value = "";
   existingImageKey.value = "";
+
   if (postPinned) postPinned.checked = false;
+  if (removePostImage) removePostImage.checked = false;
+
   postFormTitle.textContent = "Create New Post";
   savePostBtn.textContent = "Publish Post";
   postDate.valueAsDate = new Date();
+
+  updateCurrentImageBox();
   preview();
 }
 
@@ -250,20 +339,85 @@ async function loadPosts() {
 
   if (!data.success) {
     allPosts.innerHTML = '<p class="loading-text">' + esc(data.message || "Unable to load.") + "</p>";
+    recyclePosts.innerHTML = '<p class="loading-text">Unable to load recycle bin.</p>';
+
     if (res.status === 401 || res.status === 403) logoutBtn.click();
+
     return;
   }
 
-  const publishedPosts = data.posts.filter((post) => !isDeleted(post));
-  const deletedPosts = data.posts.filter(isDeleted);
+  publishedPostCache = data.posts.filter((post) => !isDeleted(post));
+  deletedPostCache = data.posts.filter(isDeleted);
+
+  renderPostLists();
+}
+
+function filteredPublishedPosts() {
+  const query = byId("postSearch") ? postSearch.value.trim().toLowerCase() : "";
+  const filter = byId("postFilter") ? postFilter.value : "all";
+
+  return publishedPostCache.filter((post) => {
+    const matchQuery = !query ||
+      String(post.title || "").toLowerCase().includes(query) ||
+      String(post.message || "").toLowerCase().includes(query) ||
+      String(post.author || "").toLowerCase().includes(query) ||
+      String(post.type || "").toLowerCase().includes(query);
+
+    const matchFilter =
+      filter === "all" ||
+      (filter === "featured" && isPinned(post)) ||
+      post.type === filter;
+
+    return matchQuery && matchFilter;
+  });
+}
+
+function renderPostLists() {
+  const publishedPosts = filteredPublishedPosts();
+  const visiblePublished = publishedPosts.slice(0, publishedVisibleCount);
+  const visibleDeleted = deletedPostCache.slice(0, deletedVisibleCount);
 
   allPosts.innerHTML = publishedPosts.length
-    ? publishedPosts.map(postItem).join("")
-    : '<p class="loading-text">No posts yet.</p>';
+    ? visiblePublished.map(postItem).join("") + loadMorePublishedHtml(publishedPosts.length)
+    : '<p class="loading-text">No matching posts found.</p>';
 
-  recyclePosts.innerHTML = deletedPosts.length
-    ? deletedPosts.map(recycleItem).join("")
+  recyclePosts.innerHTML = deletedPostCache.length
+    ? visibleDeleted.map(recycleItem).join("") + loadMoreDeletedHtml(deletedPostCache.length)
     : '<p class="loading-text">Recycle Bin is empty.</p>';
+}
+
+function loadMorePublishedHtml(total) {
+  if (publishedVisibleCount >= total) {
+    return `<p class="loading-text list-count-note">Showing ${total} post${total === 1 ? "" : "s"}.</p>`;
+  }
+
+  return `
+    <button class="small-btn clear-btn load-more-btn" onclick="loadMorePublished()" type="button">
+      Load More Posts (${publishedVisibleCount} of ${total})
+    </button>
+  `;
+}
+
+function loadMoreDeletedHtml(total) {
+  if (deletedVisibleCount >= total) {
+    return `<p class="loading-text list-count-note">Showing ${total} deleted post${total === 1 ? "" : "s"}.</p>`;
+  }
+
+  return `
+    <button class="small-btn clear-btn load-more-btn" onclick="loadMoreDeleted()" type="button">
+      Load More Deleted Posts (${deletedVisibleCount} of ${total})
+    </button>
+  `;
+}
+
+function loadMorePublished() {
+  publishedVisibleCount += 10;
+  renderPostLists();
+}
+
+function loadMoreDeleted() {
+  deletedVisibleCount += 10;
+  renderPostLists();
 }
 
 function postItem(post) {
@@ -318,11 +472,14 @@ function editPost(post) {
   postDate.value = post.date;
   existingImageUrl.value = post.image || post.image_url || "";
   existingImageKey.value = post.image_key || "";
+
   if (postPinned) postPinned.checked = isPinned(post);
+  if (removePostImage) removePostImage.checked = false;
 
   postFormTitle.textContent = "Edit Post";
   savePostBtn.textContent = "Update Post";
 
+  updateCurrentImageBox();
   window.scrollTo({ top: 0, behavior: "smooth" });
   preview();
 }
@@ -370,6 +527,12 @@ async function permanentDelete(id) {
   });
 
   const data = await res.json();
+
+  if (!data.success) {
+    alert(data.message || "Delete failed.");
+    return;
+  }
+
   alert(data.message || "Done.");
   loadPosts();
 }
@@ -412,6 +575,11 @@ async function loadSettings() {
 uploadLogoBtn.addEventListener("click", async () => {
   if (!set_logo_file.files[0]) {
     setMiniMsg("logoUploadMessage", "Please choose a logo image first.", "error");
+    return;
+  }
+
+  if (set_logo_file.files[0].size > 500 * 1024) {
+    setMiniMsg("logoUploadMessage", "Logo is too large. Please keep it below 500 KB.", "error");
     return;
   }
 

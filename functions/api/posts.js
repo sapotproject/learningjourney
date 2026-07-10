@@ -10,6 +10,8 @@ import {
   postAdminRow
 } from "../_shared.js";
 
+const POST_IMAGE_MAX_BYTES = 500 * 1024;
+
 async function ensurePinnedColumn(env) {
   const info = await env.DB.prepare(`PRAGMA table_info(posts)`).all();
   const hasPinned = (info.results || []).some((col) => col.name === "pinned");
@@ -19,9 +21,13 @@ async function ensurePinnedColumn(env) {
   }
 }
 
-function normalizePinned(value) {
+function truthy(value) {
   const s = String(value ?? "0").toLowerCase().trim();
-  return ["1", "true", "yes", "on", "pinned"].includes(s) ? 1 : 0;
+  return ["1", "true", "yes", "on", "pinned"].includes(s);
+}
+
+function normalizePinned(value) {
+  return truthy(value) ? 1 : 0;
 }
 
 async function unpinOthers(env, exceptId = "") {
@@ -31,6 +37,32 @@ async function unpinOthers(env, exceptId = "") {
   }
 
   await env.DB.prepare(`UPDATE posts SET pinned = 0`).run();
+}
+
+async function uploadPostImage(env, image) {
+  const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
+  if (!allowed.includes(image.type)) {
+    throw new Error("Only JPG, PNG, WebP, and GIF images are allowed.");
+  }
+
+  if (image.size > POST_IMAGE_MAX_BYTES) {
+    throw new Error("Image is too large. Maximum size is 500 KB.");
+  }
+
+  const safe = sanitizeFilename(image.name || "post-image");
+  const imageKey = `posts/${new Date().toISOString().slice(0, 10)}/${uuid()}-${safe}`;
+
+  await env.MEDIA.put(imageKey, await image.arrayBuffer(), {
+    httpMetadata: {
+      contentType: image.type
+    }
+  });
+
+  return {
+    imageKey,
+    imageUrl: mediaUrl(env, imageKey)
+  };
 }
 
 export async function onRequestGet(context) {
@@ -66,47 +98,49 @@ export async function onRequestPost(context) {
   const date = String(form.get("date") || "").trim();
   const existingImageUrl = String(form.get("existing_image_url") || "").trim();
   const existingImageKey = String(form.get("existing_image_key") || "").trim();
+  const removeImage = truthy(form.get("remove_image"));
   const pinned = normalizePinned(form.get("pinned"));
 
   if (!type || !title || !message || !date) {
     return bad("Type, title, message, and date are required.");
   }
 
-  let imageUrl = existingImageUrl;
-  let imageKey = existingImageKey;
+  let existingPost = null;
+
+  if (id) {
+    existingPost = await context.env.DB.prepare(
+      `SELECT id, title, image_key FROM posts WHERE id = ?`
+    ).bind(id).first();
+
+    if (!existingPost) return bad("Post not found.", 404);
+  }
+
+  let imageUrl = removeImage ? "" : existingImageUrl;
+  let imageKey = removeImage ? "" : existingImageKey;
 
   const image = form.get("image");
+  const hasNewImage = image && typeof image === "object" && image.size > 0;
 
-  if (image && typeof image === "object" && image.size > 0) {
-    const allowed = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-
-    if (!allowed.includes(image.type)) {
-      return bad("Only JPG, PNG, WebP, and GIF images are allowed.");
+  if (hasNewImage) {
+    try {
+      const uploaded = await uploadPostImage(context.env, image);
+      imageUrl = uploaded.imageUrl;
+      imageKey = uploaded.imageKey;
+    } catch (error) {
+      return bad(error.message || "Image upload failed.");
     }
+  }
 
-    if (image.size > 3 * 1024 * 1024) {
-      return bad("Image is too large. Maximum size is 3 MB.");
+  // Remove old R2 file when replacing or removing an existing image.
+  if (id && existingPost && existingPost.image_key && (removeImage || hasNewImage)) {
+    try {
+      await context.env.MEDIA.delete(existingPost.image_key);
+    } catch {
+      // Do not fail the whole post update just because cleanup failed.
     }
-
-    const safe = sanitizeFilename(image.name || "post-image");
-    imageKey = `posts/${new Date().toISOString().slice(0, 10)}/${uuid()}-${safe}`;
-
-    await context.env.MEDIA.put(imageKey, await image.arrayBuffer(), {
-      httpMetadata: {
-        contentType: image.type
-      }
-    });
-
-    imageUrl = mediaUrl(context.env, imageKey);
   }
 
   if (id) {
-    const existing = await context.env.DB.prepare(
-      `SELECT id FROM posts WHERE id = ?`
-    ).bind(id).first();
-
-    if (!existing) return bad("Post not found.", 404);
-
     if (pinned) await unpinOthers(context.env, id);
 
     await context.env.DB.prepare(

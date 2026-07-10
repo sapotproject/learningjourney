@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Learning Journey Teacher/Admin Dashboard</title>
-  <link rel="stylesheet" href="/assets/css/style.css?v=safe-qa-polish-batch1-v1"/>
+  <link rel="stylesheet" href="/assets/css/style.css?v=batch2-admin-backend-header-v1"/>
 </head>
 <body>
   <header class="admin-header">
@@ -79,6 +79,16 @@
           <div class="form-row">
             <label>Image</label>
             <input id="postImage" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+            <p class="mini-message">Maximum image size: 500 KB.</p>
+
+            <div id="currentImageBox" class="current-image-box hidden">
+              <p class="mini-message">Current image attached to this post:</p>
+              <img id="currentPostImagePreview" class="current-post-image-preview" src="" alt="Current post image">
+              <label class="checkbox-label remove-image-label">
+                <input id="removePostImage" type="checkbox">
+                <span>Remove current image from this post</span>
+              </label>
+            </div>
           </div>
 
           <div class="form-row featured-checkbox-row">
@@ -111,6 +121,20 @@
             <h3>All Posts</h3>
             <button class="small-btn clear-btn" type="button" onclick="loadPosts()">Refresh</button>
           </div>
+
+          <div class="post-tools">
+            <input id="postSearch" type="search" placeholder="Search posts...">
+            <select id="postFilter">
+              <option value="all">All Categories</option>
+              <option value="School Advisory">School Advisory</option>
+              <option value="Reminder">Reminder</option>
+              <option value="Event">Event</option>
+              <option value="News">News</option>
+              <option value="featured">Featured Only</option>
+            </select>
+            <button id="clearPostFilters" class="small-btn clear-btn" type="button">Clear</button>
+          </div>
+
           <div id="allPosts" class="post-list"></div>
         </div>
 
@@ -223,6 +247,6 @@
     </section>
   </main>
 
-  <script src="/assets/js/admin.js?v=safe-qa-polish-batch1-v1"></script>
+  <script src="/assets/js/admin.js?v=batch2-admin-backend-header-v1"></script>
 </body>
 </html>
