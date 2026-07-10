@@ -534,3 +534,127 @@ body:has(.admin-header) .footer {
     padding: 9px 12px !important;
   }
 }
+
+
+
+/* Sticky header/footer adjustment v1 */
+
+/* Public pages: bigger mobile header, about 50% larger than previous mobile header */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 82px;
+  }
+
+  .header {
+    padding: 14px 14px !important;
+  }
+
+  .header-inner {
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 10px !important;
+  }
+
+  .header .school-logo {
+    width: 118px !important;
+    height: 118px !important;
+    max-width: 118px !important;
+    max-height: 118px !important;
+  }
+
+  .school-text h1 {
+    font-size: 24px !important;
+    line-height: 1.12 !important;
+    text-align: left !important;
+  }
+
+  .school-text p {
+    font-size: 13px !important;
+    line-height: 1.25 !important;
+    text-align: left !important;
+    margin-top: 4px !important;
+  }
+
+  /* Sticky mobile burger menu follows the taller header */
+  .mobile-menu-bar {
+    top: 152px !important;
+  }
+
+  .nav.nav-open {
+    top: 214px !important;
+    max-height: calc(100vh - 214px) !important;
+  }
+
+  /* Public sticky footer: compact so it will not block too much content */
+  .footer {
+    position: sticky;
+    bottom: 0;
+    z-index: 1500;
+    padding: 9px 12px !important;
+    margin-top: 30px;
+    box-shadow: 0 -6px 18px rgba(0,0,0,.18);
+  }
+
+  .footer p {
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    margin: 0 !important;
+  }
+
+  .footer-meta {
+    margin-top: 4px !important;
+    font-size: 12px !important;
+  }
+
+  .footer-teacher-link {
+    margin-top: 3px !important;
+  }
+
+  .footer-teacher-link a {
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    padding: 2px 4px !important;
+  }
+}
+
+/* Admin dashboard sticky header */
+.admin-header {
+  position: sticky;
+  top: 0;
+  z-index: 1700;
+}
+
+/* Admin dashboard sticky footer, if footer exists on admin pages */
+body:has(.admin-header) .footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 1500;
+  box-shadow: 0 -6px 18px rgba(0,0,0,.18);
+}
+
+@media (max-width: 768px) {
+  body:has(.admin-header) {
+    padding-bottom: 82px;
+  }
+
+  .admin-header {
+    padding: 14px 16px !important;
+  }
+
+  .admin-header-inner {
+    gap: 10px !important;
+  }
+
+  .admin-brand h1 {
+    font-size: 22px !important;
+  }
+
+  .admin-brand p {
+    font-size: 14px !important;
+  }
+
+  body:has(.admin-header) .footer {
+    padding: 9px 12px !important;
+  }
+}
