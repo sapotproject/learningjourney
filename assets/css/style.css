@@ -184,27 +184,40 @@
 /* Keep the yellow line under the sticky header on desktop */
 .line {
   position: sticky !important;
-  top: 116px !important;
+  top: 120px !important;
   z-index: 8999 !important;
 }
 
-/* Desktop/laptop menu: sticky below the header and yellow line */
+/* Desktop/laptop menu: sticky below the top header and yellow line */
 @media (min-width: 769px) {
   html,
   body {
-    scroll-padding-top: 170px !important;
+    scroll-padding-top: 180px !important;
   }
 
   body {
-    padding-bottom: 88px !important;
+    padding-top: 0 !important;
+    padding-bottom: 92px !important;
   }
 
-  .nav {
+  /* Reset old fixed-menu experiments, then keep menu below the header */
+  .nav,
+  nav.nav {
     position: sticky !important;
-    top: 120px !important;
+    top: 124px !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
     z-index: 8998 !important;
     display: flex !important;
-    box-shadow: 0 5px 15px rgba(0,0,0,.14);
+    margin: 0 !important;
+    box-shadow: 0 5px 15px rgba(0,0,0,.14) !important;
+  }
+
+  .nav a,
+  nav.nav a {
+    position: relative !important;
+    z-index: 8999 !important;
   }
 
   .footer {
@@ -232,12 +245,12 @@
   }
 
   .footer-teacher-link {
-    margin-top: 4px !important;
+    margin-top: 5px !important;
   }
 
   .footer-teacher-link a {
-    font-size: 12px !important;
-    padding: 2px 4px !important;
+    font-size: 13px !important;
+    padding: 4px 8px !important;
   }
 }
 
@@ -370,10 +383,11 @@
   }
 
   .footer-teacher-link a {
-    font-size: 10px !important;
-    line-height: 1.1 !important;
-    padding: 1px 3px !important;
-    font-weight: 500 !important;
+    font-size: 14px !important;
+    line-height: 1.2 !important;
+    padding: 7px 10px !important;
+    font-weight: 700 !important;
+    display: inline-block !important;
   }
 
   .post-tools {
@@ -462,3 +476,27 @@
   z-index: 25000 !important;
 }
 
+
+
+/* Final desktop menu correction:
+   Keep menu below header, never fixed at the very top. */
+@media (min-width: 769px) {
+  .nav,
+  nav.nav {
+    position: sticky !important;
+    top: 124px !important;
+    left: auto !important;
+    right: auto !important;
+    width: 100% !important;
+  }
+}
+
+/* Final mobile footer tap target correction */
+@media (max-width: 768px) {
+  .footer-teacher-link a {
+    font-size: 14px !important;
+    padding: 7px 10px !important;
+    display: inline-block !important;
+    font-weight: 700 !important;
+  }
+}
