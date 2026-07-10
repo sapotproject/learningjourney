@@ -658,3 +658,188 @@ body:has(.admin-header) .footer {
     padding: 9px 12px !important;
   }
 }
+
+
+
+/* Sticky Header/Footer FORCE v2
+   Stronger override for public pages + admin/dashboard.
+   Paste at the VERY BOTTOM of assets/css/style.css.
+*/
+
+/* PUBLIC HEADER: sticky and visibly bigger on mobile */
+.header,
+.site-header,
+.public-header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 9999 !important;
+}
+
+@media (max-width: 768px) {
+  html,
+  body {
+    scroll-padding-top: 230px !important;
+  }
+
+  body {
+    padding-bottom: 95px !important;
+  }
+
+  .header,
+  .site-header,
+  .public-header {
+    padding: 18px 14px !important;
+    min-height: 150px !important;
+  }
+
+  .header-inner,
+  .site-header-inner {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+
+  .header img,
+  .header .school-logo,
+  #schoolLogo,
+  .site-logo,
+  .public-logo {
+    width: 120px !important;
+    height: 120px !important;
+    min-width: 120px !important;
+    min-height: 120px !important;
+    max-width: 120px !important;
+    max-height: 120px !important;
+    object-fit: contain !important;
+  }
+
+  .school-text,
+  .school-info {
+    flex: 0 1 auto !important;
+  }
+
+  .school-text h1,
+  #schoolName,
+  .site-title {
+    font-size: 25px !important;
+    line-height: 1.12 !important;
+    text-align: left !important;
+    margin: 0 !important;
+  }
+
+  .school-text p,
+  #schoolTagline,
+  .site-tagline {
+    font-size: 13px !important;
+    line-height: 1.25 !important;
+    text-align: left !important;
+    margin: 5px 0 0 !important;
+  }
+
+  /* MOBILE MENU: follow taller sticky header */
+  .mobile-menu-bar,
+  .mobile-menu-wrap {
+    position: sticky !important;
+    top: 150px !important;
+    z-index: 9998 !important;
+  }
+
+  .nav.nav-open,
+  .mobile-nav.nav-open {
+    position: fixed !important;
+    top: 210px !important;
+    left: 0 !important;
+    right: 0 !important;
+    max-height: calc(100vh - 210px) !important;
+    overflow-y: auto !important;
+    z-index: 9997 !important;
+  }
+
+  /* PUBLIC FOOTER: force sticky */
+  .footer,
+  .site-footer {
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 9999 !important;
+    padding: 10px 12px !important;
+    margin-top: 24px !important;
+    box-shadow: 0 -6px 20px rgba(0,0,0,.20) !important;
+  }
+
+  .footer p,
+  .site-footer p,
+  #footerSchoolName {
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+  }
+
+  .footer-meta {
+    margin-top: 4px !important;
+    font-size: 12px !important;
+    line-height: 1.2 !important;
+  }
+
+  .footer-teacher-link {
+    margin-top: 4px !important;
+  }
+
+  .footer-teacher-link a {
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+    padding: 2px 4px !important;
+  }
+}
+
+/* ADMIN/DASHBOARD HEADER: force sticky */
+.admin-header,
+.dashboard-header,
+.admin-topbar,
+.topbar,
+.dashboard-topbar {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 9999 !important;
+}
+
+/* ADMIN FOOTER: force sticky if present */
+.admin-footer,
+.dashboard-footer,
+body.admin-page .footer,
+body.dashboard-page .footer,
+.dashboardPanel .footer {
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 9999 !important;
+  box-shadow: 0 -6px 20px rgba(0,0,0,.20) !important;
+}
+
+@media (max-width: 768px) {
+  .admin-header,
+  .dashboard-header,
+  .admin-topbar,
+  .topbar,
+  .dashboard-topbar {
+    padding: 16px 14px !important;
+    min-height: 82px !important;
+  }
+
+  .admin-header h1,
+  .admin-brand h1,
+  .dashboard-header h1,
+  .admin-title,
+  .dashboard-title {
+    font-size: 23px !important;
+    line-height: 1.15 !important;
+  }
+
+  .admin-header p,
+  .admin-brand p,
+  .dashboard-header p,
+  .admin-subtitle {
+    font-size: 14px !important;
+  }
+}
