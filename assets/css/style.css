@@ -843,3 +843,163 @@ body.dashboard-page .footer,
     font-size: 14px !important;
   }
 }
+
+
+
+/* Header/Footer Balance v3
+   Paste at the VERY BOTTOM of assets/css/style.css.
+   This balances the sticky mobile header so more content is visible,
+   and makes the laptop/desktop menu sticky.
+*/
+
+/* Desktop/laptop menu sticky */
+@media (min-width: 769px) {
+  .nav {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 9998 !important;
+  }
+}
+
+/* Mobile: reduce sticky header size again */
+@media (max-width: 768px) {
+  html,
+  body {
+    scroll-padding-top: 170px !important;
+  }
+
+  body {
+    padding-bottom: 78px !important;
+  }
+
+  .header,
+  .site-header,
+  .public-header {
+    padding: 10px 12px !important;
+    min-height: 105px !important;
+  }
+
+  .header-inner,
+  .site-header-inner {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 9px !important;
+  }
+
+  .header img,
+  .header .school-logo,
+  #schoolLogo,
+  .site-logo,
+  .public-logo {
+    width: 82px !important;
+    height: 82px !important;
+    min-width: 82px !important;
+    min-height: 82px !important;
+    max-width: 82px !important;
+    max-height: 82px !important;
+    object-fit: contain !important;
+  }
+
+  .school-text h1,
+  #schoolName,
+  .site-title {
+    font-size: 20px !important;
+    line-height: 1.1 !important;
+    text-align: left !important;
+    margin: 0 !important;
+  }
+
+  .school-text p,
+  #schoolTagline,
+  .site-tagline {
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+    text-align: left !important;
+    margin: 3px 0 0 !important;
+  }
+
+  /* Mobile menu follows the smaller sticky header */
+  .mobile-menu-bar,
+  .mobile-menu-wrap {
+    position: sticky !important;
+    top: 105px !important;
+    z-index: 9998 !important;
+  }
+
+  .nav.nav-open,
+  .mobile-nav.nav-open {
+    position: fixed !important;
+    top: 160px !important;
+    left: 0 !important;
+    right: 0 !important;
+    max-height: calc(100vh - 160px) !important;
+    overflow-y: auto !important;
+    z-index: 9997 !important;
+  }
+
+  /* Keep footer sticky, but compact */
+  .footer,
+  .site-footer {
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 9999 !important;
+    padding: 8px 10px !important;
+    margin-top: 22px !important;
+    box-shadow: 0 -5px 16px rgba(0,0,0,.16) !important;
+  }
+
+  .footer p,
+  .site-footer p,
+  #footerSchoolName {
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    line-height: 1.15 !important;
+    margin: 0 !important;
+  }
+
+  .footer-meta {
+    margin-top: 3px !important;
+    font-size: 11px !important;
+    line-height: 1.15 !important;
+  }
+
+  .footer-teacher-link {
+    margin-top: 2px !important;
+  }
+
+  .footer-teacher-link a {
+    font-size: 10px !important;
+    line-height: 1.1 !important;
+    padding: 1px 3px !important;
+  }
+}
+
+/* Admin mobile header also slightly reduced */
+@media (max-width: 768px) {
+  .admin-header,
+  .dashboard-header,
+  .admin-topbar,
+  .topbar,
+  .dashboard-topbar {
+    padding: 10px 12px !important;
+    min-height: 66px !important;
+  }
+
+  .admin-header h1,
+  .admin-brand h1,
+  .dashboard-header h1,
+  .admin-title,
+  .dashboard-title {
+    font-size: 20px !important;
+    line-height: 1.12 !important;
+  }
+
+  .admin-header p,
+  .admin-brand p,
+  .dashboard-header p,
+  .admin-subtitle {
+    font-size: 12px !important;
+  }
+}
