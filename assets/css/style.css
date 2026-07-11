@@ -1347,3 +1347,54 @@ body.image-modal-open .mobile-menu-toggle {
   }
 }
 
+
+/* =========================================================
+   Mobile Burger Menu Stable Fix v1
+   ========================================================= */
+
+.mobile-menu-toggle {
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent !important;
+  user-select: none !important;
+  position: relative !important;
+  z-index: 12000 !important;
+  pointer-events: auto !important;
+}
+
+.mobile-menu-bar {
+  position: sticky !important;
+  top: var(--mobile-header-total, 0px) !important;
+  z-index: 11990 !important;
+  pointer-events: auto !important;
+}
+
+@media (max-width: 768px) {
+  .nav {
+    pointer-events: auto !important;
+  }
+
+  .nav:not(.show):not(.open):not(.active) {
+    display: none !important;
+  }
+
+  .nav.show,
+  .nav.open,
+  .nav.active {
+    display: flex !important;
+    flex-direction: column !important;
+    pointer-events: auto !important;
+    z-index: 11980 !important;
+  }
+
+  body.image-modal-open .mobile-menu-bar,
+  body.image-modal-open .mobile-menu-toggle,
+  body.image-modal-open .nav {
+    pointer-events: none !important;
+  }
+
+  body:not(.image-modal-open) .mobile-menu-bar,
+  body:not(.image-modal-open) .mobile-menu-toggle {
+    pointer-events: auto !important;
+  }
+}
+

@@ -36,7 +36,7 @@ function openImageModal(src) {
 
   if (!modal || !img || !src) return;
 
-  forceCloseMobileMenu();
+  if (window.closeMobileMenu) window.closeMobileMenu(); else forceCloseMobileMenu();
 
   img.src = src;
   modal.classList.add("show");

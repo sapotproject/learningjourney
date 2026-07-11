@@ -1,80 +1,111 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const toggle = document.getElementById("mobileMenuToggle");
+(() => {
+  "use strict";
+
   const nav = document.getElementById("mainNav");
+  const toggle = document.querySelector(".mobile-menu-toggle");
 
-  if (toggle && nav) {
-    toggle.addEventListener("click", () => {
-      const isOpen = nav.classList.toggle("nav-open");
-      toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
-      toggle.textContent = isOpen ? "✕ Close" : "☰ Menu";
-    });
+  if (!nav || !toggle) return;
 
-    nav.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => {
-        nav.classList.remove("nav-open");
-        toggle.setAttribute("aria-expanded", "false");
-        toggle.textContent = "☰ Menu";
-      });
-    });
-  }
-});
-
-function closeImageModal() {
-  const modal = document.getElementById("imageModal");
-  const img = document.getElementById("imageModalImg");
-
-  if (modal) modal.classList.remove("show");
-  if (img) img.src = "";
-}
-
-function openImageFull(src, alt) {
-  if (!src) return;
-
-  let modal = document.getElementById("imageModal");
-
-  if (!modal) {
-    modal = document.createElement("div");
-    modal.id = "imageModal";
-    modal.className = "image-modal";
-    modal.innerHTML = '<button class="image-close-btn" type="button">Close</button><img id="imageModalImg" src="" alt="Post image">';
-    document.body.appendChild(modal);
+  function isMenuOpen() {
+    return nav.classList.contains("show");
   }
 
-  const img = document.getElementById("imageModalImg");
-
-  if (!img) {
-    window.open(src, "_blank", "noopener");
-    return;
+  function openMenu() {
+    nav.classList.add("show");
+    nav.classList.add("open");
+    toggle.setAttribute("aria-expanded", "true");
+    document.body.classList.add("menu-open");
   }
 
-  img.src = src;
-  img.alt = alt || "Post image";
-  modal.classList.add("show");
-}
+  function closeMenu() {
+    nav.classList.remove("show");
+    nav.classList.remove("open");
+    nav.classList.remove("active");
+    toggle.setAttribute("aria-expanded", "false");
+    document.body.classList.remove("menu-open");
+  }
 
-document.addEventListener("click", (event) => {
-  const closeBtn = event.target.closest(".image-close-btn");
+  function toggleMenu(event) {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
 
-  if (closeBtn) {
-    event.preventDefault();
+    // Do not open menu while an image modal is active.
+    const imageModal = document.getElementById("imageModal");
+    if (imageModal && imageModal.classList.contains("show")) {
+      closeMenu();
+      return;
+    }
+
+    if (isMenuOpen()) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  }
+
+  // Remove old inline/on-page browser weirdness by using both click and touchend safely.
+  toggle.addEventListener("click", toggleMenu);
+
+  toggle.addEventListener(
+    "touchend",
+    (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      toggleMenu(event);
+    },
+    { passive: false }
+  );
+
+  // Stop clicks inside nav from closing before the link receives the tap.
+  nav.addEventListener("click", (event) => {
     event.stopPropagation();
-    closeImageModal();
-    return;
-  }
 
-  const imageModal = document.getElementById("imageModal");
+    const link = event.target.closest("a");
+    if (link) {
+      closeMenu();
+    }
+  });
 
-  if (imageModal && event.target === imageModal) {
-    closeImageModal();
-    return;
-  }
+  nav.addEventListener(
+    "touchend",
+    (event) => {
+      const link = event.target.closest("a");
+      if (link) {
+        closeMenu();
+      }
+    },
+    { passive: true }
+  );
 
-  const img = event.target.closest("img.post-image, img.modal-img, img.archive-main-image");
+  // Tap outside closes menu.
+  document.addEventListener("click", (event) => {
+    if (!isMenuOpen()) return;
+    if (nav.contains(event.target) || toggle.contains(event.target)) return;
+    closeMenu();
+  });
 
-  if (!img) return;
+  document.addEventListener(
+    "touchend",
+    (event) => {
+      if (!isMenuOpen()) return;
+      if (nav.contains(event.target) || toggle.contains(event.target)) return;
+      closeMenu();
+    },
+    { passive: true }
+  );
 
-  event.preventDefault();
-  event.stopPropagation();
+  // Escape closes menu on laptop.
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeMenu();
+  });
 
-  openImageFull(img.currentSrc || img.src, img.alt);
-});
+  // If screen becomes desktop/tablet wide, reset mobile menu state.
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 768) closeMenu();
+  });
+
+  // Public helper for gallery modal or future scripts.
+  window.closeMobileMenu = closeMenu;
+})();
