@@ -1,84 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>School Forms</title>  <link rel="stylesheet" href="/assets/css/style.css?v=safe-qa-polish-batch1-v1"/>
-  <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32.png?v=brown-icon-v1">
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png?v=brown-icon-v1">
-  <link rel="manifest" href="/site.webmanifest?v=brown-icon-v1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School Forms - Learning Journey Child Growth Center, Inc.</title>
+  <link rel="icon" id="dynamicFavicon" href="assets/images/favicon-32.png?v=20260711-fullbatch-v1">
+  <link rel="apple-touch-icon" id="dynamicAppleIcon" href="assets/images/apple-touch-icon.png?v=20260711-fullbatch-v1">
+  <link rel="manifest" href="site.webmanifest?v=20260711-fullbatch-v1">
+  <link rel="stylesheet" href="assets/css/style.css?v=20260711-fullbatch-v1">
 </head>
 <body>
   <header class="header">
     <div class="header-inner">
-      <img id="schoolLogo" class="school-logo hidden" src="" alt="School Logo"/>
+      <img id="schoolLogo" class="school-logo hidden" src="" alt="School Logo">
       <div class="school-text">
         <h1 id="schoolName">Learning Journey Child Growth Center, Inc.</h1>
         <p id="schoolTagline">Where Learning is a Journey and Not a Race</p>
       </div>
     </div>
   </header>
-
   <div class="line"></div>
-
   <div class="mobile-menu-bar">
-    <button id="mobileMenuToggle" class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mainNav">
-      ☰ Menu
-    </button>
+    <button class="mobile-menu-toggle" type="button" aria-expanded="false" aria-controls="mainNav">☰ Menu</button>
   </div>
-
-  <nav class="nav" id="mainNav">
-    <a href="/">Home</a>
-    <a href="/about.html">About</a>
-    <a href="/admissions.html">Admissions</a>
-    <a href="/announcements.html">Announcements</a>
-    <a href="/news.html">News</a>
-    <a href="/events.html">Events</a>
-    <a href="/calendar.html">Calendar</a>
-    <a href="/schoolforms.html">School Forms</a>
-    <a href="/gallery.html">Gallery</a>
-    <a href="/contact.html">Contact</a>
+  <nav id="mainNav" class="nav">
+    <a href="index.html">Home</a><a href="about.html">About</a><a href="admissions.html">Admissions</a>
+    <a href="announcements.html">Announcements</a><a href="news.html">News</a><a href="events.html">Events</a>
+    <a href="calendar.html">Calendar</a><a href="schoolforms.html">School Forms</a><a href="gallery.html">Gallery</a><a href="contact.html">Contact</a>
   </nav>
-
 
   <main class="container">
     <section class="page-hero">
-      <span class="tag category-tag-large">School Forms</span>
-      <h2>School Forms</h2>
-      <p>Downloadable forms will appear here once uploaded by the school.</p>
+      <span class="tag">School Forms</span>
+      <h2>Downloadable School Forms</h2>
+      <p>For now, the available school form category is the Excuse Letter form for students who were absent in class.</p>
     </section>
-
-    <section class="static-grid">
-      <article class="card">
-        <h2>Enrollment Form</h2>
-        <p>No file uploaded yet.</p>
-      </article>
-
-      <article class="card">
-        <h2>Parent Consent Form</h2>
-        <p>No file uploaded yet.</p>
-      </article>
-
-      <article class="card">
-        <h2>Medical / Health Form</h2>
-        <p>No file uploaded yet.</p>
-      </article>
+    <section class="card">
+      <h2>Excuse Letter Form</h2>
+      <p class="forms-note">Use this form when a student was absent and needs to submit an excuse letter to the school.</p>
+      <div id="formsList" class="forms-list"><p class="loading-text">Loading school forms...</p></div>
     </section>
+    <p id="formsStatus" class="load-status"></p>
   </main>
 
   <footer class="footer">
     <p id="footerSchoolName">Learning Journey Child Growth Center, Inc.</p>
-
-    <div class="footer-meta">
-      <span>Powered by <strong>RACSMEDIA</strong></span>
-    </div>
-
-    <div class="footer-teacher-link">
-      <a href="/admin.html">Teacher/Admin Portal</a>
-    </div>
+    <div class="footer-meta"><span>Powered by <strong>RACSMEDIA</strong></span></div>
+    <div class="footer-teacher-link"><a href="admin.html">Teacher/Admin Portal</a></div>
   </footer>
-
-  <script src="/assets/js/menu.js?v=safe-qa-polish-batch1-v1"></script>
-  <script src="/assets/js/settings-page.js?v=safe-qa-polish-batch1-v1"></script>
+  <script src="assets/js/menu.js?v=20260711-fullbatch-v1"></script>
+  <script src="assets/js/forms-public.js?v=20260711-fullbatch-v1"></script>
 </body>
 </html>

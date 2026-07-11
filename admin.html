@@ -248,6 +248,109 @@
         <div id="userList" class="user-list"></div>
       </section>
     </section>
+  
+        <section class="card full-row" id="formsManagerPanel">
+          <div class="section-head">
+            <h3>School Forms Manager</h3>
+            <button class="small-btn clear-btn" type="button" onclick="loadFormsAdmin()">Refresh Forms</button>
+          </div>
+          <form id="formUploadForm" class="form-section">
+            <input id="schoolFormId" type="hidden">
+            <div class="settings-grid">
+              <div class="form-row">
+                <label>Form Title</label>
+                <input id="schoolFormTitle" type="text" placeholder="Example: Excuse Letter Form" required>
+              </div>
+              <div class="form-row">
+                <label>Category</label>
+                <select id="schoolFormCategory" required>
+                  <option value="Excuse Letter">Excuse Letter</option>
+                </select>
+              </div>
+              <div class="form-row full-row">
+                <label>Description</label>
+                <textarea id="schoolFormDescription" rows="3" placeholder="Example: Use this form when a student was absent from class."></textarea>
+              </div>
+              <div class="form-row full-row">
+                <label>PDF File</label>
+                <input id="schoolFormFile" type="file" accept="application/pdf,.pdf">
+                <p class="mini-message">PDF only. Maximum file size: 5 MB.</p>
+                <p id="existingSchoolFormFile" class="mini-message"></p>
+              </div>
+              <div class="form-row">
+                <label>Status</label>
+                <select id="schoolFormStatus">
+                  <option value="visible">Visible</option>
+                  <option value="hidden">Hidden</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button id="saveSchoolFormBtn" class="publish-btn" type="submit">Upload Form</button>
+              <button id="clearSchoolFormBtn" class="clear-btn" type="button">Clear</button>
+            </div>
+            <p id="schoolFormMessage" class="form-message"></p>
+          </form>
+          <div class="section-head forms-list-head"><h3>Visible / Hidden Forms</h3></div>
+          <div id="schoolFormsList" class="post-list"></div>
+          <div class="section-head forms-list-head"><h3>Forms Recycle Bin</h3></div>
+          <div id="schoolFormsRecycleList" class="post-list"></div>
+        </section>
+
+        <section class="card full-row" id="galleryManagerPanel">
+          <div class="section-head">
+            <h3>Gallery Manager</h3>
+            <button class="small-btn clear-btn" type="button" onclick="loadGalleryAdmin()">Refresh Gallery</button>
+          </div>
+          <form id="galleryUploadForm" class="form-section">
+            <input id="galleryPhotoId" type="hidden">
+            <div class="settings-grid">
+              <div class="form-row">
+                <label>Photo Title</label>
+                <input id="galleryPhotoTitle" type="text" placeholder="Example: Classroom Activity" required>
+              </div>
+              <div class="form-row">
+                <label>Category</label>
+                <select id="galleryPhotoCategory" required>
+                  <option>Campus & Facilities</option>
+                  <option>Learning Activities</option>
+                  <option>School Events</option>
+                  <option>Student Works</option>
+                </select>
+              </div>
+              <div class="form-row full-row">
+                <label>Caption</label>
+                <textarea id="galleryPhotoCaption" rows="3" placeholder="Short caption for this gallery photo."></textarea>
+              </div>
+              <div class="form-row full-row">
+                <label>Photo</label>
+                <input id="galleryPhotoFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+                <p class="mini-message">JPG, PNG, WebP, or GIF. Maximum image size: 1000 KB.</p>
+                <div id="currentGalleryImageBox" class="current-image-box hidden">
+                  <p class="mini-message">Current gallery image:</p>
+                  <img id="currentGalleryImagePreview" class="current-post-image-preview" src="" alt="Current gallery image">
+                </div>
+              </div>
+              <div class="form-row">
+                <label>Status</label>
+                <select id="galleryPhotoStatus">
+                  <option value="visible">Visible</option>
+                  <option value="hidden">Hidden</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button id="saveGalleryPhotoBtn" class="publish-btn" type="submit">Upload Photo</button>
+              <button id="clearGalleryPhotoBtn" class="clear-btn" type="button">Clear</button>
+            </div>
+            <p id="galleryPhotoMessage" class="form-message"></p>
+          </form>
+          <div class="section-head forms-list-head"><h3>Visible / Hidden Gallery Photos</h3></div>
+          <div id="galleryPhotosList" class="post-list"></div>
+          <div class="section-head forms-list-head"><h3>Gallery Recycle Bin</h3></div>
+          <div id="galleryPhotosRecycleList" class="post-list"></div>
+        </section>
+
   </main>
 
   <script src="/assets/js/admin.js?v=batch2-admin-backend-header-v1"></script>

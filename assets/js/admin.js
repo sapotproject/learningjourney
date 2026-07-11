@@ -749,4 +749,156 @@ function loadAll() {
   loadUsers();
 }
 
+/* =========================================================
+   School Forms Manager - Excuse Letter only
+   ========================================================= */
+const SCHOOL_FORM_MAX_BYTES = 5 * 1024 * 1024;
+let schoolFormsCache = [];
+let schoolFormsDeletedCache = [];
+
+function formStatusBadge(status) {
+  const value = String(status || "visible").toLowerCase();
+  return value === "hidden" ? `<span class="status-badge hidden-badge">Hidden</span>` : `<span class="status-badge visible-badge">Visible</span>`;
+}
+function schoolFormItem(item) {
+  const fileLink = item.file_url ? `<a class="small-btn clear-btn" href="${esc(item.file_url)}" target="_blank" rel="noopener">Open PDF</a>` : "";
+  return `<div class="post-item"><h4>${esc(item.title)}</h4>${formStatusBadge(item.status)}<div class="post-meta">Excuse Letter • ${esc(item.filename || "")}</div><p>${esc(shortText(item.description || "No description.", 160))}</p><div class="post-actions">${fileLink}<button class="small-btn edit-btn" onclick='editSchoolForm(${JSON.stringify(item).replaceAll("'", "&#039;")})'>Edit</button>${item.status === "hidden" ? `<button class="small-btn restore-btn" onclick="schoolFormAction('${esc(item.id)}','show')">Show</button>` : `<button class="small-btn clear-btn" onclick="schoolFormAction('${esc(item.id)}','hide')">Hide</button>`}<button class="small-btn delete-btn" onclick="schoolFormAction('${esc(item.id)}','delete')">Move to Recycle Bin</button></div></div>`;
+}
+function schoolFormRecycleItem(item) {
+  return `<div class="post-item"><h4>${esc(item.title)}</h4><div class="post-meta">Excuse Letter • Deleted</div><p>${esc(shortText(item.description || "No description.", 160))}</p><div class="post-actions"><button class="small-btn restore-btn" onclick="schoolFormAction('${esc(item.id)}','restore')">Restore</button><button class="small-btn permanent-btn" onclick="permanentDeleteSchoolForm('${esc(item.id)}')">Permanent Delete</button></div></div>`;
+}
+function renderSchoolForms() {
+  const list = byId("schoolFormsList"), recycleList = byId("schoolFormsRecycleList");
+  if (!list || !recycleList) return;
+  list.innerHTML = schoolFormsCache.length ? schoolFormsCache.map(schoolFormItem).join("") : '<p class="loading-text">No Excuse Letter forms yet.</p>';
+  recycleList.innerHTML = schoolFormsDeletedCache.length ? schoolFormsDeletedCache.map(schoolFormRecycleItem).join("") : '<p class="loading-text">Forms Recycle Bin is empty.</p>';
+}
+async function loadFormsAdmin() {
+  const list = byId("schoolFormsList"), recycleList = byId("schoolFormsRecycleList");
+  if (!list || !recycleList) return;
+  list.innerHTML = '<p class="loading-text">Loading forms...</p>';
+  recycleList.innerHTML = '<p class="loading-text">Loading recycle bin...</p>';
+  const res = await fetch("/api/forms", { headers: authHeaders() });
+  const data = await res.json();
+  if (!data.success) { list.innerHTML = '<p class="loading-text">' + esc(data.message || "Unable to load forms.") + '</p>'; recycleList.innerHTML = '<p class="loading-text">Unable to load recycle bin.</p>'; return; }
+  const forms = data.forms || [];
+  schoolFormsCache = forms.filter((item) => Number(item.deleted || 0) !== 1);
+  schoolFormsDeletedCache = forms.filter((item) => Number(item.deleted || 0) === 1);
+  renderSchoolForms();
+}
+function clearSchoolForm() {
+  const form = byId("formUploadForm"); if (!form) return;
+  form.reset(); schoolFormId.value = ""; existingSchoolFormFile.textContent = ""; saveSchoolFormBtn.textContent = "Upload Form"; schoolFormMessage.textContent = ""; schoolFormMessage.className = "form-message";
+}
+function editSchoolForm(item) {
+  schoolFormId.value = item.id || ""; schoolFormTitle.value = item.title || ""; schoolFormCategory.value = "Excuse Letter"; schoolFormDescription.value = item.description || ""; schoolFormStatus.value = item.status || "visible";
+  existingSchoolFormFile.textContent = item.filename ? "Current PDF: " + item.filename + ". Upload a new PDF only if you want to replace it." : "";
+  saveSchoolFormBtn.textContent = "Update Form"; window.scrollTo({ top: document.getElementById("formsManagerPanel").offsetTop - 20, behavior: "smooth" });
+}
+async function saveSchoolForm(event) {
+  event.preventDefault();
+  const file = schoolFormFile.files && schoolFormFile.files[0], editing = Boolean(schoolFormId.value);
+  if (!editing && !file) { setMsg("schoolFormMessage", "Please choose a PDF file.", "error"); return; }
+  if (file && file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) { setMsg("schoolFormMessage", "Only PDF files are allowed.", "error"); return; }
+  if (file && file.size > SCHOOL_FORM_MAX_BYTES) { setMsg("schoolFormMessage", `PDF is too large (${formatKb(file.size)}). Maximum is 5 MB.`, "error"); return; }
+  setMsg("schoolFormMessage", "Saving form...", "");
+  const fd = new FormData(); fd.append("id", schoolFormId.value); fd.append("title", schoolFormTitle.value); fd.append("category", "Excuse Letter"); fd.append("description", schoolFormDescription.value); fd.append("status", schoolFormStatus.value); if (file) fd.append("file", file);
+  const res = await fetch("/api/forms", { method: "POST", headers: authHeaders(), body: fd });
+  const data = await res.json();
+  if (!data.success) { setMsg("schoolFormMessage", data.message || "Save failed.", "error"); return; }
+  clearSchoolForm(); setMsg("schoolFormMessage", data.message || "Saved.", "success"); loadFormsAdmin();
+}
+async function schoolFormAction(id, action) {
+  const messages = { hide: "Hide this form from parents?", show: "Show this form to parents?", delete: "Move this form to Recycle Bin?", restore: "Restore this form?" };
+  if (!confirm(messages[action] || "Continue?")) return;
+  const res = await fetch("/api/forms", { method: "PATCH", headers: { "Content-Type": "application/json", ...authHeaders() }, body: JSON.stringify({ id, action }) });
+  const data = await res.json(); if (!data.success) { alert(data.message || "Action failed."); return; }
+  alert(data.message || "Done."); loadFormsAdmin();
+}
+async function permanentDeleteSchoolForm(id) {
+  if (!confirm("Permanently delete this form? This will also delete the PDF file from R2.")) return;
+  const res = await fetch("/api/forms", { method: "DELETE", headers: { "Content-Type": "application/json", ...authHeaders() }, body: JSON.stringify({ id }) });
+  const data = await res.json(); if (!data.success) { alert(data.message || "Delete failed."); return; }
+  alert(data.message || "Form permanently deleted."); loadFormsAdmin();
+}
+if (byId("formUploadForm")) formUploadForm.addEventListener("submit", saveSchoolForm);
+if (byId("clearSchoolFormBtn")) clearSchoolFormBtn.addEventListener("click", clearSchoolForm);
+
+/* =========================================================
+   Gallery Manager
+   ========================================================= */
+const GALLERY_IMAGE_MAX_BYTES = 1000 * 1024;
+let galleryCache = [];
+let galleryDeletedCache = [];
+
+function getGalleryImage(item) { return item.image_url || item.image || ""; }
+function galleryPhotoThumb(item) {
+  const imageUrl = getGalleryImage(item);
+  return imageUrl ? `<img class="dashboard-post-thumb" src="${esc(imageUrl)}" alt="${esc(item.title)}" loading="lazy" onerror="this.outerHTML='<div class=&quot;dashboard-post-thumb empty-thumb&quot;>Image unavailable</div>'">` : `<div class="dashboard-post-thumb empty-thumb">No Image</div>`;
+}
+function galleryItem(item) {
+  return `<div class="post-item"><div class="dashboard-post-row">${galleryPhotoThumb(item)}<div class="dashboard-post-body"><h4>${esc(item.title)}</h4>${formStatusBadge(item.status)}<div class="post-meta">${esc(item.category)} • ${esc(item.filename || "")}</div><p>${esc(shortText(item.caption || "No caption.", 160))}</p><div class="post-actions"><button class="small-btn edit-btn" onclick='editGalleryPhoto(${JSON.stringify(item).replaceAll("'", "&#039;")})'>Edit</button>${item.status === "hidden" ? `<button class="small-btn restore-btn" onclick="galleryAction('${esc(item.id)}','show')">Show</button>` : `<button class="small-btn clear-btn" onclick="galleryAction('${esc(item.id)}','hide')">Hide</button>`}<button class="small-btn delete-btn" onclick="galleryAction('${esc(item.id)}','delete')">Move to Recycle Bin</button></div></div></div></div>`;
+}
+function galleryRecycleItem(item) {
+  return `<div class="post-item"><div class="dashboard-post-row">${galleryPhotoThumb(item)}<div class="dashboard-post-body"><h4>${esc(item.title)}</h4><div class="post-meta">${esc(item.category)} • Deleted</div><p>${esc(shortText(item.caption || "No caption.", 160))}</p><div class="post-actions"><button class="small-btn restore-btn" onclick="galleryAction('${esc(item.id)}','restore')">Restore</button><button class="small-btn permanent-btn" onclick="permanentDeleteGalleryPhoto('${esc(item.id)}')">Permanent Delete</button></div></div></div></div>`;
+}
+function renderGalleryAdmin() {
+  const list = byId("galleryPhotosList"), recycleList = byId("galleryPhotosRecycleList");
+  if (!list || !recycleList) return;
+  list.innerHTML = galleryCache.length ? galleryCache.map(galleryItem).join("") : '<p class="loading-text">No gallery photos yet.</p>';
+  recycleList.innerHTML = galleryDeletedCache.length ? galleryDeletedCache.map(galleryRecycleItem).join("") : '<p class="loading-text">Gallery Recycle Bin is empty.</p>';
+}
+async function loadGalleryAdmin() {
+  const list = byId("galleryPhotosList"), recycleList = byId("galleryPhotosRecycleList");
+  if (!list || !recycleList) return;
+  list.innerHTML = '<p class="loading-text">Loading gallery...</p>'; recycleList.innerHTML = '<p class="loading-text">Loading recycle bin...</p>';
+  const res = await fetch("/api/gallery", { headers: authHeaders() });
+  const data = await res.json();
+  if (!data.success) { list.innerHTML = '<p class="loading-text">' + esc(data.message || "Unable to load gallery.") + '</p>'; recycleList.innerHTML = '<p class="loading-text">Unable to load recycle bin.</p>'; return; }
+  const photos = data.photos || [];
+  galleryCache = photos.filter((item) => Number(item.deleted || 0) !== 1);
+  galleryDeletedCache = photos.filter((item) => Number(item.deleted || 0) === 1);
+  renderGalleryAdmin();
+}
+function updateCurrentGalleryImageBox(imageUrl) {
+  const box = byId("currentGalleryImageBox"), preview = byId("currentGalleryImagePreview");
+  if (!box || !preview) return;
+  if (imageUrl) { preview.src = imageUrl; box.classList.remove("hidden"); } else { preview.src = ""; box.classList.add("hidden"); }
+}
+function clearGalleryPhoto() {
+  const form = byId("galleryUploadForm"); if (!form) return;
+  form.reset(); galleryPhotoId.value = ""; saveGalleryPhotoBtn.textContent = "Upload Photo"; galleryPhotoMessage.textContent = ""; galleryPhotoMessage.className = "form-message"; updateCurrentGalleryImageBox("");
+}
+function editGalleryPhoto(item) {
+  galleryPhotoId.value = item.id || ""; galleryPhotoTitle.value = item.title || ""; galleryPhotoCategory.value = item.category || "School Events"; galleryPhotoCaption.value = item.caption || ""; galleryPhotoStatus.value = item.status || "visible";
+  updateCurrentGalleryImageBox(getGalleryImage(item)); saveGalleryPhotoBtn.textContent = "Update Photo"; window.scrollTo({ top: document.getElementById("galleryManagerPanel").offsetTop - 20, behavior: "smooth" });
+}
+async function saveGalleryPhoto(event) {
+  event.preventDefault();
+  const file = galleryPhotoFile.files && galleryPhotoFile.files[0], editing = Boolean(galleryPhotoId.value);
+  if (!editing && !file) { setMsg("galleryPhotoMessage", "Please choose a gallery image.", "error"); return; }
+  if (file && file.size > GALLERY_IMAGE_MAX_BYTES) { setMsg("galleryPhotoMessage", `Image is too large (${formatKb(file.size)}). Maximum is 1000 KB.`, "error"); return; }
+  setMsg("galleryPhotoMessage", "Saving photo...", "");
+  const fd = new FormData(); fd.append("id", galleryPhotoId.value); fd.append("title", galleryPhotoTitle.value); fd.append("category", galleryPhotoCategory.value); fd.append("caption", galleryPhotoCaption.value); fd.append("status", galleryPhotoStatus.value); if (file) fd.append("image", file);
+  const res = await fetch("/api/gallery", { method: "POST", headers: authHeaders(), body: fd });
+  const data = await res.json(); if (!data.success) { setMsg("galleryPhotoMessage", data.message || "Save failed.", "error"); return; }
+  clearGalleryPhoto(); setMsg("galleryPhotoMessage", data.message || "Saved.", "success"); loadGalleryAdmin();
+}
+async function galleryAction(id, action) {
+  const messages = { hide: "Hide this photo from the public gallery?", show: "Show this photo in the public gallery?", delete: "Move this photo to Gallery Recycle Bin?", restore: "Restore this gallery photo?" };
+  if (!confirm(messages[action] || "Continue?")) return;
+  const res = await fetch("/api/gallery", { method: "PATCH", headers: { "Content-Type": "application/json", ...authHeaders() }, body: JSON.stringify({ id, action }) });
+  const data = await res.json(); if (!data.success) { alert(data.message || "Action failed."); return; }
+  alert(data.message || "Done."); loadGalleryAdmin();
+}
+async function permanentDeleteGalleryPhoto(id) {
+  if (!confirm("Permanently delete this gallery photo? This will also delete the image from R2.")) return;
+  const res = await fetch("/api/gallery", { method: "DELETE", headers: { "Content-Type": "application/json", ...authHeaders() }, body: JSON.stringify({ id }) });
+  const data = await res.json(); if (!data.success) { alert(data.message || "Delete failed."); return; }
+  alert(data.message || "Gallery photo permanently deleted."); loadGalleryAdmin();
+}
+if (byId("galleryUploadForm")) galleryUploadForm.addEventListener("submit", saveGalleryPhoto);
+if (byId("clearGalleryPhotoBtn")) clearGalleryPhotoBtn.addEventListener("click", clearGalleryPhoto);
+
+
 start();
