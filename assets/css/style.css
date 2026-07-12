@@ -2107,3 +2107,37 @@ body.image-modal-open .footer {
   display: block !important;
 }
 
+
+/* =========================================================
+   SMART STICKY FORCE v2
+   Supports absolute /assets paths and fixes sticky spacing
+   ========================================================= */
+:root{--lj-header-h:0px;--lj-line-h:6px;--lj-mobilebar-h:0px;--lj-nav-h:0px;--lj-desktop-offset:0px;--lj-mobile-offset:0px}
+.footer-teacher-link a{font-size:14px!important;padding:7px 10px!important;display:inline-block!important;font-weight:800!important;line-height:1.2!important}
+.line{height:6px!important;min-height:6px!important;max-height:6px!important;padding:0!important;margin:0!important;background:#f2b705!important;display:block!important;border:0!important}
+@media (min-width:769px){
+body.sticky-layout-ready{padding-top:var(--lj-desktop-offset)!important}
+.header{position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:12000!important;margin:0!important}
+.line{position:fixed!important;top:var(--lj-header-h)!important;left:0!important;right:0!important;z-index:11995!important}
+.mobile-menu-bar{display:none!important}
+.nav{position:fixed!important;top:calc(var(--lj-header-h) + var(--lj-line-h))!important;left:0!important;right:0!important;z-index:11990!important;display:flex!important;pointer-events:auto!important;margin:0!important}
+.nav a{pointer-events:auto!important}
+}
+@media (max-width:768px){
+body.sticky-layout-ready{padding-top:var(--lj-mobile-offset)!important}
+.header{position:fixed!important;top:0!important;left:0!important;right:0!important;z-index:12000!important;margin:0!important}
+.line{position:fixed!important;top:var(--lj-header-h)!important;left:0!important;right:0!important;z-index:11995!important}
+.mobile-menu-bar{position:fixed!important;top:calc(var(--lj-header-h) + var(--lj-line-h))!important;left:0!important;right:0!important;z-index:11990!important;display:block!important;pointer-events:auto!important;margin:0!important;background:#fffdf8!important}
+.mobile-menu-toggle{touch-action:manipulation!important;-webkit-tap-highlight-color:transparent!important;pointer-events:auto!important;position:relative!important;z-index:11991!important}
+.nav{position:fixed!important;top:calc(var(--lj-header-h) + var(--lj-line-h) + var(--lj-mobilebar-h))!important;left:0!important;right:0!important;z-index:11985!important;display:none!important;pointer-events:auto!important;max-height:calc(100dvh - var(--lj-header-h) - var(--lj-line-h) - var(--lj-mobilebar-h))!important;overflow-y:auto!important;margin:0!important}
+.nav.show{display:flex!important;flex-direction:column!important}
+.nav a{pointer-events:auto!important;position:relative!important;z-index:11986!important}
+}
+body.image-modal-open{overflow:hidden!important;touch-action:none!important}
+.image-modal{position:fixed!important;inset:0!important;width:100vw!important;height:100dvh!important;min-height:100vh!important;background:rgba(0,0,0,.94)!important;display:none!important;align-items:center!important;justify-content:center!important;padding:74px 14px 28px!important;z-index:2147483000!important;pointer-events:auto!important}
+.image-modal.show{display:flex!important}
+.image-modal img,#imageModalImg{max-width:96vw!important;max-height:calc(100dvh - 125px)!important;object-fit:contain!important;border-radius:12px!important;position:relative!important;z-index:2147483001!important}
+.image-close-btn,#imageCloseBtn{position:fixed!important;top:max(14px,env(safe-area-inset-top))!important;right:max(14px,env(safe-area-inset-right))!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;min-width:92px!important;min-height:46px!important;padding:11px 16px!important;border-radius:999px!important;border:2px solid #fff!important;background:#f2b705!important;color:#5a2a1a!important;font-size:15px!important;font-weight:900!important;line-height:1!important;cursor:pointer!important;z-index:2147483647!important;opacity:1!important;visibility:visible!important;pointer-events:auto!important;box-shadow:0 8px 24px rgba(0,0,0,.45)!important}
+body.image-modal-open .header,body.image-modal-open .line,body.image-modal-open .mobile-menu-bar,body.image-modal-open .nav,body.image-modal-open .footer{z-index:1!important}
+.image-open-btn{border:0!important;padding:0!important;margin:0!important;width:100%!important;background:transparent!important;cursor:pointer!important;display:block!important}
+
