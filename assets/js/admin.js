@@ -1,3 +1,4 @@
+/* SchoolsPH Dashboard Identity + Post Metadata v1 */
 // SchoolsPH admin.js patch: 20260712-teacher-edit-message-v1
 // Clear old persistent login from previous versions.
 // This prevents admin.html from auto-opening the dashboard because of an old localStorage token.
@@ -249,6 +250,7 @@ function formatKb(bytes) {
 
 function start() {
   if (token && currentUser) {
+    injectDashboardIdentityStyles();
     document.body.classList.add("logged-in");
     hide(loginPanel);
     show(dashboardPanel);
@@ -257,6 +259,7 @@ function start() {
     if (byId("postDate")) byId("postDate").valueAsDate = new Date();
 
     resetIdleTimer();
+    renderCurrentUserBox();
     applyRoleVisibility();
     loadAll();
   } else {
@@ -265,6 +268,7 @@ function start() {
     currentUser = null;
     sessionStorage.removeItem("lj_token");
     sessionStorage.removeItem("lj_user");
+    renderCurrentUserBox();
     show(loginPanel);
     hide(dashboardPanel);
     hide(logoutBtn);
@@ -521,6 +525,110 @@ function postRestrictionNote(post) {
   return `<div class="mini-message">Teacher view: you can only edit or delete posts that you created.</div>`;
 }
 
+
+function formatDateTime(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return String(value);
+
+  return date.toLocaleString("en-PH", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
+
+
+function injectDashboardIdentityStyles() {
+  if (document.getElementById("dashboardIdentityMetaStyle")) return;
+
+  const style = document.createElement("style");
+  style.id = "dashboardIdentityMetaStyle";
+  style.textContent = `
+    .current-user-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #fff8e1;
+      border: 1px solid rgba(122, 31, 31, 0.14);
+      border-radius: 14px;
+      padding: 10px 12px;
+      margin: 0 0 16px;
+      font-size: 0.95rem;
+      color: #3c2415;
+    }
+
+    .current-user-box .muted {
+      opacity: 0.55;
+      margin: 0 4px;
+    }
+
+    .current-user-icon {
+      font-size: 1.1rem;
+    }
+
+    .post-audit-meta {
+      margin: 8px 0 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(139, 90, 60, 0.07);
+      color: #4a2b1a;
+      font-size: 0.82rem;
+      line-height: 1.45;
+    }
+
+    .post-audit-meta strong {
+      font-weight: 700;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+function renderCurrentUserBox() {
+  const box = document.getElementById("currentUserBox");
+  if (!box) return;
+
+  if (!currentUser) {
+    box.classList.add("hidden");
+    return;
+  }
+
+  const nameEl = document.getElementById("currentUserName");
+  const roleEl = document.getElementById("currentUserRole");
+  const usernameEl = document.getElementById("currentUserUsername");
+
+  if (nameEl) nameEl.textContent = currentUser.name || currentUser.username || "User";
+  if (roleEl) roleEl.textContent = currentUser.role || "user";
+  if (usernameEl) usernameEl.textContent = "@" + (currentUser.username || "");
+
+  box.classList.remove("hidden");
+}
+
+function postMetadataHtml(post) {
+  const createdBy = post.author || post.created_by || "Unknown";
+  const createdAt = post.created_at || post.date || "";
+  const editedBy = post.last_edited_by || "";
+  const editedAt = post.last_edited_at || "";
+
+  let html = `
+    <div class="post-audit-meta">
+      <div><strong>Created by:</strong> ${esc(createdBy)}${createdAt ? " · " + esc(formatDateTime(createdAt)) : ""}</div>
+  `;
+
+  if (editedBy || editedAt) {
+    html += `<div><strong>Last edited:</strong> ${esc(editedBy || "Unknown")}${editedAt ? " · " + esc(formatDateTime(editedAt)) : ""}</div>`;
+  }
+
+  if (post.deleted_by || post.deleted_at) {
+    html += `<div><strong>Deleted by:</strong> ${esc(post.deleted_by || "Unknown")}${post.deleted_at ? " · " + esc(formatDateTime(post.deleted_at)) : ""}</div>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
 function renderPostLists() {
   const publishedPosts = filteredPublishedPosts();
   const visiblePublished = publishedPosts.slice(0, publishedVisibleCount);
@@ -576,6 +684,7 @@ function postItem(post) {
         ${imageThumb(post)}
         <div class="dashboard-post-body">
           <h4>${esc(post.title)}</h4>
+          ${postMetadataHtml(post)}
           ${featuredBadge(post)}
           <div class="post-meta">
             ${esc(post.type)} • ${esc(post.date)} • ${esc(post.author || "")}
@@ -599,6 +708,7 @@ function recycleItem(post) {
         ${imageThumb(post)}
         <div class="dashboard-post-body">
           <h4>${esc(post.title)}</h4>
+          ${postMetadataHtml(post)}
           <div class="post-meta">
             ${esc(post.type)} • Deleted
           </div>

@@ -45,7 +45,19 @@
     </section>
 
     <section id="dashboardPanel" class="hidden">
-      <section class="top-grid">
+      
+      <div id="currentUserBox" class="current-user-box hidden">
+        <span class="current-user-icon">👤</span>
+        <span>
+          Logged in as
+          <strong id="currentUserName">User</strong>
+          <span class="muted">·</span>
+          <span id="currentUserRole">role</span>
+          <span class="muted">·</span>
+          <span id="currentUserUsername">@username</span>
+        </span>
+      </div>
+<section class="top-grid">
         <form id="postForm" class="card">
           <h3 id="postFormTitle">Create New Post</h3>
 
@@ -364,7 +376,7 @@
       </section>
   </main>
 
-  <script src="/assets/js/admin.js?v=20260712-teacher-admin-panels-hard-hide-v2"></script>
+  <script src="/assets/js/admin.js?v=20260713-dashboard-identity-post-meta-v1"></script>
   <script src="/assets/js/image-modal-fix.js?v=20260711-final-layout-admin-repair-v1"></script>
 </body>
 </html>
