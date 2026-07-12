@@ -18,11 +18,13 @@
     nav.classList.add("show");
     nav.classList.remove("open", "active");
     toggle.setAttribute("aria-expanded", "true");
+    if (window.applyStickyLayout) window.applyStickyLayout();
   }
 
   function closeMenu() {
     nav.classList.remove("show", "open", "active");
     toggle.setAttribute("aria-expanded", "false");
+    if (window.applyStickyLayout) window.applyStickyLayout();
   }
 
   toggle.addEventListener("click", (event) => {
@@ -43,7 +45,6 @@
     const link = event.target.closest("a");
     if (!link) return;
 
-    // Let browser navigate normally.
     if (isMobile()) {
       setTimeout(closeMenu, 120);
     }
