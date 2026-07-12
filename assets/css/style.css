@@ -1913,3 +1913,36 @@ body:not(.logged-in) #galleryManagerPanel {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* =========================================================
+   Clean CSS Replacement v2
+   Desktop/Laptop sticky top header + sticky menu
+   Mobile behavior stays unchanged
+   ========================================================= */
+
+@media (min-width: 769px) {
+  html,
+  body {
+    scroll-padding-top: 172px !important;
+  }
+
+  .header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 1400 !important;
+  }
+
+  .line {
+    position: sticky !important;
+    top: 116px !important;
+    z-index: 1399 !important;
+  }
+
+  .nav {
+    position: sticky !important;
+    top: 120px !important;
+    z-index: 1398 !important;
+  }
+}
+
