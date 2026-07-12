@@ -1,3 +1,4 @@
+// SchoolsPH Manila timezone dashboard patch: 20260713-manila-timezone-dashboard-v1
 /* SchoolsPH Dashboard Identity + Post Metadata v1 */
 // SchoolsPH admin.js patch: 20260712-teacher-edit-message-v1
 // Clear old persistent login from previous versions.
@@ -526,17 +527,41 @@ function postRestrictionNote(post) {
 }
 
 
+function parseSchoolTimestamp(value) {
+  if (!value) return null;
+
+  if (value instanceof Date) return value;
+
+  const raw = String(value).trim();
+
+  // D1 CURRENT_TIMESTAMP returns UTC like: 2026-07-12 16:56:00
+  // JavaScript may treat that as local time unless we explicitly mark it as UTC.
+  if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(raw)) {
+    return new Date(raw.replace(" ", "T") + "Z");
+  }
+
+  // Also support timestamps without seconds: 2026-07-12 16:56
+  if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/.test(raw)) {
+    return new Date(raw.replace(" ", "T") + ":00Z");
+  }
+
+  return new Date(raw);
+}
+
 function formatDateTime(value) {
   if (!value) return "";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return String(value);
+
+  const date = parseSchoolTimestamp(value);
+  if (!date || Number.isNaN(date.getTime())) return String(value);
 
   return date.toLocaleString("en-PH", {
+    timeZone: "Asia/Manila",
     year: "numeric",
     month: "short",
     day: "numeric",
     hour: "numeric",
-    minute: "2-digit"
+    minute: "2-digit",
+    hour12: true
   });
 }
 
