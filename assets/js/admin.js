@@ -36,8 +36,20 @@ function isOwnPost(post) {
 }
 
 function applyRoleVisibility() {
+  const adminAllowed = isAdminRole();
+
   document.querySelectorAll(".admin-only").forEach((el) => {
-    el.style.display = isAdminRole() ? "" : "none";
+    el.style.display = adminAllowed ? "" : "none";
+  });
+
+  [
+    "settingsPanel",
+    "usersPanel",
+    "formsManagerPanel",
+    "galleryManagerPanel"
+  ].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = adminAllowed ? "" : "none";
   });
 }
 
@@ -415,7 +427,7 @@ async function loadPosts() {
       allPosts.innerHTML = '<p class="loading-text">' + esc(data.message || "Unable to load posts. Please refresh and try again.") + "</p>";
       recyclePosts.innerHTML = '<p class="loading-text">Unable to load recycle bin.</p>';
 
-      if (res.status === 401 || res.status === 403) logout("Your session expired. Please login again.");
+      if (res.status === 401) logout("Your session expired. Please login again.");
 
       return;
     }
@@ -748,7 +760,7 @@ async function loadUsers() {
 
     if (!data.success) {
       userList.innerHTML = '<p class="loading-text">' + esc(data.message || "Unable to load users. Please refresh and try again.") + "</p>";
-      if (res.status === 401 || res.status === 403) logout("Your session expired. Please login again.");
+      if (res.status === 401) logout("Your session expired. Please login again.");
       return;
     }
 
@@ -989,7 +1001,12 @@ function renderSchoolForms() {
   recycleList.innerHTML = schoolFormsDeletedCache.length ? schoolFormsDeletedCache.map(schoolFormRecycleItem).join("") : '<p class="loading-text">Forms Recycle Bin is empty.</p>';
 }
 async function loadFormsAdmin() {
-  const list = byId("schoolFormsList"), recycleList = byId("schoolFormsRecycleList");
+  
+  if (!isAdminRole()) {
+    applyRoleVisibility();
+    return;
+  }
+const list = byId("schoolFormsList"), recycleList = byId("schoolFormsRecycleList");
   if (!list || !recycleList) return;
   list.innerHTML = '<p class="loading-text">Loading forms, please wait...</p>';
   recycleList.innerHTML = '<p class="loading-text">Loading forms recycle bin...</p>';
@@ -1001,7 +1018,7 @@ async function loadFormsAdmin() {
     if (!data.success) {
       list.innerHTML = '<p class="loading-text">' + esc(data.message || "Unable to load forms. Please refresh and try again.") + '</p>';
       recycleList.innerHTML = '<p class="loading-text">Unable to load forms recycle bin.</p>';
-      if (res.status === 401 || res.status === 403) logout("Your session expired. Please login again.");
+      if (res.status === 401) logout("Your session expired. Please login again.");
       return;
     }
 
@@ -1077,7 +1094,12 @@ function renderGalleryAdmin() {
   recycleList.innerHTML = galleryDeletedCache.length ? galleryDeletedCache.map(galleryRecycleItem).join("") : '<p class="loading-text">Gallery Recycle Bin is empty.</p>';
 }
 async function loadGalleryAdmin() {
-  const list = byId("galleryPhotosList"), recycleList = byId("galleryPhotosRecycleList");
+  
+  if (!isAdminRole()) {
+    applyRoleVisibility();
+    return;
+  }
+const list = byId("galleryPhotosList"), recycleList = byId("galleryPhotosRecycleList");
   if (!list || !recycleList) return;
   list.innerHTML = '<p class="loading-text">Loading gallery, please wait...</p>';
   recycleList.innerHTML = '<p class="loading-text">Loading gallery recycle bin...</p>';
@@ -1089,7 +1111,7 @@ async function loadGalleryAdmin() {
     if (!data.success) {
       list.innerHTML = '<p class="loading-text">' + esc(data.message || "Unable to load gallery. Please refresh and try again.") + '</p>';
       recycleList.innerHTML = '<p class="loading-text">Unable to load gallery recycle bin.</p>';
-      if (res.status === 401 || res.status === 403) logout("Your session expired. Please login again.");
+      if (res.status === 401) logout("Your session expired. Please login again.");
       return;
     }
 
