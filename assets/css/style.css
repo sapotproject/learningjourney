@@ -1495,11 +1495,7 @@ body.image-modal-open {
   font-size: 14px;
 }
 
-/* Hide manager sections before login when admin page body has no logged-in class */
-body:not(.logged-in) #formsManagerPanel,
-body:not(.logged-in) #galleryManagerPanel {
-  display: none !important;
-}
+
 
 /* =========================================================
    ADMIN TOOLS / GALLERY MANAGER
@@ -1944,5 +1940,20 @@ body:not(.logged-in) #galleryManagerPanel {
     top: 120px !important;
     z-index: 1398 !important;
   }
+}
+
+
+/* =========================================================
+   Clean CSS Replacement v3
+   Restore Forms Manager + Gallery Manager visibility
+   ========================================================= */
+
+/* The previous logged-in body-class rule was too strict.
+   It hid these manager panels even after successful login on the current admin page.
+   Dashboard/login visibility should be handled by the admin page structure/JS,
+   not by hiding these panels globally in CSS. */
+#formsManagerPanel,
+#galleryManagerPanel {
+  visibility: visible;
 }
 
