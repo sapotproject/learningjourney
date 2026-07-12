@@ -17,6 +17,54 @@ const loginPanel = document.getElementById("loginPanel");
 const dashboardPanel = document.getElementById("dashboardPanel");
 const logoutBtn = document.getElementById("logoutBtn");
 
+const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
+let idleTimer = null;
+let idleLogoutInProgress = false;
+
+function friendlyError(prefix, error) {
+  const details = error && error.message ? " (" + error.message + ")" : "";
+  return (prefix || "Something went wrong.") + details;
+}
+
+async function readJsonSafe(res) {
+  try {
+    return await res.json();
+  } catch {
+    return { success: false, message: "Server returned an unreadable response. Please refresh and try again." };
+  }
+}
+
+function logout(reason = "") {
+  sessionStorage.clear();
+  localStorage.removeItem("lj_token");
+  localStorage.removeItem("lj_user");
+  token = "";
+  currentUser = null;
+  if (idleTimer) clearTimeout(idleTimer);
+  idleTimer = null;
+  idleLogoutInProgress = false;
+  document.body.classList.remove("logged-in");
+  start();
+  if (reason) setMsg("loginMessage", reason, "error");
+}
+
+function resetIdleTimer() {
+  if (!token || !currentUser) return;
+
+  if (idleTimer) clearTimeout(idleTimer);
+
+  idleTimer = setTimeout(() => {
+    if (!token || !currentUser || idleLogoutInProgress) return;
+    idleLogoutInProgress = true;
+    logout("You were automatically logged out after 30 minutes of inactivity.");
+  }, IDLE_TIMEOUT_MS);
+}
+
+["click", "keydown", "input", "change", "mousemove", "scroll", "touchstart"].forEach((eventName) => {
+  window.addEventListener(eventName, resetIdleTimer, { passive: true });
+});
+
+
 function authHeaders() {
   return { Authorization: "Bearer " + token };
 }
@@ -119,14 +167,17 @@ function formatKb(bytes) {
 
 function start() {
   if (token && currentUser) {
+    document.body.classList.add("logged-in");
     hide(loginPanel);
     show(dashboardPanel);
     show(logoutBtn);
 
     if (byId("postDate")) byId("postDate").valueAsDate = new Date();
 
+    resetIdleTimer();
     loadAll();
   } else {
+    document.body.classList.remove("logged-in");
     token = "";
     currentUser = null;
     sessionStorage.removeItem("lj_token");
@@ -140,40 +191,40 @@ function start() {
 byId("loginForm").addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  setMsg("loginMessage", "Logging in...", "");
+  setMsg("loginMessage", "Logging in, please wait...", "");
 
-  const res = await fetch("/api/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      username: loginUsername.value,
-      password: loginPassword.value
-    })
-  });
+  try {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: loginUsername.value,
+        password: loginPassword.value
+      })
+    });
 
-  const data = await res.json();
+    const data = await readJsonSafe(res);
 
-  if (!data.success) {
-    setMsg("loginMessage", data.message || "Login failed.", "error");
-    return;
+    if (!data.success) {
+      setMsg("loginMessage", data.message || "Login failed. Please check your username and password.", "error");
+      return;
+    }
+
+    token = data.token;
+    currentUser = data.user;
+
+    sessionStorage.setItem("lj_token", token);
+    sessionStorage.setItem("lj_user", JSON.stringify(currentUser));
+
+    setMsg("loginMessage", "", "");
+    start();
+  } catch (error) {
+    setMsg("loginMessage", friendlyError("Unable to login. Please check your internet connection and try again.", error), "error");
   }
-
-  token = data.token;
-  currentUser = data.user;
-
-  sessionStorage.setItem("lj_token", token);
-  sessionStorage.setItem("lj_user", JSON.stringify(currentUser));
-
-  start();
 });
 
 logoutBtn.onclick = () => {
-  sessionStorage.clear();
-  localStorage.removeItem("lj_token");
-  localStorage.removeItem("lj_user");
-  token = "";
-  currentUser = null;
-  start();
+  logout("");
 };
 
 function updateCurrentImageBox() {
@@ -328,28 +379,33 @@ function clearPost() {
 }
 
 async function loadPosts() {
-  allPosts.innerHTML = '<p class="loading-text">Loading...</p>';
-  recyclePosts.innerHTML = '<p class="loading-text">Loading...</p>';
+  allPosts.innerHTML = '<p class="loading-text">Loading posts, please wait...</p>';
+  recyclePosts.innerHTML = '<p class="loading-text">Loading recycle bin...</p>';
 
-  const res = await fetch("/api/posts", {
-    headers: authHeaders()
-  });
+  try {
+    const res = await fetch("/api/posts", {
+      headers: authHeaders()
+    });
 
-  const data = await res.json();
+    const data = await readJsonSafe(res);
 
-  if (!data.success) {
-    allPosts.innerHTML = '<p class="loading-text">' + esc(data.message || "Unable to load.") + "</p>";
+    if (!data.success) {
+      allPosts.innerHTML = '<p class="loading-text">' + esc(data.message || "Unable to load posts. Please refresh and try again.") + "</p>";
+      recyclePosts.innerHTML = '<p class="loading-text">Unable to load recycle bin.</p>';
+
+      if (res.status === 401 || res.status === 403) logout("Your session expired. Please login again.");
+
+      return;
+    }
+
+    publishedPostCache = data.posts.filter((post) => !isDeleted(post));
+    deletedPostCache = data.posts.filter(isDeleted);
+
+    renderPostLists();
+  } catch (error) {
+    allPosts.innerHTML = '<p class="loading-text">Unable to load posts. Please check your internet connection and refresh.</p>';
     recyclePosts.innerHTML = '<p class="loading-text">Unable to load recycle bin.</p>';
-
-    if (res.status === 401 || res.status === 403) logoutBtn.click();
-
-    return;
   }
-
-  publishedPostCache = data.posts.filter((post) => !isDeleted(post));
-  deletedPostCache = data.posts.filter(isDeleted);
-
-  renderPostLists();
 }
 
 function filteredPublishedPosts() {
@@ -646,58 +702,153 @@ async function loadUsers() {
     return;
   }
 
-  const res = await fetch("/api/users", {
-    headers: authHeaders()
-  });
+  usersPanel.style.display = "";
+  userList.innerHTML = '<p class="loading-text">Loading users, please wait...</p>';
 
-  const data = await res.json();
+  try {
+    const res = await fetch("/api/users", {
+      headers: authHeaders()
+    });
 
-  if (!data.success) {
-    userList.innerHTML = '<p class="loading-text">' + esc(data.message || "Unable to load users.") + "</p>";
-    return;
+    const data = await readJsonSafe(res);
+
+    if (!data.success) {
+      userList.innerHTML = '<p class="loading-text">' + esc(data.message || "Unable to load users. Please refresh and try again.") + "</p>";
+      if (res.status === 401 || res.status === 403) logout("Your session expired. Please login again.");
+      return;
+    }
+
+    userList.innerHTML = (data.users || []).map((user) => {
+      const safeUser = JSON.stringify({
+        username: user.username,
+        name: user.name,
+        role: user.role,
+        active: user.active ? 1 : 0
+      }).replaceAll("'", "&#039;");
+
+      return `
+        <div class="user-item">
+          <h4>${esc(user.name)} (${esc(user.username)})</h4>
+          <div class="post-meta">${esc(user.role)} • ${user.active ? "active" : "inactive"}</div>
+          <div class="post-actions">
+            <button class="small-btn edit-btn" onclick='editUser(${safeUser})'>Edit</button>
+            <button class="small-btn clear-btn" onclick="toggleUser('${esc(user.username)}', ${user.active ? 0 : 1}, '${esc(user.role)}', '${esc(user.name)}')">
+              ${user.active ? "Deactivate" : "Activate"}
+            </button>
+            <button class="small-btn restore-btn" onclick="resetPw('${esc(user.username)}')">Reset PW</button>
+            <button class="small-btn permanent-btn" onclick="permanentDeleteUser('${esc(user.username)}')">Permanent Delete</button>
+          </div>
+        </div>
+      `;
+    }).join("") || '<p class="loading-text">No users found.</p>';
+  } catch (error) {
+    userList.innerHTML = '<p class="loading-text">Unable to load users. Please check your internet connection and refresh.</p>';
   }
+}
 
-  userList.innerHTML = (data.users || []).map((user) => `
-    <div class="user-item">
-      <h4>${esc(user.name)} (${esc(user.username)})</h4>
-      <div class="post-meta">${esc(user.role)} • ${user.active ? "active" : "inactive"}</div>
-      <div class="post-actions">
-        <button class="small-btn edit-btn" onclick="toggleUser('${esc(user.username)}', ${user.active ? 0 : 1}, '${esc(user.role)}', '${esc(user.name)}')">
-          ${user.active ? "Deactivate" : "Activate"}
-        </button>
-        <button class="small-btn restore-btn" onclick="resetPw('${esc(user.username)}')">Reset PW</button>
-      </div>
-    </div>
-  `).join("");
+function resetUserForm() {
+  if (!byId("userForm")) return;
+
+  userForm.reset();
+  user_mode.value = "add";
+  user_original_username.value = "";
+  user_username.disabled = false;
+  user_password.placeholder = "Required only when adding a new user or resetting password";
+  if (byId("saveUserBtn")) saveUserBtn.textContent = "Add User";
+  if (byId("cancelEditUserBtn")) cancelEditUserBtn.classList.add("hidden");
+  setMsg("userMessage", "", "");
+}
+
+function editUser(user) {
+  user_mode.value = "edit";
+  user_original_username.value = user.username || "";
+  user_username.value = user.username || "";
+  user_username.disabled = true;
+  user_name.value = user.name || "";
+  user_role.value = user.role || "teacher";
+  user_active.value = String(user.active ? 1 : 0);
+  user_password.value = "";
+  user_password.placeholder = "Use Reset PW button to change password";
+  saveUserBtn.textContent = "Save User Changes";
+  cancelEditUserBtn.classList.remove("hidden");
+  setMsg("userMessage", "Editing user: " + (user.username || ""), "");
+  window.scrollTo({ top: usersPanel.offsetTop - 20, behavior: "smooth" });
+}
+
+if (byId("cancelEditUserBtn")) {
+  cancelEditUserBtn.addEventListener("click", resetUserForm);
 }
 
 userForm.addEventListener("submit", async (event) => {
   event.preventDefault();
+
+  const isEdit = user_mode.value === "edit";
+
+  if (isEdit) {
+    const body = {
+      action: "update",
+      username: user_original_username.value,
+      name: user_name.value,
+      role: user_role.value,
+      active: Number(user_active.value || 0)
+    };
+
+    setMsg("userMessage", "Saving user changes...", "");
+
+    try {
+      const res = await fetch("/api/users", {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeaders()
+        },
+        body: JSON.stringify(body)
+      });
+
+      const data = await readJsonSafe(res);
+      setMsg("userMessage", data.message || "Done.", data.success ? "success" : "error");
+
+      if (data.success) {
+        resetUserForm();
+        loadUsers();
+      }
+    } catch (error) {
+      setMsg("userMessage", "Unable to save user changes. Please check your connection and try again.", "error");
+    }
+
+    return;
+  }
 
   const body = {
     username: user_username.value,
     name: user_name.value,
     role: user_role.value,
     password: user_password.value,
-    active: 1
+    active: Number(user_active.value || 1)
   };
 
-  const res = await fetch("/api/users", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...authHeaders()
-    },
-    body: JSON.stringify(body)
-  });
+  setMsg("userMessage", "Adding user...", "");
 
-  const data = await res.json();
+  try {
+    const res = await fetch("/api/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...authHeaders()
+      },
+      body: JSON.stringify(body)
+    });
 
-  setMsg("userMessage", data.message || "Done.", data.success ? "success" : "error");
+    const data = await readJsonSafe(res);
 
-  if (data.success) {
-    userForm.reset();
-    loadUsers();
+    setMsg("userMessage", data.message || "Done.", data.success ? "success" : "error");
+
+    if (data.success) {
+      resetUserForm();
+      loadUsers();
+    }
+  } catch (error) {
+    setMsg("userMessage", "Unable to add user. Please check your connection and try again.", "error");
   }
 });
 
@@ -717,13 +868,13 @@ async function toggleUser(username, active, role, name) {
     })
   });
 
-  const data = await res.json();
+  const data = await readJsonSafe(res);
   alert(data.message || "Done.");
   loadUsers();
 }
 
 async function resetPw(username) {
-  const password = prompt("New password for " + username + "?");
+  const password = prompt("New password for " + username + "? Minimum 6 characters.");
   if (!password) return;
 
   const res = await fetch("/api/users", {
@@ -739,14 +890,40 @@ async function resetPw(username) {
     })
   });
 
-  const data = await res.json();
+  const data = await readJsonSafe(res);
   alert(data.message || "Done.");
+}
+
+async function permanentDeleteUser(username) {
+  if (!confirm("Permanently delete user '" + username + "'? This cannot be undone. The username can be reused after deletion.")) return;
+
+  const res = await fetch("/api/users", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      ...authHeaders()
+    },
+    body: JSON.stringify({ username })
+  });
+
+  const data = await readJsonSafe(res);
+
+  if (!data.success) {
+    alert(data.message || "Delete failed.");
+    return;
+  }
+
+  alert(data.message || "User permanently deleted.");
+  resetUserForm();
+  loadUsers();
 }
 
 function loadAll() {
   loadPosts();
   loadSettings();
   loadUsers();
+  loadFormsAdmin();
+  loadGalleryAdmin();
 }
 
 /* =========================================================
@@ -776,15 +953,28 @@ function renderSchoolForms() {
 async function loadFormsAdmin() {
   const list = byId("schoolFormsList"), recycleList = byId("schoolFormsRecycleList");
   if (!list || !recycleList) return;
-  list.innerHTML = '<p class="loading-text">Loading forms...</p>';
-  recycleList.innerHTML = '<p class="loading-text">Loading recycle bin...</p>';
-  const res = await fetch("/api/forms", { headers: authHeaders() });
-  const data = await res.json();
-  if (!data.success) { list.innerHTML = '<p class="loading-text">' + esc(data.message || "Unable to load forms.") + '</p>'; recycleList.innerHTML = '<p class="loading-text">Unable to load recycle bin.</p>'; return; }
-  const forms = data.forms || [];
-  schoolFormsCache = forms.filter((item) => Number(item.deleted || 0) !== 1);
-  schoolFormsDeletedCache = forms.filter((item) => Number(item.deleted || 0) === 1);
-  renderSchoolForms();
+  list.innerHTML = '<p class="loading-text">Loading forms, please wait...</p>';
+  recycleList.innerHTML = '<p class="loading-text">Loading forms recycle bin...</p>';
+
+  try {
+    const res = await fetch("/api/forms", { headers: authHeaders() });
+    const data = await readJsonSafe(res);
+
+    if (!data.success) {
+      list.innerHTML = '<p class="loading-text">' + esc(data.message || "Unable to load forms. Please refresh and try again.") + '</p>';
+      recycleList.innerHTML = '<p class="loading-text">Unable to load forms recycle bin.</p>';
+      if (res.status === 401 || res.status === 403) logout("Your session expired. Please login again.");
+      return;
+    }
+
+    const forms = data.forms || [];
+    schoolFormsCache = forms.filter((item) => Number(item.deleted || 0) !== 1);
+    schoolFormsDeletedCache = forms.filter((item) => Number(item.deleted || 0) === 1);
+    renderSchoolForms();
+  } catch (error) {
+    list.innerHTML = '<p class="loading-text">Unable to load forms. Please check your internet connection and refresh.</p>';
+    recycleList.innerHTML = '<p class="loading-text">Unable to load forms recycle bin.</p>';
+  }
 }
 function clearSchoolForm() {
   const form = byId("formUploadForm"); if (!form) return;
@@ -851,14 +1041,28 @@ function renderGalleryAdmin() {
 async function loadGalleryAdmin() {
   const list = byId("galleryPhotosList"), recycleList = byId("galleryPhotosRecycleList");
   if (!list || !recycleList) return;
-  list.innerHTML = '<p class="loading-text">Loading gallery...</p>'; recycleList.innerHTML = '<p class="loading-text">Loading recycle bin...</p>';
-  const res = await fetch("/api/gallery", { headers: authHeaders() });
-  const data = await res.json();
-  if (!data.success) { list.innerHTML = '<p class="loading-text">' + esc(data.message || "Unable to load gallery.") + '</p>'; recycleList.innerHTML = '<p class="loading-text">Unable to load recycle bin.</p>'; return; }
-  const photos = data.photos || [];
-  galleryCache = photos.filter((item) => Number(item.deleted || 0) !== 1);
-  galleryDeletedCache = photos.filter((item) => Number(item.deleted || 0) === 1);
-  renderGalleryAdmin();
+  list.innerHTML = '<p class="loading-text">Loading gallery, please wait...</p>';
+  recycleList.innerHTML = '<p class="loading-text">Loading gallery recycle bin...</p>';
+
+  try {
+    const res = await fetch("/api/gallery", { headers: authHeaders() });
+    const data = await readJsonSafe(res);
+
+    if (!data.success) {
+      list.innerHTML = '<p class="loading-text">' + esc(data.message || "Unable to load gallery. Please refresh and try again.") + '</p>';
+      recycleList.innerHTML = '<p class="loading-text">Unable to load gallery recycle bin.</p>';
+      if (res.status === 401 || res.status === 403) logout("Your session expired. Please login again.");
+      return;
+    }
+
+    const photos = data.photos || [];
+    galleryCache = photos.filter((item) => Number(item.deleted || 0) !== 1);
+    galleryDeletedCache = photos.filter((item) => Number(item.deleted || 0) === 1);
+    renderGalleryAdmin();
+  } catch (error) {
+    list.innerHTML = '<p class="loading-text">Unable to load gallery. Please check your internet connection and refresh.</p>';
+    recycleList.innerHTML = '<p class="loading-text">Unable to load gallery recycle bin.</p>';
+  }
 }
 function updateCurrentGalleryImageBox(imageUrl) {
   const box = byId("currentGalleryImageBox"), preview = byId("currentGalleryImagePreview");

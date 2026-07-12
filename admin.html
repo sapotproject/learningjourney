@@ -4,10 +4,10 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Learning Journey Teacher/Admin Dashboard</title>
-  <link rel="stylesheet" href="/assets/css/style.css?v=20260712-admin-manager-visibility-fix-v1"/>
+  <link rel="stylesheet" href="/assets/css/style.css?v=20260712-admin-polish-v1"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32.png?v=brown-icon-v1">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png?v=brown-icon-v1">
-  <link rel="manifest" href="/site.webmanifest?v=20260712-admin-manager-visibility-fix-v1">
+  <link rel="manifest" href="/site.webmanifest?v=20260712-admin-polish-v1">
 </head>
 <body class="admin-page">
   <header class="admin-header">
@@ -214,14 +214,18 @@
         <h3>User Management</h3>
 
         <form id="userForm" class="user-form-grid">
+          <input id="user_mode" type="hidden" value="add">
+          <input id="user_original_username" type="hidden">
+
           <div class="form-row">
             <label>Username</label>
-            <input id="user_username">
+            <input id="user_username" autocomplete="off" placeholder="unique username">
+            <p class="mini-message">Username must be unique. It cannot be changed after creation.</p>
           </div>
 
           <div class="form-row">
             <label>Name</label>
-            <input id="user_name">
+            <input id="user_name" autocomplete="off">
           </div>
 
           <div class="form-row">
@@ -233,12 +237,21 @@
           </div>
 
           <div class="form-row">
+            <label>Status</label>
+            <select id="user_active">
+              <option value="1">Active</option>
+              <option value="0">Inactive</option>
+            </select>
+          </div>
+
+          <div class="form-row full-row">
             <label>Password</label>
-            <input id="user_password" type="password" placeholder="Required for new user / reset only">
+            <input id="user_password" type="password" placeholder="Required only when adding a new user or resetting password">
           </div>
 
           <div class="form-actions full-row">
-            <button class="publish-btn" type="submit">Add User</button>
+            <button id="saveUserBtn" class="publish-btn" type="submit">Add User</button>
+            <button id="cancelEditUserBtn" class="clear-btn hidden" type="button">Cancel Edit</button>
             <button class="clear-btn" type="button" onclick="loadUsers()">Refresh Users</button>
           </div>
 
@@ -351,7 +364,7 @@
       </section>
   </main>
 
-  <script src="/assets/js/admin.js?v=20260712-admin-manager-visibility-fix-v1"></script>
+  <script src="/assets/js/admin.js?v=20260712-admin-polish-v1"></script>
   <script src="/assets/js/image-modal-fix.js?v=20260711-final-layout-admin-repair-v1"></script>
 </body>
 </html>

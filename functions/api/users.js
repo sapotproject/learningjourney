@@ -119,3 +119,46 @@ export async function onRequestPatch(context) {
 
   return bad("Invalid action.");
 }
+
+export async function onRequestDelete(context) {
+  const admin = await requireAdmin(context.request, context.env);
+  if (!admin) return bad("Admin only.", 403);
+
+  let body;
+  try {
+    body = await context.request.json();
+  } catch {
+    return bad("Invalid delete request.");
+  }
+
+  const username = String(body.username || "").trim().toLowerCase();
+  if (!username) return bad("Username is required.");
+
+  if (username === admin.username) {
+    return bad("You cannot permanently delete your own account while logged in.");
+  }
+
+  const user = await context.env.DB.prepare(
+    `SELECT username, role, active FROM users WHERE username = ?`
+  ).bind(username).first();
+
+  if (!user) return bad("User not found.", 404);
+
+  if (user.role === "admin") {
+    const adminCountRow = await context.env.DB.prepare(
+      `SELECT COUNT(*) AS total FROM users WHERE role = 'admin' AND active = 1 AND username != ?`
+    ).bind(username).first();
+
+    if (!adminCountRow || Number(adminCountRow.total || 0) < 1) {
+      return bad("Cannot delete the last active admin account.");
+    }
+  }
+
+  await context.env.DB.prepare(
+    `DELETE FROM users WHERE username = ?`
+  ).bind(username).run();
+
+  await audit(context.env, admin.username, "Permanently Deleted User Account", username, "");
+
+  return json({ success: true, message: "User permanently deleted. The username can now be reused." });
+}
