@@ -1,3 +1,4 @@
+// SchoolsPH admin.js patch: 20260712-teacher-edit-message-v1
 // Clear old persistent login from previous versions.
 // This prevents admin.html from auto-opening the dashboard because of an old localStorage token.
 localStorage.removeItem("lj_token");
@@ -126,6 +127,15 @@ function isOwnPost(post) {
 
 function canCurrentUserModifyPost(post) {
   return isAdminRole() || isOwnPost(post);
+}
+
+
+function unauthorizedEditPostMessage() {
+  alert("Unauthorized. Teacher accounts can only edit posts they created. Please ask an admin if this post needs to be changed.");
+}
+
+function unauthorizedDeletePostMessage() {
+  alert("Unauthorized. Teacher accounts can only move to Recycle Bin or restore posts they created. Please ask an admin if this post needs to be changed.");
 }
 
 function unauthorizedMessage() {
@@ -604,7 +614,7 @@ function recycleItem(post) {
 }
 
 function editPost(post) {
-  if (!canCurrentUserModifyPost(post)) { unauthorizedMessage(); return; }
+  if (!canCurrentUserModifyPost(post)) { unauthorizedEditPostMessage(); return; }
 postId.value = post.id;
   postType.value = post.type;
   postTitle.value = post.title;
@@ -627,7 +637,12 @@ postId.value = post.id;
 async function postAction(id, action) {
   const post = findPostFromCache(id);
 
-  if ((action === "delete" || action === "restore" || action === "pin" || action === "unpin") && post && !canCurrentUserModifyPost(post)) {
+  if ((action === "delete" || action === "restore") && post && !canCurrentUserModifyPost(post)) {
+    unauthorizedDeletePostMessage();
+    return;
+  }
+
+  if ((action === "pin" || action === "unpin") && post && !canCurrentUserModifyPost(post)) {
     unauthorizedMessage();
     return;
   }
