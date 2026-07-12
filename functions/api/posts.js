@@ -10,6 +10,30 @@ import {
   postAdminRow
 } from "../_shared.js";
 
+
+
+function isAdminUser(user) {
+  return user && user.role === "admin";
+}
+
+function sameUser(a, b) {
+  return String(a || "").trim().toLowerCase() === String(b || "").trim().toLowerCase();
+}
+
+async function getPostOwner(env, postId) {
+  const row = await env.DB.prepare(
+    `SELECT author FROM posts WHERE id = ?`
+  ).bind(postId).first();
+
+  return row ? row.author : "";
+}
+
+async function canModifyPost(env, user, postId) {
+  if (isAdminUser(user)) return true;
+  const owner = await getPostOwner(env, postId);
+  return sameUser(owner, user && user.name);
+}
+
 const POST_IMAGE_MAX_BYTES = 500 * 1024;
 
 async function ensurePinnedColumn(env) {
@@ -196,7 +220,9 @@ export async function onRequestPatch(context) {
 
   const body = await context.request.json();
   const id = String(body.id || "").trim();
-  const action = String(body.action || "").trim();
+  
+  if (!(await canModifyPost(context.env, admin, id))) return bad("You can only edit your own posts.", 403);
+const action = String(body.action || "").trim();
 
   if (!id || !action) return bad("Post ID and action are required.");
 
@@ -270,7 +296,9 @@ export async function onRequestDelete(context) {
   const body = await context.request.json();
   const id = String(body.id || "").trim();
 
-  if (!id) return bad("Post ID is required.");
+  
+  if (!(await canModifyPost(context.env, admin, id))) return bad("You can only delete your own posts.", 403);
+if (!id) return bad("Post ID is required.");
 
   const post = await context.env.DB.prepare(
     `SELECT id, title, image_key FROM posts WHERE id = ?`

@@ -21,6 +21,26 @@ const IDLE_TIMEOUT_MS = 30 * 60 * 1000;
 let idleTimer = null;
 let idleLogoutInProgress = false;
 
+
+function isAdminRole() {
+  return currentUser && currentUser.role === "admin";
+}
+
+function normalizeName(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function isOwnPost(post) {
+  if (!currentUser) return false;
+  return normalizeName(post.author) === normalizeName(currentUser.name);
+}
+
+function applyRoleVisibility() {
+  document.querySelectorAll(".admin-only").forEach((el) => {
+    el.style.display = isAdminRole() ? "" : "none";
+  });
+}
+
 function friendlyError(prefix, error) {
   const details = error && error.message ? " (" + error.message + ")" : "";
   return (prefix || "Something went wrong.") + details;
@@ -44,6 +64,7 @@ function logout(reason = "") {
   idleTimer = null;
   idleLogoutInProgress = false;
   document.body.classList.remove("logged-in");
+  applyRoleVisibility();
   start();
   if (reason) setMsg("loginMessage", reason, "error");
 }
@@ -175,6 +196,7 @@ function start() {
     if (byId("postDate")) byId("postDate").valueAsDate = new Date();
 
     resetIdleTimer();
+    applyRoleVisibility();
     loadAll();
   } else {
     document.body.classList.remove("logged-in");
@@ -428,6 +450,16 @@ function filteredPublishedPosts() {
   });
 }
 
+
+function canCurrentUserModifyPost(post) {
+  return isAdminRole() || isOwnPost(post);
+}
+
+function postRestrictionNote(post) {
+  if (canCurrentUserModifyPost(post)) return "";
+  return `<div class="mini-message">Teacher view: you can only edit or delete posts that you created.</div>`;
+}
+
 function renderPostLists() {
   const publishedPosts = filteredPublishedPosts();
   const visiblePublished = publishedPosts.slice(0, publishedVisibleCount);
@@ -521,7 +553,9 @@ function recycleItem(post) {
 }
 
 function editPost(post) {
-  postId.value = post.id;
+  
+  if (!canCurrentUserModifyPost(post)) { alert("You can only edit posts that you created."); return; }
+postId.value = post.id;
   postType.value = post.type;
   postTitle.value = post.title;
   postMessageText.value = post.message;
@@ -739,6 +773,7 @@ async function loadUsers() {
             <button class="small-btn permanent-btn" onclick="permanentDeleteUser('${esc(user.username)}')">Permanent Delete</button>
           </div>
         </div>
+          ${postRestrictionNote(post)}
       `;
     }).join("") || '<p class="loading-text">No users found.</p>';
   } catch (error) {
@@ -920,10 +955,13 @@ async function permanentDeleteUser(username) {
 
 function loadAll() {
   loadPosts();
-  loadSettings();
-  loadUsers();
-  loadFormsAdmin();
-  loadGalleryAdmin();
+
+  if (isAdminRole()) {
+    loadSettings();
+    loadUsers();
+    loadFormsAdmin();
+    loadGalleryAdmin();
+  }
 }
 
 /* =========================================================
