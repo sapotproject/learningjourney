@@ -16,6 +16,7 @@
 
   function openMenu() {
     nav.classList.add("show");
+    nav.classList.remove("open", "active");
     toggle.setAttribute("aria-expanded", "true");
   }
 
@@ -24,7 +25,7 @@
     toggle.setAttribute("aria-expanded", "false");
   }
 
-  function toggleMenu(event) {
+  toggle.addEventListener("click", (event) => {
     event.preventDefault();
     event.stopPropagation();
 
@@ -36,15 +37,16 @@
 
     if (isOpen()) closeMenu();
     else openMenu();
-  }
+  });
 
-  toggle.addEventListener("click", toggleMenu);
-
-  // Let links navigate normally. Only close the menu slightly after click.
   nav.addEventListener("click", (event) => {
     const link = event.target.closest("a");
     if (!link) return;
-    setTimeout(closeMenu, 120);
+
+    // Let browser navigate normally.
+    if (isMobile()) {
+      setTimeout(closeMenu, 120);
+    }
   });
 
   document.addEventListener("click", (event) => {
