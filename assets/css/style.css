@@ -1467,3 +1467,217 @@ body.image-modal-open .footer {
   z-index: 2147483647 !important;
 }
 
+
+/* =========================================================
+   Mobile Header + Universal Modal Repair v3
+   ========================================================= */
+
+/* Bigger Teacher/Admin Portal link restored */
+.footer-teacher-link a {
+  font-size: 14px !important;
+  padding: 7px 10px !important;
+  display: inline-block !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+}
+
+/* Laptop/Desktop: header, yellow line, and menu stay together in proper order */
+@media (min-width: 769px) {
+  .header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 12000 !important;
+  }
+
+  .line {
+    position: sticky !important;
+    top: 86px !important;
+    z-index: 11990 !important;
+  }
+
+  .mobile-menu-bar {
+    display: none !important;
+  }
+
+  .nav {
+    position: sticky !important;
+    top: 92px !important;
+    z-index: 11980 !important;
+    display: flex !important;
+    pointer-events: auto !important;
+  }
+}
+
+/* Mobile: use fixed top stack so burger cannot slide behind header */
+@media (max-width: 768px) {
+  body {
+    padding-top: 132px !important;
+  }
+
+  .header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 12000 !important;
+  }
+
+  .line {
+    position: fixed !important;
+    top: 74px !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 11995 !important;
+  }
+
+  .mobile-menu-bar {
+    position: fixed !important;
+    top: 80px !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 11990 !important;
+    display: block !important;
+    pointer-events: auto !important;
+  }
+
+  .mobile-menu-toggle {
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 11991 !important;
+  }
+
+  .nav {
+    position: fixed !important;
+    top: 126px !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 11985 !important;
+    display: none !important;
+    pointer-events: auto !important;
+    max-height: calc(100dvh - 126px) !important;
+    overflow-y: auto !important;
+  }
+
+  .nav.show {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .nav a {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 11986 !important;
+  }
+
+  .container {
+    scroll-margin-top: 140px !important;
+  }
+}
+
+/* Universal fullscreen image modal */
+body.image-modal-open {
+  overflow: hidden !important;
+  touch-action: none !important;
+}
+
+.image-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 100vh !important;
+  background: rgba(0, 0, 0, 0.94) !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 74px 14px 28px !important;
+  z-index: 2147483000 !important;
+  pointer-events: auto !important;
+}
+
+.image-modal.show {
+  display: flex !important;
+}
+
+.image-modal img,
+#imageModalImg {
+  max-width: 96vw !important;
+  max-height: calc(100dvh - 125px) !important;
+  object-fit: contain !important;
+  border-radius: 12px !important;
+  position: relative !important;
+  z-index: 2147483001 !important;
+  pointer-events: auto !important;
+}
+
+.image-close-btn,
+#imageCloseBtn {
+  position: fixed !important;
+  top: max(14px, env(safe-area-inset-top)) !important;
+  right: max(14px, env(safe-area-inset-right)) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 92px !important;
+  min-height: 46px !important;
+  padding: 11px 16px !important;
+  border-radius: 999px !important;
+  border: 2px solid #ffffff !important;
+  background: #f2b705 !important;
+  color: #5a2a1a !important;
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  z-index: 2147483647 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+}
+
+body.image-modal-open .header,
+body.image-modal-open .line,
+body.image-modal-open .mobile-menu-bar,
+body.image-modal-open .nav,
+body.image-modal-open .footer {
+  z-index: 1 !important;
+}
+
+.clickable-image,
+.image-open-btn {
+  cursor: pointer !important;
+}
+
+.image-open-btn {
+  border: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  background: transparent !important;
+  display: block !important;
+}
+
+@media (max-width: 768px) {
+  .image-modal {
+    padding: 72px 10px 26px !important;
+  }
+
+  .image-modal img,
+  #imageModalImg {
+    max-width: 96vw !important;
+    max-height: calc(100dvh - 118px) !important;
+  }
+
+  .image-close-btn,
+  #imageCloseBtn {
+    top: max(12px, env(safe-area-inset-top)) !important;
+    right: max(10px, env(safe-area-inset-right)) !important;
+    min-width: 88px !important;
+    min-height: 44px !important;
+    font-size: 14px !important;
+  }
+}
+

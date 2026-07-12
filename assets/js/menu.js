@@ -20,17 +20,13 @@
   }
 
   function closeMenu() {
-    nav.classList.remove("show");
-    nav.classList.remove("open");
-    nav.classList.remove("active");
+    nav.classList.remove("show", "open", "active");
     toggle.setAttribute("aria-expanded", "false");
   }
 
   function toggleMenu(event) {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
+    event.preventDefault();
+    event.stopPropagation();
 
     const modal = document.getElementById("imageModal");
     if (modal && modal.classList.contains("show")) {
@@ -38,37 +34,21 @@
       return;
     }
 
-    if (isOpen()) {
-      closeMenu();
-    } else {
-      openMenu();
-    }
+    if (isOpen()) closeMenu();
+    else openMenu();
   }
 
   toggle.addEventListener("click", toggleMenu);
 
-  // Use pointerup only on the button. Do not attach touch handlers to links,
-  // because that can cancel mobile page navigation.
-  toggle.addEventListener("pointerup", (event) => {
-    if (event.pointerType === "touch") {
-      toggleMenu(event);
-    }
-  });
-
-  // Close after link click, but let browser navigate normally.
+  // Let links navigate normally. Only close the menu slightly after click.
   nav.addEventListener("click", (event) => {
     const link = event.target.closest("a");
     if (!link) return;
-
-    if (isMobile()) {
-      setTimeout(closeMenu, 80);
-    }
+    setTimeout(closeMenu, 120);
   });
 
-  // Tap outside closes menu.
   document.addEventListener("click", (event) => {
-    if (!isMobile()) return;
-    if (!isOpen()) return;
+    if (!isMobile() || !isOpen()) return;
     if (nav.contains(event.target) || toggle.contains(event.target)) return;
     closeMenu();
   });
