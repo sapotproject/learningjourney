@@ -2141,3 +2141,323 @@ body.image-modal-open{overflow:hidden!important;touch-action:none!important}
 body.image-modal-open .header,body.image-modal-open .line,body.image-modal-open .mobile-menu-bar,body.image-modal-open .nav,body.image-modal-open .footer{z-index:1!important}
 .image-open-btn{border:0!important;padding:0!important;margin:0!important;width:100%!important;background:transparent!important;cursor:pointer!important;display:block!important}
 
+
+/* =========================================================
+   FINAL Layout + Admin Repair v1
+   CSS-only deterministic header/menu repair
+   ========================================================= */
+
+/* kill accidental browser/body gaps */
+html,
+body {
+  margin: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* restore bigger Teacher/Admin Portal link */
+.footer-teacher-link a {
+  font-size: 14px !important;
+  padding: 7px 10px !important;
+  display: inline-block !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+}
+
+/* divider must be yellow and small, never a white spacer */
+.line {
+  height: 6px !important;
+  min-height: 6px !important;
+  max-height: 6px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: #f2b705 !important;
+  border: 0 !important;
+  display: block !important;
+}
+
+/* desktop/laptop fixed stack */
+@media (min-width: 769px) {
+  body {
+    padding-top: 153px !important;
+  }
+
+  .header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 96px !important;
+    min-height: 96px !important;
+    max-height: 96px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 12000 !important;
+    overflow: hidden !important;
+  }
+
+  .header-inner {
+    height: 96px !important;
+    min-height: 96px !important;
+    max-height: 96px !important;
+    margin: 0 auto !important;
+    padding: 0 20px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 18px !important;
+  }
+
+  .school-logo {
+    width: 72px !important;
+    height: 72px !important;
+    object-fit: contain !important;
+    flex: 0 0 auto !important;
+  }
+
+  .school-text h1 {
+    font-size: 26px !important;
+    line-height: 1.1 !important;
+    margin: 0 !important;
+  }
+
+  .school-text p {
+    font-size: 14px !important;
+    line-height: 1.2 !important;
+    margin: 6px 0 0 !important;
+  }
+
+  .line {
+    position: fixed !important;
+    top: 96px !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 11995 !important;
+  }
+
+  .mobile-menu-bar {
+    display: none !important;
+  }
+
+  .nav {
+    position: fixed !important;
+    top: 102px !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 51px !important;
+    min-height: 51px !important;
+    max-height: 51px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 11990 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    pointer-events: auto !important;
+  }
+
+  .nav a {
+    pointer-events: auto !important;
+  }
+}
+
+/* mobile fixed stack */
+@media (max-width: 768px) {
+  body {
+    padding-top: 176px !important;
+  }
+
+  .header {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    min-height: 120px !important;
+    height: 120px !important;
+    max-height: 120px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 12000 !important;
+    overflow: hidden !important;
+  }
+
+  .header-inner {
+    height: 120px !important;
+    min-height: 120px !important;
+    max-height: 120px !important;
+    margin: 0 !important;
+    padding: 10px 18px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 14px !important;
+  }
+
+  .school-logo {
+    width: 74px !important;
+    height: 74px !important;
+    object-fit: contain !important;
+    flex: 0 0 auto !important;
+  }
+
+  .school-text h1 {
+    font-size: 27px !important;
+    line-height: 1.05 !important;
+    margin: 0 !important;
+  }
+
+  .school-text p {
+    font-size: 15px !important;
+    line-height: 1.2 !important;
+    margin: 8px 0 0 !important;
+  }
+
+  .line {
+    position: fixed !important;
+    top: 120px !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 11995 !important;
+  }
+
+  .mobile-menu-bar {
+    position: fixed !important;
+    top: 126px !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 50px !important;
+    min-height: 50px !important;
+    max-height: 50px !important;
+    z-index: 11990 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    pointer-events: auto !important;
+    margin: 0 !important;
+    padding: 0 12px !important;
+    background: #fffdf8 !important;
+  }
+
+  .mobile-menu-toggle {
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 11991 !important;
+    width: 100% !important;
+    min-height: 42px !important;
+  }
+
+  .nav {
+    position: fixed !important;
+    top: 176px !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 11985 !important;
+    display: none !important;
+    pointer-events: auto !important;
+    max-height: calc(100dvh - 176px) !important;
+    overflow-y: auto !important;
+    margin: 0 !important;
+  }
+
+  .nav.show {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .nav a {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 11986 !important;
+  }
+}
+
+/* Admin login: remove tiny white top gap */
+body.admin-page,
+body.login-page,
+body:has(.login-card),
+body:has(#loginPanel) {
+  margin-top: 0 !important;
+}
+
+/* Hide dashboard-only managers until logged in/dashboard is visible */
+body:not(.logged-in) #formsManagerPanel,
+body:not(.logged-in) #galleryManagerPanel,
+.login-screen #formsManagerPanel,
+.login-screen #galleryManagerPanel,
+#loginPanel #formsManagerPanel,
+#loginPanel #galleryManagerPanel {
+  display: none !important;
+}
+
+/* universal image fullscreen, yellow close */
+body.image-modal-open {
+  overflow: hidden !important;
+  touch-action: none !important;
+}
+
+.image-modal {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  min-height: 100vh !important;
+  background: rgba(0, 0, 0, 0.94) !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 74px 14px 28px !important;
+  z-index: 2147483000 !important;
+  pointer-events: auto !important;
+}
+
+.image-modal.show {
+  display: flex !important;
+}
+
+.image-modal img,
+#imageModalImg {
+  max-width: 96vw !important;
+  max-height: calc(100dvh - 125px) !important;
+  object-fit: contain !important;
+  border-radius: 12px !important;
+  position: relative !important;
+  z-index: 2147483001 !important;
+}
+
+.image-close-btn,
+#imageCloseBtn {
+  position: fixed !important;
+  top: max(14px, env(safe-area-inset-top)) !important;
+  right: max(14px, env(safe-area-inset-right)) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 92px !important;
+  min-height: 46px !important;
+  padding: 11px 16px !important;
+  border-radius: 999px !important;
+  border: 2px solid #ffffff !important;
+  background: #f2b705 !important;
+  color: #5a2a1a !important;
+  font-size: 15px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  z-index: 2147483647 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
+}
+
+body.image-modal-open .header,
+body.image-modal-open .line,
+body.image-modal-open .mobile-menu-bar,
+body.image-modal-open .nav,
+body.image-modal-open .footer {
+  z-index: 1 !important;
+}
+
