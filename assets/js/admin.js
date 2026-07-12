@@ -56,7 +56,7 @@ function adminOnlyActionGuard(showMessage = true) {
   if (isAdminRole()) return true;
   hideAdminOnlyPanelsForTeacher();
   if (showMessage) {
-    alert("Admin only. Your teacher account cannot manage Forms, Gallery, Users, or Page Settings.");
+    alert("Unauthorized. Your teacher account cannot manage Forms, Gallery, Users, or Page Settings.");
   }
   return false;
 }
@@ -108,6 +108,37 @@ function resetIdleTimer() {
 
 function authHeaders() {
   return { Authorization: "Bearer " + token };
+}
+
+
+function isAdminRole() {
+  return currentUser && String(currentUser.role || "").toLowerCase() === "admin";
+}
+
+function normalizeOwner(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function isOwnPost(post) {
+  if (!currentUser || !post) return false;
+  return normalizeOwner(post.author) === normalizeOwner(currentUser.name || currentUser.username);
+}
+
+function canCurrentUserModifyPost(post) {
+  return isAdminRole() || isOwnPost(post);
+}
+
+function unauthorizedMessage() {
+  alert("Unauthorized. Your teacher account can only manage posts that you created.");
+}
+
+function adminSettingsUnauthorizedMessage() {
+  alert("Unauthorized. Page Settings can only be changed by an admin account.");
+}
+
+function findPostFromCache(id) {
+  return [...(publishedPostCache || []), ...(deletedPostCache || [])]
+    .find((post) => String(post.id) === String(id));
 }
 
 function byId(id) {
@@ -573,8 +604,7 @@ function recycleItem(post) {
 }
 
 function editPost(post) {
-  
-  if (!canCurrentUserModifyPost(post)) { alert("You can only edit posts that you created."); return; }
+  if (!canCurrentUserModifyPost(post)) { unauthorizedMessage(); return; }
 postId.value = post.id;
   postType.value = post.type;
   postTitle.value = post.title;
@@ -595,6 +625,13 @@ postId.value = post.id;
 }
 
 async function postAction(id, action) {
+  const post = findPostFromCache(id);
+
+  if ((action === "delete" || action === "restore" || action === "pin" || action === "unpin") && post && !canCurrentUserModifyPost(post)) {
+    unauthorizedMessage();
+    return;
+  }
+
   const messages = {
     delete: "Move to Recycle Bin?",
     restore: "Restore post?",
@@ -604,28 +641,34 @@ async function postAction(id, action) {
 
   if (!confirm(messages[action] || "Continue?")) return;
 
-  const res = await fetch("/api/posts", {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-      ...authHeaders()
-    },
-    body: JSON.stringify({ id, action })
-  });
+  try {
+    const res = await fetch("/api/posts", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        ...authHeaders()
+      },
+      body: JSON.stringify({ id, action })
+    });
 
-  const data = await res.json();
+    const data = await readJsonSafe(res);
 
-  if (!data.success) {
-    alert(data.message || "Action failed.");
-    return;
+    if (!data.success) {
+      alert(data.message || "Action failed.");
+      return;
+    }
+
+    alert(data.message || "Done.");
+    loadPosts();
+  } catch (error) {
+    alert("Unable to complete the action. Please check your internet connection and try again.");
   }
-
-  alert(data.message || "Done.");
-  loadPosts();
 }
 
 async function permanentDelete(id) {
-  if (!confirm("Permanently delete this post?")) return;
+  const post = findPostFromCache(id);
+  if (post && !isAdminRole()) { alert("Unauthorized. Permanent delete is admin-only."); return; }
+if (!confirm("Permanently delete this post?")) return;
 
   const res = await fetch("/api/posts", {
     method: "DELETE",
@@ -721,7 +764,9 @@ uploadLogoBtn.addEventListener("click", async () => {
 settingsForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
-  const settings = {};
+  
+  if (!isAdminRole()) { adminSettingsUnauthorizedMessage(); return; }
+const settings = {};
 
   [
     "school_name",
@@ -1043,7 +1088,9 @@ function clearSchoolForm() {
   form.reset(); schoolFormId.value = ""; existingSchoolFormFile.textContent = ""; saveSchoolFormBtn.textContent = "Upload Form"; schoolFormMessage.textContent = ""; schoolFormMessage.className = "form-message";
 }
 function editSchoolForm(item) {
-  schoolFormId.value = item.id || ""; schoolFormTitle.value = item.title || ""; schoolFormCategory.value = "Excuse Letter"; schoolFormDescription.value = item.description || ""; schoolFormStatus.value = item.status || "visible";
+  
+  if (!adminOnlyActionGuard(true)) return;
+schoolFormId.value = item.id || ""; schoolFormTitle.value = item.title || ""; schoolFormCategory.value = "Excuse Letter"; schoolFormDescription.value = item.description || ""; schoolFormStatus.value = item.status || "visible";
   existingSchoolFormFile.textContent = item.filename ? "Current PDF: " + item.filename + ". Upload a new PDF only if you want to replace it." : "";
   saveSchoolFormBtn.textContent = "Update Form"; window.scrollTo({ top: document.getElementById("formsManagerPanel").offsetTop - 20, behavior: "smooth" });
 }
@@ -1061,14 +1108,18 @@ async function saveSchoolForm(event) {
   clearSchoolForm(); setMsg("schoolFormMessage", data.message || "Saved.", "success"); loadFormsAdmin();
 }
 async function schoolFormAction(id, action) {
-  const messages = { hide: "Hide this form from parents?", show: "Show this form to parents?", delete: "Move this form to Recycle Bin?", restore: "Restore this form?" };
+  
+  if (!adminOnlyActionGuard(true)) return;
+const messages = { hide: "Hide this form from parents?", show: "Show this form to parents?", delete: "Move this form to Recycle Bin?", restore: "Restore this form?" };
   if (!confirm(messages[action] || "Continue?")) return;
   const res = await fetch("/api/forms", { method: "PATCH", headers: { "Content-Type": "application/json", ...authHeaders() }, body: JSON.stringify({ id, action }) });
   const data = await res.json(); if (!data.success) { alert(data.message || "Action failed."); return; }
   alert(data.message || "Done."); loadFormsAdmin();
 }
 async function permanentDeleteSchoolForm(id) {
-  if (!confirm("Permanently delete this form? This will also delete the PDF file from R2.")) return;
+  
+  if (!adminOnlyActionGuard(true)) return;
+if (!confirm("Permanently delete this form? This will also delete the PDF file from R2.")) return;
   const res = await fetch("/api/forms", { method: "DELETE", headers: { "Content-Type": "application/json", ...authHeaders() }, body: JSON.stringify({ id }) });
   const data = await res.json(); if (!data.success) { alert(data.message || "Delete failed."); return; }
   alert(data.message || "Form permanently deleted."); loadFormsAdmin();
@@ -1138,7 +1189,9 @@ function clearGalleryPhoto() {
   form.reset(); galleryPhotoId.value = ""; saveGalleryPhotoBtn.textContent = "Upload Photo"; galleryPhotoMessage.textContent = ""; galleryPhotoMessage.className = "form-message"; updateCurrentGalleryImageBox("");
 }
 function editGalleryPhoto(item) {
-  galleryPhotoId.value = item.id || ""; galleryPhotoTitle.value = item.title || ""; galleryPhotoCategory.value = item.category || "School Events"; galleryPhotoCaption.value = item.caption || ""; galleryPhotoStatus.value = item.status || "visible";
+  
+  if (!adminOnlyActionGuard(true)) return;
+galleryPhotoId.value = item.id || ""; galleryPhotoTitle.value = item.title || ""; galleryPhotoCategory.value = item.category || "School Events"; galleryPhotoCaption.value = item.caption || ""; galleryPhotoStatus.value = item.status || "visible";
   updateCurrentGalleryImageBox(getGalleryImage(item)); saveGalleryPhotoBtn.textContent = "Update Photo"; window.scrollTo({ top: document.getElementById("galleryManagerPanel").offsetTop - 20, behavior: "smooth" });
 }
 async function saveGalleryPhoto(event) {
@@ -1153,14 +1206,18 @@ async function saveGalleryPhoto(event) {
   clearGalleryPhoto(); setMsg("galleryPhotoMessage", data.message || "Saved.", "success"); loadGalleryAdmin();
 }
 async function galleryAction(id, action) {
-  const messages = { hide: "Hide this photo from the public gallery?", show: "Show this photo in the public gallery?", delete: "Move this photo to Gallery Recycle Bin?", restore: "Restore this gallery photo?" };
+  
+  if (!adminOnlyActionGuard(true)) return;
+const messages = { hide: "Hide this photo from the public gallery?", show: "Show this photo in the public gallery?", delete: "Move this photo to Gallery Recycle Bin?", restore: "Restore this gallery photo?" };
   if (!confirm(messages[action] || "Continue?")) return;
   const res = await fetch("/api/gallery", { method: "PATCH", headers: { "Content-Type": "application/json", ...authHeaders() }, body: JSON.stringify({ id, action }) });
   const data = await res.json(); if (!data.success) { alert(data.message || "Action failed."); return; }
   alert(data.message || "Done."); loadGalleryAdmin();
 }
 async function permanentDeleteGalleryPhoto(id) {
-  if (!confirm("Permanently delete this gallery photo? This will also delete the image from R2.")) return;
+  
+  if (!adminOnlyActionGuard(true)) return;
+if (!confirm("Permanently delete this gallery photo? This will also delete the image from R2.")) return;
   const res = await fetch("/api/gallery", { method: "DELETE", headers: { "Content-Type": "application/json", ...authHeaders() }, body: JSON.stringify({ id }) });
   const data = await res.json(); if (!data.success) { alert(data.message || "Delete failed."); return; }
   alert(data.message || "Gallery photo permanently deleted."); loadGalleryAdmin();

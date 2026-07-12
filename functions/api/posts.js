@@ -13,10 +13,10 @@ import {
 
 
 function isAdminUser(user) {
-  return user && user.role === "admin";
+  return user && String(user.role || "").toLowerCase() === "admin";
 }
 
-function sameUser(a, b) {
+function sameText(a, b) {
   return String(a || "").trim().toLowerCase() === String(b || "").trim().toLowerCase();
 }
 
@@ -29,9 +29,11 @@ async function getPostOwner(env, postId) {
 }
 
 async function canModifyPost(env, user, postId) {
+  if (!user || !postId) return false;
   if (isAdminUser(user)) return true;
+
   const owner = await getPostOwner(env, postId);
-  return sameUser(owner, user && user.name);
+  return sameText(owner, user.name || user.username);
 }
 
 const POST_IMAGE_MAX_BYTES = 500 * 1024;
@@ -137,7 +139,11 @@ export async function onRequestPost(context) {
     ).bind(id).first();
 
     if (!existingPost) return bad("Post not found.", 404);
-  }
+  
+    if (!(await canModifyPost(context.env, user, id))) {
+      return bad("Unauthorized. You can only edit posts that you created.", 403);
+    }
+}
 
   let imageUrl = removeImage ? "" : existingImageUrl;
   let imageKey = removeImage ? "" : existingImageKey;
@@ -220,17 +226,19 @@ export async function onRequestPatch(context) {
 
   const body = await context.request.json();
   const id = String(body.id || "").trim();
-  
-  if (!(await canModifyPost(context.env, admin, id))) return bad("You can only edit your own posts.", 403);
-const action = String(body.action || "").trim();
+  const action = String(body.action || "").trim();
 
   if (!id || !action) return bad("Post ID and action are required.");
 
   const post = await context.env.DB.prepare(
-    `SELECT id, title FROM posts WHERE id = ?`
+    `SELECT id, title, author FROM posts WHERE id = ?`
   ).bind(id).first();
 
   if (!post) return bad("Post not found.", 404);
+
+  if (!(await canModifyPost(context.env, user, id))) {
+    return bad("Unauthorized. You can only manage posts that you created.", 403);
+  }
 
   if (action === "pin") {
     await unpinOthers(context.env, id);
@@ -275,9 +283,10 @@ const action = String(body.action || "").trim();
   if (action === "restore") {
     await context.env.DB.prepare(
       `UPDATE posts
-       SET deleted = 0, status = 'published', deleted_by = NULL, deleted_at = NULL
+       SET deleted = 0, status = 'published', deleted_by = NULL, deleted_at = NULL,
+           last_edited_by = ?, last_edited_at = CURRENT_TIMESTAMP
        WHERE id = ?`
-    ).bind(id).run();
+    ).bind(user.name || user.username, id).run();
 
     await audit(context.env, user.username, "Restored Post", post.title, id);
 
@@ -296,9 +305,7 @@ export async function onRequestDelete(context) {
   const body = await context.request.json();
   const id = String(body.id || "").trim();
 
-  
-  if (!(await canModifyPost(context.env, admin, id))) return bad("You can only delete your own posts.", 403);
-if (!id) return bad("Post ID is required.");
+  if (!id) return bad("Post ID is required.");
 
   const post = await context.env.DB.prepare(
     `SELECT id, title, image_key FROM posts WHERE id = ?`
