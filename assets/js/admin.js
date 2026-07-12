@@ -23,19 +23,15 @@ let idleLogoutInProgress = false;
 
 
 function isAdminRole() {
-  return currentUser && currentUser.role === "admin";
+  return currentUser && String(currentUser.role || "").toLowerCase() === "admin";
 }
 
-function normalizeName(value) {
-  return String(value || "").trim().toLowerCase();
+function setDisplayById(id, displayValue) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = displayValue;
 }
 
-function isOwnPost(post) {
-  if (!currentUser) return false;
-  return normalizeName(post.author) === normalizeName(currentUser.name);
-}
-
-function applyRoleVisibility() {
+function hideAdminOnlyPanelsForTeacher() {
   const adminAllowed = isAdminRole();
 
   document.querySelectorAll(".admin-only").forEach((el) => {
@@ -48,9 +44,21 @@ function applyRoleVisibility() {
     "formsManagerPanel",
     "galleryManagerPanel"
   ].forEach((id) => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = adminAllowed ? "" : "none";
+    setDisplayById(id, adminAllowed ? "" : "none");
   });
+}
+
+function applyRoleVisibility() {
+  hideAdminOnlyPanelsForTeacher();
+}
+
+function adminOnlyActionGuard(showMessage = true) {
+  if (isAdminRole()) return true;
+  hideAdminOnlyPanelsForTeacher();
+  if (showMessage) {
+    alert("Admin only. Your teacher account cannot manage Forms, Gallery, Users, or Page Settings.");
+  }
+  return false;
 }
 
 function friendlyError(prefix, error) {
@@ -973,6 +981,8 @@ function loadAll() {
     loadUsers();
     loadFormsAdmin();
     loadGalleryAdmin();
+  } else {
+    hideAdminOnlyPanelsForTeacher();
   }
 }
 
@@ -1002,10 +1012,7 @@ function renderSchoolForms() {
 }
 async function loadFormsAdmin() {
   
-  if (!isAdminRole()) {
-    applyRoleVisibility();
-    return;
-  }
+  if (!adminOnlyActionGuard(false)) return;
 const list = byId("schoolFormsList"), recycleList = byId("schoolFormsRecycleList");
   if (!list || !recycleList) return;
   list.innerHTML = '<p class="loading-text">Loading forms, please wait...</p>';
@@ -1095,10 +1102,7 @@ function renderGalleryAdmin() {
 }
 async function loadGalleryAdmin() {
   
-  if (!isAdminRole()) {
-    applyRoleVisibility();
-    return;
-  }
+  if (!adminOnlyActionGuard(false)) return;
 const list = byId("galleryPhotosList"), recycleList = byId("galleryPhotosRecycleList");
   if (!list || !recycleList) return;
   list.innerHTML = '<p class="loading-text">Loading gallery, please wait...</p>';
@@ -1166,3 +1170,36 @@ if (byId("clearGalleryPhotoBtn")) clearGalleryPhotoBtn.addEventListener("click",
 
 
 start();
+
+
+
+document.addEventListener("click", (event) => {
+  const target = event.target.closest("button, a");
+  if (!target) return;
+
+  const label = (target.textContent || "").trim().toLowerCase();
+  const attr = (
+    (target.getAttribute("onclick") || "") + " " +
+    (target.id || "") + " " +
+    (target.className || "")
+  ).toLowerCase();
+
+  const isAdminManagerAction =
+    label.includes("refresh forms") ||
+    label.includes("refresh gallery") ||
+    attr.includes("loadformsadmin") ||
+    attr.includes("loadgalleryadmin") ||
+    attr.includes("schoolform") ||
+    attr.includes("gallery");
+
+  if (!isAdminRole() && isAdminManagerAction) {
+    event.preventDefault();
+    event.stopPropagation();
+    hideAdminOnlyPanelsForTeacher();
+    return false;
+  }
+}, true);
+
+
+
+document.addEventListener("DOMContentLoaded", hideAdminOnlyPanelsForTeacher);
