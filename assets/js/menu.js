@@ -6,15 +6,17 @@
 
   if (!nav || !toggle) return;
 
-  function isMenuOpen() {
+  function isMobile() {
+    return window.matchMedia("(max-width: 768px)").matches;
+  }
+
+  function isOpen() {
     return nav.classList.contains("show");
   }
 
   function openMenu() {
     nav.classList.add("show");
-    nav.classList.add("open");
     toggle.setAttribute("aria-expanded", "true");
-    document.body.classList.add("menu-open");
   }
 
   function closeMenu() {
@@ -22,7 +24,6 @@
     nav.classList.remove("open");
     nav.classList.remove("active");
     toggle.setAttribute("aria-expanded", "false");
-    document.body.classList.remove("menu-open");
   }
 
   function toggleMenu(event) {
@@ -31,81 +32,54 @@
       event.stopPropagation();
     }
 
-    // Do not open menu while an image modal is active.
-    const imageModal = document.getElementById("imageModal");
-    if (imageModal && imageModal.classList.contains("show")) {
+    const modal = document.getElementById("imageModal");
+    if (modal && modal.classList.contains("show")) {
       closeMenu();
       return;
     }
 
-    if (isMenuOpen()) {
+    if (isOpen()) {
       closeMenu();
     } else {
       openMenu();
     }
   }
 
-  // Remove old inline/on-page browser weirdness by using both click and touchend safely.
   toggle.addEventListener("click", toggleMenu);
 
-  toggle.addEventListener(
-    "touchend",
-    (event) => {
-      event.preventDefault();
-      event.stopPropagation();
+  // Use pointerup only on the button. Do not attach touch handlers to links,
+  // because that can cancel mobile page navigation.
+  toggle.addEventListener("pointerup", (event) => {
+    if (event.pointerType === "touch") {
       toggleMenu(event);
-    },
-    { passive: false }
-  );
-
-  // Stop clicks inside nav from closing before the link receives the tap.
-  nav.addEventListener("click", (event) => {
-    event.stopPropagation();
-
-    const link = event.target.closest("a");
-    if (link) {
-      closeMenu();
     }
   });
 
-  nav.addEventListener(
-    "touchend",
-    (event) => {
-      const link = event.target.closest("a");
-      if (link) {
-        closeMenu();
-      }
-    },
-    { passive: true }
-  );
+  // Close after link click, but let browser navigate normally.
+  nav.addEventListener("click", (event) => {
+    const link = event.target.closest("a");
+    if (!link) return;
+
+    if (isMobile()) {
+      setTimeout(closeMenu, 80);
+    }
+  });
 
   // Tap outside closes menu.
   document.addEventListener("click", (event) => {
-    if (!isMenuOpen()) return;
+    if (!isMobile()) return;
+    if (!isOpen()) return;
     if (nav.contains(event.target) || toggle.contains(event.target)) return;
     closeMenu();
   });
 
-  document.addEventListener(
-    "touchend",
-    (event) => {
-      if (!isMenuOpen()) return;
-      if (nav.contains(event.target) || toggle.contains(event.target)) return;
-      closeMenu();
-    },
-    { passive: true }
-  );
-
-  // Escape closes menu on laptop.
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") closeMenu();
   });
 
-  // If screen becomes desktop/tablet wide, reset mobile menu state.
   window.addEventListener("resize", () => {
-    if (window.innerWidth > 768) closeMenu();
+    if (!isMobile()) closeMenu();
   });
 
-  // Public helper for gallery modal or future scripts.
   window.closeMobileMenu = closeMenu;
 })();

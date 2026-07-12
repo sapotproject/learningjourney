@@ -1349,52 +1349,121 @@ body.image-modal-open .mobile-menu-toggle {
 
 
 /* =========================================================
-   Mobile Burger Menu Stable Fix v1
+   Menu Layout Repair v2
+   Fixes bad mobile burger/header behavior and restores navigation
    ========================================================= */
 
-.mobile-menu-toggle {
-  touch-action: manipulation !important;
-  -webkit-tap-highlight-color: transparent !important;
-  user-select: none !important;
-  position: relative !important;
-  z-index: 12000 !important;
-  pointer-events: auto !important;
-}
-
-.mobile-menu-bar {
-  position: sticky !important;
-  top: var(--mobile-header-total, 0px) !important;
-  z-index: 11990 !important;
-  pointer-events: auto !important;
-}
-
-@media (max-width: 768px) {
-  .nav {
-    pointer-events: auto !important;
+/* Desktop/laptop: keep the full top area in the correct order */
+@media (min-width: 769px) {
+  .header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 12000 !important;
   }
 
-  .nav:not(.show):not(.open):not(.active) {
+  .line {
+    position: sticky !important;
+    top: 86px !important;
+    z-index: 11990 !important;
+  }
+
+  .mobile-menu-bar {
     display: none !important;
   }
 
-  .nav.show,
-  .nav.open,
-  .nav.active {
+  .nav {
+    position: sticky !important;
+    top: 92px !important;
+    z-index: 11980 !important;
+    display: flex !important;
+    pointer-events: auto !important;
+  }
+
+  .nav a {
+    pointer-events: auto !important;
+  }
+}
+
+/* Mobile: header first, yellow line second, burger third, dropdown below burger */
+@media (max-width: 768px) {
+  .header {
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 12000 !important;
+  }
+
+  .line {
+    position: sticky !important;
+    top: 74px !important;
+    z-index: 11990 !important;
+  }
+
+  .mobile-menu-bar {
+    position: sticky !important;
+    top: 80px !important;
+    z-index: 11980 !important;
+    display: block !important;
+    pointer-events: auto !important;
+  }
+
+  .mobile-menu-toggle {
+    touch-action: manipulation !important;
+    -webkit-tap-highlight-color: transparent !important;
+    position: relative !important;
+    z-index: 11981 !important;
+    pointer-events: auto !important;
+  }
+
+  .nav {
+    position: sticky !important;
+    top: 126px !important;
+    z-index: 11970 !important;
+    display: none !important;
+    pointer-events: auto !important;
+  }
+
+  .nav.show {
     display: flex !important;
     flex-direction: column !important;
-    pointer-events: auto !important;
-    z-index: 11980 !important;
   }
 
-  body.image-modal-open .mobile-menu-bar,
-  body.image-modal-open .mobile-menu-toggle,
-  body.image-modal-open .nav {
-    pointer-events: none !important;
-  }
-
-  body:not(.image-modal-open) .mobile-menu-bar,
-  body:not(.image-modal-open) .mobile-menu-toggle {
+  .nav a {
     pointer-events: auto !important;
+    position: relative !important;
+    z-index: 11971 !important;
   }
+}
+
+/* During image fullscreen, header/menu should never block the Close button */
+body.image-modal-open .header,
+body.image-modal-open .line,
+body.image-modal-open .mobile-menu-bar,
+body.image-modal-open .nav,
+body.image-modal-open .footer {
+  z-index: 1 !important;
+}
+
+/* Fullscreen image Close button: yellow instead of maroon */
+.image-close-btn,
+#imageCloseBtn {
+  background: #f2b705 !important;
+  color: #5a2a1a !important;
+  border: 2px solid #ffffff !important;
+  font-weight: 900 !important;
+}
+
+/* Keep modal on top */
+.image-modal {
+  z-index: 2147483000 !important;
+}
+
+.image-modal img,
+#imageModalImg {
+  z-index: 2147483001 !important;
+}
+
+.image-close-btn,
+#imageCloseBtn {
+  z-index: 2147483647 !important;
 }
 
