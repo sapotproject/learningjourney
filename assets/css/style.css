@@ -1495,7 +1495,11 @@ body.image-modal-open {
   font-size: 14px;
 }
 
-
+/* Hide manager sections before login when admin page body has no logged-in class */
+body:not(.logged-in) #formsManagerPanel,
+body:not(.logged-in) #galleryManagerPanel {
+  display: none !important;
+}
 
 /* =========================================================
    ADMIN TOOLS / GALLERY MANAGER
@@ -1943,17 +1947,20 @@ body.image-modal-open {
 }
 
 
-/* =========================================================
-   Clean CSS Replacement v3
-   Restore Forms Manager + Gallery Manager visibility
-   ========================================================= */
 
-/* The previous logged-in body-class rule was too strict.
-   It hid these manager panels even after successful login on the current admin page.
-   Dashboard/login visibility should be handled by the admin page structure/JS,
-   not by hiding these panels globally in CSS. */
-#formsManagerPanel,
-#galleryManagerPanel {
-  visibility: visible;
+/* SchoolsPH Final QA Polish v1 - desktop/laptop footer should not be sticky */
+@media (min-width: 769px) {
+  .site-footer,
+  footer,
+  .footer {
+    position: static !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    z-index: auto !important;
+  }
+
+  body {
+    padding-bottom: 0 !important;
+  }
 }
-

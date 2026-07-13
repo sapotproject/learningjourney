@@ -1,3 +1,4 @@
+// SchoolsPH Final QA Polish v1: 20260713-final-qa-polish-v1
 // SchoolsPH Manila timezone dashboard patch: 20260713-manila-timezone-dashboard-v1
 /* SchoolsPH Dashboard Identity + Post Metadata v1 */
 // SchoolsPH admin.js patch: 20260712-teacher-edit-message-v1
@@ -14,7 +15,7 @@ let deletedPostCache = [];
 let publishedVisibleCount = 10;
 let deletedVisibleCount = 10;
 
-const POST_IMAGE_MAX_BYTES = 500 * 1024;
+const POST_IMAGE_MAX_BYTES = 4 * 1024 * 1024;
 
 const loginPanel = document.getElementById("loginPanel");
 const dashboardPanel = document.getElementById("dashboardPanel");
@@ -342,7 +343,7 @@ function preview() {
   const removeImage = removePostImage && removePostImage.checked;
 
   if (imageFile && fileTooLarge(imageFile, POST_IMAGE_MAX_BYTES)) {
-    setMsg("postMessage", `Image is too large (${formatKb(imageFile.size)}). Maximum is 500 KB.`, "error");
+    setMsg("postMessage", `Image is too large (${formatKb(imageFile.size)}). Maximum is 4 MB.`, "error");
   }
 
   if (!type && !date && !title && !message && !imageFile && !existingImageUrl.value) {
@@ -408,7 +409,7 @@ postForm.addEventListener("submit", async (event) => {
   const imageFile = postImage.files && postImage.files[0];
 
   if (fileTooLarge(imageFile, POST_IMAGE_MAX_BYTES)) {
-    setMsg("postMessage", `Image is too large (${formatKb(imageFile.size)}). Maximum is 500 KB.`, "error");
+    setMsg("postMessage", `Image is too large (${formatKb(imageFile.size)}). Maximum is 4 MB.`, "error");
     return;
   }
 
@@ -881,8 +882,8 @@ uploadLogoBtn.addEventListener("click", async () => {
     return;
   }
 
-  if (set_logo_file.files[0].size > 500 * 1024) {
-    setMiniMsg("logoUploadMessage", "Logo is too large. Please keep it below 500 KB.", "error");
+  if (set_logo_file.files[0].size > 4 * 1024 * 1024) {
+    setMiniMsg("logoUploadMessage", "Logo is too large. Please keep it below 4 MB.", "error");
     return;
   }
 
@@ -947,9 +948,11 @@ const settings = {};
 
 async function loadUsers() {
   if (!currentUser || currentUser.role !== "admin") {
-    usersPanel.style.display = "none";
+    if (typeof usersPanel !== "undefined" && usersPanel) usersPanel.style.display = "none";
     return;
   }
+
+  if (!userList) return;
 
   usersPanel.style.display = "";
   userList.innerHTML = '<p class="loading-text">Loading users, please wait...</p>';
@@ -961,8 +964,8 @@ async function loadUsers() {
 
     const data = await readJsonSafe(res);
 
-    if (!data.success) {
-      userList.innerHTML = '<p class="loading-text">' + esc(data.message || "Unable to load users. Please refresh and try again.") + "</p>";
+    if (!res.ok || !data.success) {
+      userList.innerHTML = '<p class="loading-text">' + esc(data.message || ("Unable to load users. Server response: " + res.status)) + "</p>";
       if (res.status === 401) logout("Your session expired. Please login again.");
       return;
     }
@@ -988,11 +991,10 @@ async function loadUsers() {
             <button class="small-btn permanent-btn" onclick="permanentDeleteUser('${esc(user.username)}')">Permanent Delete</button>
           </div>
         </div>
-          ${postRestrictionNote(post)}
       `;
     }).join("") || '<p class="loading-text">No users found.</p>';
   } catch (error) {
-    userList.innerHTML = '<p class="loading-text">Unable to load users. Please check your internet connection and refresh.</p>';
+    userList.innerHTML = '<p class="loading-text">Unable to load users. Please check if functions/api/users.js is uploaded and Cloudflare deployment finished.</p>';
   }
 }
 
@@ -1280,7 +1282,7 @@ if (byId("clearSchoolFormBtn")) clearSchoolFormBtn.addEventListener("click", cle
 /* =========================================================
    Gallery Manager
    ========================================================= */
-const GALLERY_IMAGE_MAX_BYTES = 1000 * 1024;
+const GALLERY_IMAGE_MAX_BYTES = 4 * 1024 * 1024;
 let galleryCache = [];
 let galleryDeletedCache = [];
 
@@ -1348,7 +1350,7 @@ async function saveGalleryPhoto(event) {
   event.preventDefault();
   const file = galleryPhotoFile.files && galleryPhotoFile.files[0], editing = Boolean(galleryPhotoId.value);
   if (!editing && !file) { setMsg("galleryPhotoMessage", "Please choose a gallery image.", "error"); return; }
-  if (file && file.size > GALLERY_IMAGE_MAX_BYTES) { setMsg("galleryPhotoMessage", `Image is too large (${formatKb(file.size)}). Maximum is 1000 KB.`, "error"); return; }
+  if (file && file.size > GALLERY_IMAGE_MAX_BYTES) { setMsg("galleryPhotoMessage", `Image is too large (${formatKb(file.size)}). Maximum is 4 MB.`, "error"); return; }
   setMsg("galleryPhotoMessage", "Saving photo...", "");
   const fd = new FormData(); fd.append("id", galleryPhotoId.value); fd.append("title", galleryPhotoTitle.value); fd.append("category", galleryPhotoCategory.value); fd.append("caption", galleryPhotoCaption.value); fd.append("status", galleryPhotoStatus.value); if (file) fd.append("image", file);
   const res = await fetch("/api/gallery", { method: "POST", headers: authHeaders(), body: fd });

@@ -36,7 +36,7 @@ async function canModifyPost(env, user, postId) {
   return sameText(owner, user.name || user.username);
 }
 
-const POST_IMAGE_MAX_BYTES = 500 * 1024;
+const POST_IMAGE_MAX_BYTES = 4 * 1024 * 1024;
 
 async function ensurePinnedColumn(env) {
   const info = await env.DB.prepare(`PRAGMA table_info(posts)`).all();
@@ -73,7 +73,7 @@ async function uploadPostImage(env, image) {
   }
 
   if (image.size > POST_IMAGE_MAX_BYTES) {
-    throw new Error("Image is too large. Maximum size is 500 KB.");
+    throw new Error("Image is too large. Maximum size is 4 MB.");
   }
 
   const safe = sanitizeFilename(image.name || "post-image");
