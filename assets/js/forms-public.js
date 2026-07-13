@@ -1,3 +1,4 @@
+// SchoolsPH School Forms copy cleanup: 20260713-schoolforms-copy-cleanup-v1
 const formsList = document.getElementById("formsList");
 const formsStatus = document.getElementById("formsStatus");
 
@@ -40,7 +41,7 @@ function formCard(item) {
     <article class="form-card">
       <div class="form-card-main">
         <span class="tag">Excuse Letter</span>
-        <h3>${esc(item.title || "Excuse Letter Form")}</h3>
+        <h3>${esc(item.title || "School Form")}</h3>
         ${description ? `<p>${esc(description)}</p>` : `<p>Use this form when a student was absent from class.</p>`}
         <div class="form-meta">
           ${uploadedAt ? `<span>Uploaded: ${esc(uploadedAt)}</span>` : ""}
