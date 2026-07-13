@@ -4,12 +4,12 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Learning Journey Teacher/Admin Dashboard</title>
-  <link rel="stylesheet" href="/assets/css/style.css?v=20260712-role-permissions-v1"/>
+  <link rel="stylesheet" href="/assets/css/style.css?v=batch2-admin-backend-header-v1"/>
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon-32.png?v=brown-icon-v1">
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png?v=brown-icon-v1">
-  <link rel="manifest" href="/site.webmanifest?v=20260712-admin-polish-v1">
+  <link rel="manifest" href="/site.webmanifest?v=brown-icon-v1">
 </head>
-<body class="admin-page">
+<body>
   <header class="admin-header">
     <div class="admin-header-inner">
       <div class="admin-brand">
@@ -45,19 +45,7 @@
     </section>
 
     <section id="dashboardPanel" class="hidden">
-      
-      <div id="currentUserBox" class="current-user-box hidden">
-        <span class="current-user-icon">👤</span>
-        <span>
-          Logged in as
-          <strong id="currentUserName">User</strong>
-          <span class="muted">·</span>
-          <span id="currentUserRole">role</span>
-          <span class="muted">·</span>
-          <span id="currentUserUsername">@username</span>
-        </span>
-      </div>
-<section class="top-grid">
+      <section class="top-grid">
         <form id="postForm" class="card">
           <h3 id="postFormTitle">Create New Post</h3>
 
@@ -222,22 +210,18 @@
         </form>
       </section>
 
-      <section id="usersPanel" class="card admin-only">
+      <section id="usersPanel" class="card">
         <h3>User Management</h3>
 
         <form id="userForm" class="user-form-grid">
-          <input id="user_mode" type="hidden" value="add">
-          <input id="user_original_username" type="hidden">
-
           <div class="form-row">
             <label>Username</label>
-            <input id="user_username" autocomplete="off" placeholder="unique username">
-            <p class="mini-message">Username must be unique. It cannot be changed after creation.</p>
+            <input id="user_username">
           </div>
 
           <div class="form-row">
             <label>Name</label>
-            <input id="user_name" autocomplete="off">
+            <input id="user_name">
           </div>
 
           <div class="form-row">
@@ -249,21 +233,12 @@
           </div>
 
           <div class="form-row">
-            <label>Status</label>
-            <select id="user_active">
-              <option value="1">Active</option>
-              <option value="0">Inactive</option>
-            </select>
-          </div>
-
-          <div class="form-row full-row">
             <label>Password</label>
-            <input id="user_password" type="password" placeholder="Required only when adding a new user or resetting password">
+            <input id="user_password" type="password" placeholder="Required for new user / reset only">
           </div>
 
           <div class="form-actions full-row">
-            <button id="saveUserBtn" class="publish-btn" type="submit">Add User</button>
-            <button id="cancelEditUserBtn" class="clear-btn hidden" type="button">Cancel Edit</button>
+            <button class="publish-btn" type="submit">Add User</button>
             <button class="clear-btn" type="button" onclick="loadUsers()">Refresh Users</button>
           </div>
 
@@ -272,6 +247,8 @@
 
         <div id="userList" class="user-list"></div>
       </section>
+    </section>
+  
         <section class="card full-row" id="formsManagerPanel">
           <div class="section-head">
             <h3>School Forms Manager</h3>
@@ -284,12 +261,7 @@
                 <label>Form Title</label>
                 <input id="schoolFormTitle" type="text" placeholder="Example: Excuse Letter Form" required>
               </div>
-              <div class="form-row">
-                <label>Category</label>
-                <select id="schoolFormCategory" required>
-                  <option value="Excuse Letter">Excuse Letter</option>
-                </select>
-              </div>
+              <input id="schoolFormCategory" type="hidden" value="General">
               <div class="form-row full-row">
                 <label>Description</label>
                 <textarea id="schoolFormDescription" rows="3" placeholder="Example: Use this form when a student was absent from class."></textarea>
@@ -315,9 +287,9 @@
             <p id="schoolFormMessage" class="form-message"></p>
           </form>
           <div class="section-head forms-list-head"><h3>Visible / Hidden Forms</h3></div>
-          <div id="schoolFormsList" class="post-list admin-only"></div>
+          <div id="schoolFormsList" class="post-list"></div>
           <div class="section-head forms-list-head"><h3>Forms Recycle Bin</h3></div>
-          <div id="schoolFormsRecycleList" class="post-list admin-only"></div>
+          <div id="schoolFormsRecycleList" class="post-list"></div>
         </section>
 
         <section class="card full-row" id="galleryManagerPanel">
@@ -332,15 +304,7 @@
                 <label>Photo Title</label>
                 <input id="galleryPhotoTitle" type="text" placeholder="Example: Classroom Activity" required>
               </div>
-              <div class="form-row">
-                <label>Category</label>
-                <select id="galleryPhotoCategory" required>
-                  <option>Campus & Facilities</option>
-                  <option>Learning Activities</option>
-                  <option>School Events</option>
-                  <option>Student Works</option>
-                </select>
-              </div>
+              <input id="schoolFormCategory" type="hidden" value="General">
               <div class="form-row full-row">
                 <label>Caption</label>
                 <textarea id="galleryPhotoCaption" rows="3" placeholder="Short caption for this gallery photo."></textarea>
@@ -369,14 +333,13 @@
             <p id="galleryPhotoMessage" class="form-message"></p>
           </form>
           <div class="section-head forms-list-head"><h3>Visible / Hidden Gallery Photos</h3></div>
-          <div id="galleryPhotosList" class="post-list admin-only"></div>
+          <div id="galleryPhotosList" class="post-list"></div>
           <div class="section-head forms-list-head"><h3>Gallery Recycle Bin</h3></div>
-          <div id="galleryPhotosRecycleList" class="post-list admin-only"></div>
+          <div id="galleryPhotosRecycleList" class="post-list"></div>
         </section>
-      </section>
+
   </main>
 
-  <script src="/assets/js/admin.js?v=20260713-dashboard-identity-post-meta-v1"></script>
-  <script src="/assets/js/image-modal-fix.js?v=20260711-final-layout-admin-repair-v1"></script>
+  <script src="/assets/js/admin.js?v=20260713-remove-forms-category-v1"></script>
 </body>
 </html>

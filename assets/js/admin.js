@@ -1,3 +1,4 @@
+// SchoolsPH remove school forms category patch: 20260713-remove-forms-category-v1
 // SchoolsPH Final QA Polish v1: 20260713-final-qa-polish-v1
 // SchoolsPH Manila timezone dashboard patch: 20260713-manila-timezone-dashboard-v1
 /* SchoolsPH Dashboard Identity + Post Metadata v1 */
@@ -445,6 +446,7 @@ postForm.addEventListener("submit", async (event) => {
 
   clearPost();
   setMsg("postMessage", data.message || "Saved.", "success");
+  ensureSchoolFormCategoryHidden();
   loadPosts();
 });
 
@@ -1196,17 +1198,30 @@ function formStatusBadge(status) {
 }
 function schoolFormItem(item) {
   const fileLink = item.file_url ? `<a class="small-btn clear-btn" href="${esc(item.file_url)}" target="_blank" rel="noopener">Open PDF</a>` : "";
-  return `<div class="post-item"><h4>${esc(item.title)}</h4>${formStatusBadge(item.status)}<div class="post-meta">Excuse Letter • ${esc(item.filename || "")}</div><p>${esc(shortText(item.description || "No description.", 160))}</p><div class="post-actions">${fileLink}<button class="small-btn edit-btn" onclick='editSchoolForm(${JSON.stringify(item).replaceAll("'", "&#039;")})'>Edit</button>${item.status === "hidden" ? `<button class="small-btn restore-btn" onclick="schoolFormAction('${esc(item.id)}','show')">Show</button>` : `<button class="small-btn clear-btn" onclick="schoolFormAction('${esc(item.id)}','hide')">Hide</button>`}<button class="small-btn delete-btn" onclick="schoolFormAction('${esc(item.id)}','delete')">Move to Recycle Bin</button></div></div>`;
+  return `<div class="post-item"><h4>${esc(item.title)}</h4>${formStatusBadge(item.status)}<div class="post-meta">${esc(item.filename || "")}</div><p>${esc(shortText(item.description || "No description.", 160))}</p><div class="post-actions">${fileLink}<button class="small-btn edit-btn" onclick='editSchoolForm(${JSON.stringify(item).replaceAll("'", "&#039;")})'>Edit</button>${item.status === "hidden" ? `<button class="small-btn restore-btn" onclick="schoolFormAction('${esc(item.id)}','show')">Show</button>` : `<button class="small-btn clear-btn" onclick="schoolFormAction('${esc(item.id)}','hide')">Hide</button>`}<button class="small-btn delete-btn" onclick="schoolFormAction('${esc(item.id)}','delete')">Move to Recycle Bin</button></div></div>`;
 }
 function schoolFormRecycleItem(item) {
-  return `<div class="post-item"><h4>${esc(item.title)}</h4><div class="post-meta">Excuse Letter • Deleted</div><p>${esc(shortText(item.description || "No description.", 160))}</p><div class="post-actions"><button class="small-btn restore-btn" onclick="schoolFormAction('${esc(item.id)}','restore')">Restore</button><button class="small-btn permanent-btn" onclick="permanentDeleteSchoolForm('${esc(item.id)}')">Permanent Delete</button></div></div>`;
+  return `<div class="post-item"><h4>${esc(item.title)}</h4><div class="post-meta">Deleted</div><p>${esc(shortText(item.description || "No description.", 160))}</p><div class="post-actions"><button class="small-btn restore-btn" onclick="schoolFormAction('${esc(item.id)}','restore')">Restore</button><button class="small-btn permanent-btn" onclick="permanentDeleteSchoolForm('${esc(item.id)}')">Permanent Delete</button></div></div>`;
 }
 function renderSchoolForms() {
   const list = byId("schoolFormsList"), recycleList = byId("schoolFormsRecycleList");
   if (!list || !recycleList) return;
-  list.innerHTML = schoolFormsCache.length ? schoolFormsCache.map(schoolFormItem).join("") : '<p class="loading-text">No Excuse Letter forms yet.</p>';
+  list.innerHTML = schoolFormsCache.length ? schoolFormsCache.map(schoolFormItem).join("") : '<p class="loading-text">No school forms yet.</p>';
   recycleList.innerHTML = schoolFormsDeletedCache.length ? schoolFormsDeletedCache.map(schoolFormRecycleItem).join("") : '<p class="loading-text">Forms Recycle Bin is empty.</p>';
 }
+function ensureSchoolFormCategoryHidden() {
+  if (document.getElementById("schoolFormCategory") || document.getElementById("formCategory") || document.getElementById("form_category")) return;
+
+  const form = document.getElementById("schoolFormUploadForm") || document.getElementById("schoolFormForm");
+  if (!form) return;
+
+  const input = document.createElement("input");
+  input.type = "hidden";
+  input.id = "schoolFormCategory";
+  input.value = "General";
+  form.appendChild(input);
+}
+
 async function loadFormsAdmin() {
   
   if (!adminOnlyActionGuard(false)) return;
@@ -1242,7 +1257,7 @@ function clearSchoolForm() {
 function editSchoolForm(item) {
   
   if (!adminOnlyActionGuard(true)) return;
-schoolFormId.value = item.id || ""; schoolFormTitle.value = item.title || ""; schoolFormCategory.value = "Excuse Letter"; schoolFormDescription.value = item.description || ""; schoolFormStatus.value = item.status || "visible";
+schoolFormId.value = item.id || ""; schoolFormTitle.value = item.title || ""; if (typeof schoolFormCategory !== "undefined" && schoolFormCategory) schoolFormCategory.value = "General"; schoolFormDescription.value = item.description || ""; schoolFormStatus.value = item.status || "visible";
   existingSchoolFormFile.textContent = item.filename ? "Current PDF: " + item.filename + ". Upload a new PDF only if you want to replace it." : "";
   saveSchoolFormBtn.textContent = "Update Form"; window.scrollTo({ top: document.getElementById("formsManagerPanel").offsetTop - 20, behavior: "smooth" });
 }
@@ -1253,7 +1268,7 @@ async function saveSchoolForm(event) {
   if (file && file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) { setMsg("schoolFormMessage", "Only PDF files are allowed.", "error"); return; }
   if (file && file.size > SCHOOL_FORM_MAX_BYTES) { setMsg("schoolFormMessage", `PDF is too large (${formatKb(file.size)}). Maximum is 5 MB.`, "error"); return; }
   setMsg("schoolFormMessage", "Saving form...", "");
-  const fd = new FormData(); fd.append("id", schoolFormId.value); fd.append("title", schoolFormTitle.value); fd.append("category", "Excuse Letter"); fd.append("description", schoolFormDescription.value); fd.append("status", schoolFormStatus.value); if (file) fd.append("file", file);
+  const fd = new FormData(); fd.append("id", schoolFormId.value); fd.append("title", schoolFormTitle.value); fd.append("category", "General"); fd.append("description", schoolFormDescription.value); fd.append("status", schoolFormStatus.value); if (file) fd.append("file", file);
   const res = await fetch("/api/forms", { method: "POST", headers: authHeaders(), body: fd });
   const data = await res.json();
   if (!data.success) { setMsg("schoolFormMessage", data.message || "Save failed.", "error"); return; }
