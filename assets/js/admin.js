@@ -1,5 +1,4 @@
-// SchoolsPH Add User Button Repair v1: 20260713-add-user-button-repair-v1
-// SchoolsPH Gallery Category Safe Repair v1: 20260713-gallery-category-safe-repair-v1
+// SchoolsPH Add User Real Fix v2 + Gallery Category Repair: 20260713-add-user-real-fix-v2
 // SchoolsPH remove school forms category patch: 20260713-remove-forms-category-v1
 // SchoolsPH Final QA Polish v1: 20260713-final-qa-polish-v1
 // SchoolsPH Manila timezone dashboard patch: 20260713-manila-timezone-dashboard-v1
@@ -160,23 +159,6 @@ function findPostFromCache(id) {
 function byId(id) {
   return document.getElementById(id);
 }
-
-// Explicit User Management element references.
-// This avoids relying on browser auto-created globals from element IDs.
-const usersPanel = byId("usersPanel");
-const userList = byId("userList");
-const userForm = byId("userForm");
-const user_mode = byId("user_mode");
-const user_original_username = byId("user_original_username");
-const user_username = byId("user_username");
-const user_name = byId("user_name");
-const user_role = byId("user_role");
-const user_active = byId("user_active");
-const user_password = byId("user_password");
-const saveUserBtn = byId("saveUserBtn");
-const cancelEditUserBtn = byId("cancelEditUserBtn");
-const userMessage = byId("userMessage");
-
 
 function esc(value) {
   return String(value || "")
@@ -969,11 +951,11 @@ const settings = {};
 
 async function loadUsers() {
   if (!currentUser || currentUser.role !== "admin") {
-    if (usersPanel) usersPanel.style.display = "none";
+    if (typeof usersPanel !== "undefined" && usersPanel) usersPanel.style.display = "none";
     return;
   }
 
-  if (!userList || !usersPanel) return;
+  if (!userList) return;
 
   usersPanel.style.display = "";
   userList.innerHTML = '<p class="loading-text">Loading users, please wait...</p>';
@@ -1020,7 +1002,7 @@ async function loadUsers() {
 }
 
 function resetUserForm() {
-  if (!userForm) return;
+  if (!byId("userForm")) return;
 
   userForm.reset();
   user_mode.value = "add";
@@ -1048,19 +1030,12 @@ function editUser(user) {
   window.scrollTo({ top: usersPanel.offsetTop - 20, behavior: "smooth" });
 }
 
-if (cancelEditUserBtn) {
+if (byId("cancelEditUserBtn")) {
   cancelEditUserBtn.addEventListener("click", resetUserForm);
 }
 
-if (userForm) {
 userForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-
-  const requiredUserFields = [user_mode, user_username, user_name, user_role, user_active, user_password, userMessage];
-  if (requiredUserFields.some((field) => !field)) {
-    alert("User Management form is missing required fields. Please refresh the admin page.");
-    return;
-  }
 
   const isEdit = user_mode.value === "edit";
 
@@ -1131,9 +1106,6 @@ userForm.addEventListener("submit", async (event) => {
     setMsg("userMessage", "Unable to add user. Please check your connection and try again.", "error");
   }
 });
-} else {
-  console.error("User Management form was not found. Add User button cannot be attached.");
-}
 
 async function toggleUser(username, active, role, name) {
   const res = await fetch("/api/users", {
@@ -1501,3 +1473,19 @@ document.addEventListener("DOMContentLoaded", hideAdminOnlyPanelsForTeacher);
 
 
 document.addEventListener("DOMContentLoaded", ensureGalleryPhotoCategoryDropdown);
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const addUserButton = document.getElementById("saveUserBtn");
+  const addUserForm = document.getElementById("userForm");
+
+  if (addUserButton && addUserForm && !addUserButton.dataset.submitBackupAttached) {
+    addUserButton.dataset.submitBackupAttached = "1";
+    addUserButton.addEventListener("click", (event) => {
+      if (addUserButton.type === "submit") return;
+      event.preventDefault();
+      addUserForm.requestSubmit ? addUserForm.requestSubmit() : addUserForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+    });
+  }
+});
+
