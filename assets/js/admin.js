@@ -1,3 +1,4 @@
+// SchoolsPH Gallery Category Safe Repair v1: 20260713-gallery-category-safe-repair-v1
 // SchoolsPH remove school forms category patch: 20260713-remove-forms-category-v1
 // SchoolsPH Final QA Polish v1: 20260713-final-qa-polish-v1
 // SchoolsPH Manila timezone dashboard patch: 20260713-manila-timezone-dashboard-v1
@@ -1318,6 +1319,46 @@ function renderGalleryAdmin() {
   list.innerHTML = galleryCache.length ? galleryCache.map(galleryItem).join("") : '<p class="loading-text">No gallery photos yet.</p>';
   recycleList.innerHTML = galleryDeletedCache.length ? galleryDeletedCache.map(galleryRecycleItem).join("") : '<p class="loading-text">Gallery Recycle Bin is empty.</p>';
 }
+
+function ensureGalleryPhotoCategoryDropdown() {
+  let select = document.getElementById("galleryPhotoCategory");
+  const form = document.getElementById("galleryUploadForm");
+
+  if (select || !form) return select;
+
+  const row = document.createElement("div");
+  row.className = "form-row";
+  row.innerHTML = `
+    <label>Category</label>
+    <select id="galleryPhotoCategory" required>
+      <option>Campus & Facilities</option>
+      <option>Learning Activities</option>
+      <option>School Events</option>
+      <option>Student Works</option>
+    </select>
+  `;
+
+  const grid = form.querySelector(".settings-grid") || form;
+  const caption = document.getElementById("galleryPhotoCaption");
+  const status = document.getElementById("galleryPhotoStatus");
+
+  if (caption && caption.closest(".form-row") && caption.closest(".form-row").parentNode === grid) {
+    grid.insertBefore(row, caption.closest(".form-row"));
+  } else if (status && status.closest(".form-row") && status.closest(".form-row").parentNode === grid) {
+    grid.insertBefore(row, status.closest(".form-row"));
+  } else {
+    grid.appendChild(row);
+  }
+
+  return document.getElementById("galleryPhotoCategory");
+}
+
+function getGalleryPhotoCategoryValue() {
+  const select = ensureGalleryPhotoCategoryDropdown();
+  return select && select.value ? select.value : "School Events";
+}
+
+
 async function loadGalleryAdmin() {
   
   if (!adminOnlyActionGuard(false)) return;
@@ -1358,16 +1399,18 @@ function clearGalleryPhoto() {
 function editGalleryPhoto(item) {
   
   if (!adminOnlyActionGuard(true)) return;
-galleryPhotoId.value = item.id || ""; galleryPhotoTitle.value = item.title || ""; galleryPhotoCategory.value = item.category || "School Events"; galleryPhotoCaption.value = item.caption || ""; galleryPhotoStatus.value = item.status || "visible";
+  ensureGalleryPhotoCategoryDropdown();
+galleryPhotoId.value = item.id || ""; galleryPhotoTitle.value = item.title || ""; (document.getElementById("galleryPhotoCategory") || ensureGalleryPhotoCategoryDropdown()).value = item.category || "School Events"; galleryPhotoCaption.value = item.caption || ""; galleryPhotoStatus.value = item.status || "visible";
   updateCurrentGalleryImageBox(getGalleryImage(item)); saveGalleryPhotoBtn.textContent = "Update Photo"; window.scrollTo({ top: document.getElementById("galleryManagerPanel").offsetTop - 20, behavior: "smooth" });
 }
 async function saveGalleryPhoto(event) {
   event.preventDefault();
+  ensureGalleryPhotoCategoryDropdown();
   const file = galleryPhotoFile.files && galleryPhotoFile.files[0], editing = Boolean(galleryPhotoId.value);
   if (!editing && !file) { setMsg("galleryPhotoMessage", "Please choose a gallery image.", "error"); return; }
   if (file && file.size > GALLERY_IMAGE_MAX_BYTES) { setMsg("galleryPhotoMessage", `Image is too large (${formatKb(file.size)}). Maximum is 4 MB.`, "error"); return; }
   setMsg("galleryPhotoMessage", "Saving photo...", "");
-  const fd = new FormData(); fd.append("id", galleryPhotoId.value); fd.append("title", galleryPhotoTitle.value); fd.append("category", galleryPhotoCategory.value); fd.append("caption", galleryPhotoCaption.value); fd.append("status", galleryPhotoStatus.value); if (file) fd.append("image", file);
+  const fd = new FormData(); fd.append("id", galleryPhotoId.value); fd.append("title", galleryPhotoTitle.value); fd.append("category", getGalleryPhotoCategoryValue()); fd.append("caption", galleryPhotoCaption.value); fd.append("status", galleryPhotoStatus.value); if (file) fd.append("image", file);
   const res = await fetch("/api/gallery", { method: "POST", headers: authHeaders(), body: fd });
   const data = await res.json(); if (!data.success) { setMsg("galleryPhotoMessage", data.message || "Save failed.", "error"); return; }
   clearGalleryPhoto(); setMsg("galleryPhotoMessage", data.message || "Saved.", "success"); loadGalleryAdmin();
@@ -1427,3 +1470,6 @@ document.addEventListener("click", (event) => {
 
 
 document.addEventListener("DOMContentLoaded", hideAdminOnlyPanelsForTeacher);
+
+
+document.addEventListener("DOMContentLoaded", ensureGalleryPhotoCategoryDropdown);

@@ -82,7 +82,7 @@
           <div class="form-row">
             <label>Image</label>
             <input id="postImage" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
-            <p class="mini-message">Maximum image size: 500 KB.</p>
+            <p class="mini-message">Maximum image size: 4 MB.</p>
 
             <div id="currentImageBox" class="current-image-box hidden">
               <p class="mini-message">Current image attached to this post:</p>
@@ -304,15 +304,23 @@
                 <label>Photo Title</label>
                 <input id="galleryPhotoTitle" type="text" placeholder="Example: Classroom Activity" required>
               </div>
-              <input id="schoolFormCategory" type="hidden" value="General">
-              <div class="form-row full-row">
+              <div class="form-row">
+                <label>Category</label>
+                <select id="galleryPhotoCategory" required>
+                  <option>Campus & Facilities</option>
+                  <option>Learning Activities</option>
+                  <option>School Events</option>
+                  <option>Student Works</option>
+                </select>
+              </div>
+<div class="form-row full-row">
                 <label>Caption</label>
                 <textarea id="galleryPhotoCaption" rows="3" placeholder="Short caption for this gallery photo."></textarea>
               </div>
               <div class="form-row full-row">
                 <label>Photo</label>
                 <input id="galleryPhotoFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
-                <p class="mini-message">JPG, PNG, WebP, or GIF. Maximum image size: 1000 KB.</p>
+                <p class="mini-message">JPG, PNG, WebP, or GIF. Maximum image size: 4 MB.</p>
                 <div id="currentGalleryImageBox" class="current-image-box hidden">
                   <p class="mini-message">Current gallery image:</p>
                   <img id="currentGalleryImagePreview" class="current-post-image-preview" src="" alt="Current gallery image">
@@ -340,6 +348,6 @@
 
   </main>
 
-  <script src="/assets/js/admin.js?v=20260713-remove-forms-category-v1"></script>
+  <script src="/assets/js/admin.js?v=20260713-gallery-category-safe-repair-v1"></script>
 </body>
 </html>
