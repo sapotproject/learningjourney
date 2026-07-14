@@ -214,14 +214,18 @@
         <h3>User Management</h3>
 
         <form id="userForm" class="user-form-grid">
+          <input id="user_mode" type="hidden" value="add">
+          <input id="user_original_username" type="hidden">
+
           <div class="form-row">
             <label>Username</label>
-            <input id="user_username">
+            <input id="user_username" autocomplete="off" placeholder="unique username">
+            <p class="mini-message">Username must be unique. It cannot be changed after creation.</p>
           </div>
 
           <div class="form-row">
             <label>Name</label>
-            <input id="user_name">
+            <input id="user_name" autocomplete="off" placeholder="Full name">
           </div>
 
           <div class="form-row">
@@ -233,12 +237,21 @@
           </div>
 
           <div class="form-row">
+            <label>Status</label>
+            <select id="user_active">
+              <option value="1">Active</option>
+              <option value="0">Inactive</option>
+            </select>
+          </div>
+
+          <div class="form-row full-row">
             <label>Password</label>
             <input id="user_password" type="password" placeholder="Required for new user / reset only">
           </div>
 
           <div class="form-actions full-row">
-            <button class="publish-btn" type="submit">Add User</button>
+            <button id="saveUserBtn" class="publish-btn" type="submit">Add User</button>
+            <button id="cancelEditUserBtn" class="clear-btn hidden" type="button">Cancel Edit</button>
             <button class="clear-btn" type="button" onclick="loadUsers()">Refresh Users</button>
           </div>
 
@@ -348,6 +361,6 @@
 
   </main>
 
-  <script src="/assets/js/admin.js?v=20260713-add-user-real-fix-v2"></script>
+  <script src="/assets/js/admin.js?v=20260713-user-management-form-repair-v3"></script>
 </body>
 </html>

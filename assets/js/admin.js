@@ -1,3 +1,4 @@
+// SchoolsPH User Management Form Repair v3: 20260713-user-management-form-repair-v3
 // SchoolsPH Add User Real Fix v2 + Gallery Category Repair: 20260713-add-user-real-fix-v2
 // SchoolsPH remove school forms category patch: 20260713-remove-forms-category-v1
 // SchoolsPH Final QA Polish v1: 20260713-final-qa-polish-v1
@@ -159,6 +160,21 @@ function findPostFromCache(id) {
 function byId(id) {
   return document.getElementById(id);
 }
+
+// Explicit User Management element references
+const usersPanel = byId("usersPanel");
+const userList = byId("userList");
+const userForm = byId("userForm");
+const user_mode = byId("user_mode");
+const user_original_username = byId("user_original_username");
+const user_username = byId("user_username");
+const user_name = byId("user_name");
+const user_role = byId("user_role");
+const user_active = byId("user_active");
+const user_password = byId("user_password");
+const saveUserBtn = byId("saveUserBtn");
+const cancelEditUserBtn = byId("cancelEditUserBtn");
+
 
 function esc(value) {
   return String(value || "")
@@ -1034,6 +1050,7 @@ if (byId("cancelEditUserBtn")) {
   cancelEditUserBtn.addEventListener("click", resetUserForm);
 }
 
+if (userForm) {
 userForm.addEventListener("submit", async (event) => {
   event.preventDefault();
 
@@ -1106,6 +1123,9 @@ userForm.addEventListener("submit", async (event) => {
     setMsg("userMessage", "Unable to add user. Please check your connection and try again.", "error");
   }
 });
+} else {
+  console.error("User form not found. User Management is not available.");
+}
 
 async function toggleUser(username, active, role, name) {
   const res = await fetch("/api/users", {
