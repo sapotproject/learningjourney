@@ -210,7 +210,87 @@
         </form>
       </section>
 
-      <section id="usersPanel" class="card">
+            <section id="pageContentPanel" class="card admin-only">
+        <h3>Page Content Manager</h3>
+        <p class="mini-message">Admin only. Edit the text for the About and Admissions pages. The page layout stays protected.</p>
+
+        <div class="settings-grid">
+          <form id="aboutContentForm" class="form-section">
+            <h3>About Page</h3>
+
+            <div class="form-row full-row">
+              <label>Page Title</label>
+              <input id="pc_about_page_title" type="text" placeholder="About Our School">
+            </div>
+
+            <div class="form-row full-row">
+              <label>Intro Description</label>
+              <textarea id="pc_about_intro_description" rows="4" placeholder="Short introduction about the school."></textarea>
+            </div>
+
+            <div class="form-row full-row">
+              <label>Mission</label>
+              <textarea id="pc_about_mission" rows="4" placeholder="School mission statement."></textarea>
+            </div>
+
+            <div class="form-row full-row">
+              <label>Vision</label>
+              <textarea id="pc_about_vision" rows="4" placeholder="School vision statement."></textarea>
+            </div>
+
+            <div class="form-row full-row">
+              <label>Core Values</label>
+              <textarea id="pc_about_core_values" rows="5" placeholder="One value per line"></textarea>
+              <p class="mini-message">Tip: enter one core value per line.</p>
+            </div>
+
+            <div class="form-actions full-row">
+              <button class="publish-btn" type="submit">Save About Page</button>
+            </div>
+
+            <p id="aboutContentMessage" class="form-message full-row"></p>
+          </form>
+
+          <form id="admissionsContentForm" class="form-section">
+            <h3>Admissions Page</h3>
+
+            <div class="form-row full-row">
+              <label>Page Title</label>
+              <input id="pc_admissions_page_title" type="text" placeholder="Admissions">
+            </div>
+
+            <div class="form-row full-row">
+              <label>Intro Description</label>
+              <textarea id="pc_admissions_intro_description" rows="4" placeholder="Short admissions introduction."></textarea>
+            </div>
+
+            <div class="form-row full-row">
+              <label>Requirements</label>
+              <textarea id="pc_admissions_requirements" rows="6" placeholder="One requirement per line"></textarea>
+              <p class="mini-message">Tip: enter one requirement per line.</p>
+            </div>
+
+            <div class="form-row full-row">
+              <label>Enrollment Process</label>
+              <textarea id="pc_admissions_enrollment_process" rows="6" placeholder="One step per line"></textarea>
+              <p class="mini-message">Tip: enter one enrollment step per line.</p>
+            </div>
+
+            <div class="form-row full-row">
+              <label>Contact / Reminder Note</label>
+              <textarea id="pc_admissions_contact_note" rows="4" placeholder="Reminder note for parents."></textarea>
+            </div>
+
+            <div class="form-actions full-row">
+              <button class="publish-btn" type="submit">Save Admissions Page</button>
+            </div>
+
+            <p id="admissionsContentMessage" class="form-message full-row"></p>
+          </form>
+        </div>
+      </section>
+
+<section id="usersPanel" class="card">
         <h3>User Management</h3>
 
         <form id="userForm" class="user-form-grid">
@@ -361,6 +441,6 @@
 
   </main>
 
-  <script src="/assets/js/admin.js?v=20260713-user-management-form-repair-v3"></script>
+  <script src="/assets/js/admin.js?v=20260715-page-content-manager-v1"></script>
 </body>
 </html>

@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png?v=brown-icon-v1">
   <link rel="manifest" href="/site.webmanifest?v=20260711-final-layout-admin-repair-v1">
 </head>
-<body>
+<body data-page-content="admissions">
   <header class="header">
     <div class="header-inner">
       <img id="schoolLogo" class="school-logo hidden" src="" alt="School Logo"/>
@@ -44,8 +44,8 @@
   <main class="container">
     <section class="page-hero">
       <span class="tag category-tag-large">Admissions</span>
-      <h2>Admissions</h2>
-      <p>Basic enrollment information for parents and guardians.</p>
+      <h2 id="admissionsPageTitle">Admissions</h2>
+      <p id="admissionsIntroDescription">Basic enrollment information for parents and guardians.</p>
     </section>
 
     <section class="admission-grid">
@@ -64,7 +64,7 @@
       <article class="card">
         <h2>General Requirements</h2>
         <p>Requirements may vary depending on the level or program.</p>
-        <ul class="simple-list">
+        <ul id="admissionsRequirementsList" class="simple-list">
           <li>Completed enrollment or inquiry form</li>
           <li>Birth certificate copy</li>
           <li>Recent 1x1 or 2x2 photo, if required</li>
@@ -74,8 +74,8 @@
       </article>
 
       <article class="card">
-        <h2>Enrollment Steps</h2>
-        <ol class="simple-list">
+        <h2>Enrollment Process</h2>
+        <ol id="admissionsEnrollmentProcess" class="simple-list">
           <li>Contact the school office.</li>
           <li>Submit the required information or documents.</li>
           <li>Wait for confirmation from the school.</li>
@@ -85,7 +85,7 @@
 
       <article class="card">
         <h2>Need Help?</h2>
-        <p>
+        <p id="admissionsContactNote">
           For updated admission schedules, fees, and available slots, please contact the school directly.
         </p>
         <p><strong>Phone:</strong> <span id="admissionPhone"></span></p>
@@ -108,6 +108,7 @@
 
   <script src="/assets/js/menu.js?v=20260711-final-layout-admin-repair-v1"></script>
   <script src="/assets/js/settings-page.js?v=20260711-final-layout-admin-repair-v1"></script>
+  <script src="/assets/js/page-content-public.js?v=20260715-page-content-manager-v1"></script>
   <script src="/assets/js/image-modal-fix.js?v=20260711-final-layout-admin-repair-v1"></script>
 </body>
 </html>

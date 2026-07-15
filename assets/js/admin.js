@@ -1,3 +1,4 @@
+// SchoolsPH Page Content Manager v1: 20260715-page-content-manager-v1
 // SchoolsPH User Management Form Repair v3: 20260713-user-management-form-repair-v3
 // SchoolsPH Add User Real Fix v2 + Gallery Category Repair: 20260713-add-user-real-fix-v2
 // SchoolsPH remove school forms category patch: 20260713-remove-forms-category-v1
@@ -49,7 +50,8 @@ function hideAdminOnlyPanelsForTeacher() {
     "settingsPanel",
     "usersPanel",
     "formsManagerPanel",
-    "galleryManagerPanel"
+    "galleryManagerPanel",
+    "pageContentPanel"
   ].forEach((id) => {
     setDisplayById(id, adminAllowed ? "" : "none");
   });
@@ -1193,6 +1195,112 @@ async function permanentDeleteUser(username) {
   loadUsers();
 }
 
+
+function pageContentGetValue(id) {
+  const el = byId(id);
+  return el ? el.value.trim() : "";
+}
+
+function pageContentSetValue(id, value) {
+  const el = byId(id);
+  if (el) el.value = value || "";
+}
+
+function fillPageContentForm(page, content) {
+  content = content || {};
+
+  if (page === "about") {
+    pageContentSetValue("pc_about_page_title", content.page_title);
+    pageContentSetValue("pc_about_intro_description", content.intro_description);
+    pageContentSetValue("pc_about_mission", content.mission);
+    pageContentSetValue("pc_about_vision", content.vision);
+    pageContentSetValue("pc_about_core_values", content.core_values);
+    return;
+  }
+
+  if (page === "admissions") {
+    pageContentSetValue("pc_admissions_page_title", content.page_title);
+    pageContentSetValue("pc_admissions_intro_description", content.intro_description);
+    pageContentSetValue("pc_admissions_requirements", content.requirements);
+    pageContentSetValue("pc_admissions_enrollment_process", content.enrollment_process);
+    pageContentSetValue("pc_admissions_contact_note", content.contact_note);
+  }
+}
+
+async function loadPageContentAdmin() {
+  if (!isAdminRole()) {
+    setDisplayById("pageContentPanel", "none");
+    return;
+  }
+
+  const panel = byId("pageContentPanel");
+  if (!panel) return;
+
+  panel.style.display = "";
+
+  try {
+    const res = await fetch("/api/pages", {
+      headers: authHeaders()
+    });
+
+    const data = await readJsonSafe(res);
+    if (!data.success) {
+      setMsg("aboutContentMessage", data.message || "Unable to load page content.", "error");
+      return;
+    }
+
+    const pages = data.pages || {};
+    fillPageContentForm("about", pages.about || {});
+    fillPageContentForm("admissions", pages.admissions || {});
+  } catch (error) {
+    setMsg("aboutContentMessage", friendlyError("Unable to load page content.", error), "error");
+  }
+}
+
+async function savePageContent(page, content, messageId) {
+  if (!adminOnlyActionGuard(true)) return;
+
+  setMsg(messageId, "Saving page content...", "");
+
+  try {
+    const res = await fetch("/api/pages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...authHeaders()
+      },
+      body: JSON.stringify({ page, content })
+    });
+
+    const data = await readJsonSafe(res);
+    setMsg(messageId, data.message || "Saved.", data.success ? "success" : "error");
+  } catch (error) {
+    setMsg(messageId, friendlyError("Save failed.", error), "error");
+  }
+}
+
+function getAboutContentPayload() {
+  return {
+    page_title: pageContentGetValue("pc_about_page_title"),
+    intro_description: pageContentGetValue("pc_about_intro_description"),
+    mission: pageContentGetValue("pc_about_mission"),
+    vision: pageContentGetValue("pc_about_vision"),
+    core_values: pageContentGetValue("pc_about_core_values")
+  };
+}
+
+function getAdmissionsContentPayload() {
+  return {
+    page_title: pageContentGetValue("pc_admissions_page_title"),
+    intro_description: pageContentGetValue("pc_admissions_intro_description"),
+    requirements: pageContentGetValue("pc_admissions_requirements"),
+    enrollment_process: pageContentGetValue("pc_admissions_enrollment_process"),
+    contact_note: pageContentGetValue("pc_admissions_contact_note")
+  };
+}
+
+
+
 function loadAll() {
   loadPosts();
 
@@ -1201,6 +1309,7 @@ function loadAll() {
     loadUsers();
     loadFormsAdmin();
     loadGalleryAdmin();
+    loadPageContentAdmin();
   } else {
     hideAdminOnlyPanelsForTeacher();
   }
@@ -1454,6 +1563,22 @@ if (!confirm("Permanently delete this gallery photo? This will also delete the i
 }
 if (byId("galleryUploadForm")) galleryUploadForm.addEventListener("submit", saveGalleryPhoto);
 if (byId("clearGalleryPhotoBtn")) clearGalleryPhotoBtn.addEventListener("click", clearGalleryPhoto);
+
+
+
+if (byId("aboutContentForm")) {
+  byId("aboutContentForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    await savePageContent("about", getAboutContentPayload(), "aboutContentMessage");
+  });
+}
+
+if (byId("admissionsContentForm")) {
+  byId("admissionsContentForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    await savePageContent("admissions", getAdmissionsContentPayload(), "admissionsContentMessage");
+  });
+}
 
 
 start();
